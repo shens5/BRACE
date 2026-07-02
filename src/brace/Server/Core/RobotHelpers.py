@@ -10,19 +10,19 @@ import numpy as np
 
 def checkSlewRate(torqueNow: float, torquePast: float, deltaTime: float, maxSlew: float) -> float:
     """
-    Function that caps the slew rate of an output value of the current iteration
-    to prevent excess changes in acceleration.
+        Function that caps the slew rate of an output value of the current iteration
+        to prevent excess changes in acceleration.
 
-    :param torqueNow: The calculated output value before checks this iteration.
-    :type torqueNow: float
-    :param torquePast: The output value used last iteration.
-    :type torquePast: float
-    :param deltaTime: The time between the last iteration and the current one in seconds.
-    :type deltaTime: float
-    :param maxSlew: The maximum change between the two output values per second.
-    :type maxSlew: float
-    :return: The output value adjusted based on the max slew rate (capped if above limit).
-    :rtype: float
+        :param torqueNow: The calculated output value before checks this iteration.
+        :type torqueNow: float
+        :param torquePast: The output value used last iteration.
+        :type torquePast: float
+        :param deltaTime: The time between the last iteration and the current one in seconds.
+        :type deltaTime: float
+        :param maxSlew: The maximum change between the two output values per second.
+        :type maxSlew: float
+        :return: The output value adjusted based on the max slew rate (capped if above limit).
+        :rtype: float
     """
     
     #input: Nm, Nm, sec, Nm/sec
@@ -106,14 +106,14 @@ def hysteresisMultiple(timeData: Iterable[float], functionConditions: list[Hyste
 
 class HysteresisParameters(NamedTuple):
     """
-    HysteresisParameters are for evaluating all the values of a certain measurement (up to a certain hysteresisTime) back in time.
-    In order for hysteresis to be considered true, all values have to return true when evaluated by the lambdaCondition.
-    A successful hysteresis signals long enough stability to switch a state.
+        HysteresisParameters are for evaluating all the values of a certain measurement (up to a certain hysteresisTime) back in time.
+        In order for hysteresis to be considered true, all values have to return true when evaluated by the lambdaCondition.
+        A successful hysteresis signals long enough stability to switch a state.
 
-    NamedTuple that contains
-        lambdaCondition - a callable that contains a float and returns a bool (for evaluating across all values in measurementCollection).
-        measurementCollection - an iterable of floats in the measurementList that should be measured against. Values checked are paired with time iterable.
-        hysteresisTime - the length of how long hysteresis should be checked for previous measurement values. 
+        NamedTuple that contains
+            lambdaCondition - a callable that contains a float and returns a bool (for evaluating across all values in measurementCollection).
+            measurementCollection - an iterable of floats in the measurementList that should be measured against. Values checked are paired with time iterable.
+            hysteresisTime - the length of how long hysteresis should be checked for previous measurement values. 
     """
     lambdaCondition: Callable[[float], bool]
     measurementCollection: Iterable[float]

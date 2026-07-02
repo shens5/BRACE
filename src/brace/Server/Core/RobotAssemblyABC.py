@@ -25,6 +25,9 @@ import logging
 logger = logging.getLogger("logger")
 #MAIN
 class RobotAssemblyABC(IDataProducer):
+    """
+        Class that handles overall control between RobotABC objects, reading into the IMeasurementLists, RPC requests, and data export.
+    """
     MAX_LEN = 15000
     IGNORED_EXPORT_API_CALLS = { 'heartbeat',  # Removed to keep calls more sparse
                                  'changeControlLogic' } # Handled separately due to different timing to clock step of a normal cycle.
@@ -39,31 +42,32 @@ class RobotAssemblyABC(IDataProducer):
                  simulated: bool = False, dataTopicName: str = None, remoteHostTopicTemplate: str = None):
         
         """
-        Class that handles overall control between RobotABC objects, reading into the IMeasurementLists, RPC requests, and data export.
-        
-        :param initialControlLogicType: An initialized enum that represents the control logic object that each RobotABC should be initialized 
-        with. This enum should be a member of the controlLogic dictionary also in this __init__. 
-        :type initialControlLogicType: IntEnum
-        :param numRobots: The number of robots that should be instantiated with this RobotAssemblyABC.
-        :type numRobots: int
-        :param controlLogic: A dictionary containing anonymous functions that initialize the control logic object that take in an index
-        as an indicator for that robot. Should contain the initialControlLogicType IntEnum as a key element.
-        :type controlLogic: dict[IntEnum, Callable[[bool], IControlLogic]]
-        :param UPDATE_RATE_PER_SECOND: The update rate at which this RobotAssemblyABC should run at. True update rate may fluctuate depending
-        on relative load and jitter. 
-        :type UPDATE_RATE_PER_SECOND: int
-        :param startTime: A relative start time that is bound to one or more IDataProducers to synchronize the exported start time between
-        multiple IDataProducer processes. This should be a multiprocessing.Value('d') as times provided by time.perf_counter() are doubles.
-        :type startTime: multiprocessing.Value
-        :param robotImplementation: The RobotABC implementation that should be homogenously used in this RobotAssemblyABC.
-        :type robotImplementation: RobotABC 
-        :param simulated: Parameter used for whether or not this object is being used in simulation or online.
-        :type simulated: bool
-        :param dataTopicName: Name of the topic that should be used for sending data points. Defaults to "datatypes" if none specified.
-        :type dataTopicName: str | None
-        :param remoteHostTopicTemplate: Topic prefix for the return topic used for server responses back to the client. Should have "$hostname" 
-        to distinguish between other possible clients. Defaults to "remotecommands/return/$hostname" if none specified.
-        :type remoteHostTopicTemplate: str | None
+            :param initialControlLogicType: An initialized enum that represents the control logic 
+                object that each RobotABC should be initialized with. This enum should be a member 
+                of the controlLogic dictionary also in this __init__. 
+            :type initialControlLogicType: IntEnum
+            :param numRobots: The number of robots that should be instantiated with this RobotAssemblyABC.
+            :type numRobots: int
+            :param controlLogic: A dictionary containing anonymous functions that initialize the control logic object that take in an index
+                as an indicator for that robot. Should contain the initialControlLogicType IntEnum as a key element.
+            :type controlLogic: dict[IntEnum, Callable[[bool], IControlLogic]]
+            :param UPDATE_RATE_PER_SECOND: The update rate at which this RobotAssemblyABC should run at. 
+                True update rate may fluctuate depending on relative load and jitter. 
+            :type UPDATE_RATE_PER_SECOND: int
+            :param startTime: A relative start time that is bound to one or more IDataProducers to 
+                synchronize the exported start time between multiple IDataProducer processes. 
+                This should be a multiprocessing.Value('d') as times provided by time.perf_counter() are doubles.
+            :type startTime: multiprocessing.Value
+            :param robotImplementation: The RobotABC implementation that should be homogenously used in this RobotAssemblyABC.
+            :type robotImplementation: RobotABC 
+            :param simulated: Parameter used for whether or not this object is being used in simulation or online.
+            :type simulated: bool
+            :param dataTopicName: Name of the topic that should be used for sending data points. Defaults to "datatypes" if none specified.
+            :type dataTopicName: str | None
+            :param remoteHostTopicTemplate: Topic prefix for the return topic used for server responses back to the client.
+                Should have "$hostname" to distinguish between other possible clients. Defaults to 
+                "remotecommands/return/$hostname" if none specified.
+            :type remoteHostTopicTemplate: str | None
         """
         
         # Rename if configuration is available.
@@ -105,13 +109,13 @@ class RobotAssemblyABC(IDataProducer):
 
     def publishDataToMqtt(self, force: bool = False) -> None:
         """
-        Publishes a sequence of NamedTuple elements to the MQTT data topic. Elements are batched to reduce overhead 
-        at slight expense of viewing delay. 
-        
-        :param force: Forces the NameTuple buffer to be published. Such as when controllers change.
-        :type force: bool
-        :return: None
-        :rtype: None
+            Publishes a sequence of NamedTuple elements to the MQTT data topic. Elements are batched to reduce overhead 
+            at slight expense of viewing delay. 
+            
+            :param force: Forces the NameTuple buffer to be published. Such as when controllers change.
+            :type force: bool
+            :return: None
+            :rtype: None
         """
         # Messages are batched, otherwise it seems to affect CAN writes due to apparent overloaded socket spillover.
         # Send when the number of elements is met, or if it was reset in the middle (before elements have been made).
@@ -122,54 +126,54 @@ class RobotAssemblyABC(IDataProducer):
 
     def setInputComInterface(self, inputComInterfaces: Iterable[Iterable[IInputCom]]) -> None:
         """
-        Initializes the input interfaces that a RobotABC in this RobotAssemblyABC should use.
-        
-        :param inputComInterfaces: Generally a list of lists containing IInputCom that defines pairwise
-        input interfaces to be used for each robot. Each RobotABC is assigned one list of IInputCom from this list of lists.
-        :type inputComInterfaces: Iterable[Iterable[IInputCom]]
-        :return: None
-        :rtype: None
+            Initializes the input interfaces that a RobotABC in this RobotAssemblyABC should use.
+            
+            :param inputComInterfaces: Generally a list of lists containing IInputCom that defines pairwise
+            input interfaces to be used for each robot. Each RobotABC is assigned one list of IInputCom from this list of lists.
+            :type inputComInterfaces: Iterable[Iterable[IInputCom]]
+            :return: None
+            :rtype: None
         """
         for i, inputCom in enumerate(inputComInterfaces):
             self.getRobot(index = i).addInputComs(inputCom)
 
     def setOutputComInterface(self, outputComInterfaces: Iterable[Iterable[IOutputCom]]) -> None:
         """
-        Initializes the output interfaces that a RobotABC in this RobotAssemblyABC should use.
-        
-        :param outputComInterfaces: Generally a list of lists containing IOutputCom that defines pairwise
-        input interfaces to be used for each robot. Each RobotABC is assigned one list of IOutputCom from this list of lists.
-        :type outputComInterfaces: Iterable[Iterable[IOutputCom]]
-        :return: None
-        :rtype: None
+            Initializes the output interfaces that a RobotABC in this RobotAssemblyABC should use.
+            
+            :param outputComInterfaces: Generally a list of lists containing IOutputCom that defines pairwise
+            input interfaces to be used for each robot. Each RobotABC is assigned one list of IOutputCom from this list of lists.
+            :type outputComInterfaces: Iterable[Iterable[IOutputCom]]
+            :return: None
+            :rtype: None
         """
         for i, outputCom in enumerate(outputComInterfaces):
             self.getRobot(index = i).addOutputComs(outputCom)
 
     def setMeasurementLists(self, measurementLists: Iterable[IMeasurementLists]) -> None:
         """
-        Sets the MeasurementLists that a RobotABC in this RobotAssemblyABC should use.
-        
-        :param measurementLists: Generally a list of IMeasurementLists subclasses that defines pairwise
-        sensor data objects to be used for each robot. Each RobotABC is assigned one IMeasurementList from this list,
-        representing the sensor data for that RobotABC.
-        :type measurementLists: Iterable[IMeasurementLists]
-        :return: None
-        :rtype: None
+            Sets the MeasurementLists that a RobotABC in this RobotAssemblyABC should use.
+            
+            :param measurementLists: Generally a list of IMeasurementLists subclasses that defines pairwise
+                sensor data objects to be used for each robot. Each RobotABC is assigned one IMeasurementList from this list,
+                representing the sensor data for that RobotABC.
+            :type measurementLists: Iterable[IMeasurementLists]
+            :return: None
+            :rtype: None
         """
         for i, measurementList in enumerate(measurementLists):
             self.getRobot(index = i).addMeasurementList(measurementList)
     
     def setSafetyControl(self, safetyControls: Iterable[ISafetyControl]) -> None:
         """
-        Initializes the ISafetyControl layer that a RobotABC in this RobotAssemblyABC should use.
-        
-        :param safetyControls: Generally a list of ISafetyControl subclasses that defines the safety
-        constraint behavior to be used for each robot. Each RobotABC is assigned one ISafetyControl from this list,
-        representing the sensor data for that RobotABC.
-        :type measurementLists: Iterable[ISafetyControl]]
-        :return: None
-        :rtype: None
+            Initializes the ISafetyControl layer that a RobotABC in this RobotAssemblyABC should use.
+            
+            :param safetyControls: Generally a list of ISafetyControl subclasses that defines the safety
+                constraint behavior to be used for each robot. Each RobotABC is assigned one ISafetyControl from this list,
+                representing the sensor data for that RobotABC.
+            :type measurementLists: Iterable[ISafetyControl]]
+            :return: None
+            :rtype: None
         """
         for i, safetyControl in enumerate(safetyControls):
             self.getRobot(index = i).addSafetyControls(safetyControl)
@@ -177,14 +181,14 @@ class RobotAssemblyABC(IDataProducer):
     # Exports the data of all robots into a single named tuple.
     def exportRecentData(self, force: bool = False) -> None:
         """
-        Creates a NamedTuple object based on the data from the type
-        and data from each Control Logic definition. Each field should be defined
-        for the NamedTuple which is considered a flat object.
+            Creates a NamedTuple object based on the data from the type
+            and data from each Control Logic definition. Each field should be defined
+            for the NamedTuple which is considered a flat object.
 
-        :param force: Flag to force the data to be published when passed to publishDatatoMqtt
-        :type force: bool 
-        :return: None
-        :rtype: None
+            :param force: Flag to force the data to be published when passed to publishDatatoMqtt
+            :type force: bool 
+            :return: None
+            :rtype: None
         """
         recentData: list[dict[str, float | int]] = []
         exportingDataTypes: set[NamedTuple] = set()
@@ -208,14 +212,14 @@ class RobotAssemblyABC(IDataProducer):
 
     def exportNaNData(self, t: float) -> None:
         """ 
-        This exports NaNs to the data topic for the current Data type. On graphs, when 
-        a NaN is drawn, the points in between the time value and the next valid time value will not plot anything (no line interpolation).
-        This is helpful when switching between controllers should not yield valid data in between. 
-            
-        :param t: The current time relative to the start time for the NaN data point to punctuate the data.
-        :type t: float
-        :return: None
-        :rtype: None
+            This exports NaNs to the data topic for the current Data type. On graphs, when 
+            a NaN is drawn, the points in between the time value and the next valid time value will not plot anything (no line interpolation).
+            This is helpful when switching between controllers should not yield valid data in between. 
+                
+            :param t: The current time relative to the start time for the NaN data point to punctuate the data.
+            :type t: float
+            :return: None
+            :rtype: None
         """
         exportingDataTypes: set[NamedTuple] = set()
 
@@ -237,12 +241,12 @@ class RobotAssemblyABC(IDataProducer):
 
     def setup(self, **kwargs) -> None:
         """
-        A setup for things that should be performed before execution, but after the constructor init.
+            A setup for things that should be performed before execution, but after the constructor init.
 
-        :params kwargs: Parameters that should be passed to each RobotABC's setup and potentially to control logic objects.
-        :type kwargs: dict[str, Any]
-        :return: None
-        :rtype: None
+            :params kwargs: Parameters that should be passed to each RobotABC's setup and potentially to control logic objects.
+            :type kwargs: dict[str, Any]
+            :return: None
+            :rtype: None
         """
 
         # The first cycle is done here (that initializes parameters that would otherwise break in a normal cycle).
@@ -255,24 +259,24 @@ class RobotAssemblyABC(IDataProducer):
 
     def addSendDataEvent(self, sendData: Synchronized) -> None:
         """
-        Binds additional multiprocessing events to be controlled by RobotAssemblyABC (to control when data is sent).
+            Binds additional multiprocessing events to be controlled by RobotAssemblyABC (to control when data is sent).
 
-        :param sendData: Event in a while loop to dictate if data should be sent. This is to synchronize when data
-        should be sent together with RobotAssemblyABC.
-        :type sendData: multiprocessing.Event
-        :return: None
-        :rtype: None
+            :param sendData: Event in a while loop to dictate if data should be sent. This is to synchronize when data
+                should be sent together with RobotAssemblyABC.
+            :type sendData: multiprocessing.Event
+            :return: None
+            :rtype: None
         """
         self.sendDataEvents.append(sendData)
 
     def getRobot(self, index: int) -> RobotABC:
         """
-        Helper function to retrieve a particular RobotABC indexed by number.
+            Helper function to retrieve a particular RobotABC indexed by number.
 
-        :param index: Index of the RobotABC within this RobotAssemblyABC.
-        :type index: int
-        :return: The RobotABC indexed by the number
-        :rtype: RobotABC
+            :param index: Index of the RobotABC within this RobotAssemblyABC.
+            :type index: int
+            :return: The RobotABC indexed by the number
+            :rtype: RobotABC
         """
         return self.robots[index]
     
@@ -283,23 +287,23 @@ class RobotAssemblyABC(IDataProducer):
 
     def calibrateRobots(self) -> None:
         """
-        Runs the calibration function in each RobotABC. This is often to zero each robot for relative sensor measurements.
+            Runs the calibration function in each RobotABC. This is often to zero each robot for relative sensor measurements.
 
-        :return: None
-        :rtype: None
+            :return: None
+            :rtype: None
         """
         for robot in self.robots:
             robot.setCalibrationOffset()
 
     def changeControlLogic(self, controlLogicType: IntEnum) -> None:
         """ 
-        Changes the logic controllers across all robots, exporting a terminating NaN datapoint if data is being sent. 
-        
-        :param controlLogicType: An integer enum that corresponds to the control logic from the controller logic
-        constructor dictionary, to be changed.
-        :type controlLogicType: IntEnum
-        :return: None
-        :rtype: None
+            Changes the logic controllers across all robots, exporting a terminating NaN datapoint if data is being sent. 
+            
+            :param controlLogicType: An integer enum that corresponds to the control logic from the controller logic
+            constructor dictionary, to be changed.
+            :type controlLogicType: IntEnum
+            :return: None
+            :rtype: None
         """
         t = time.perf_counter() - self.startTime.value
         if self.sendData.is_set():
@@ -313,142 +317,144 @@ class RobotAssemblyABC(IDataProducer):
     
     def changeControlLogicParameters(self, controlLogicType: IntEnum, parameters: dict[str, float | dict[IntEnum: float]], index: int) -> None:
         """ 
-        Requests in-place modification of the control logic parameters. 
-        
-        :param controlLogicType: An integer enum that corresponds to the control logic to be changed.
-        :type controlLogicType: IntEnum
-        :param parameters: The parameters that should be overridden (often through setattr, keys can be instance variable names). 
-        Parameters are often floats, but may be state lookup tables for torque values.
-        :type parameters: dict[str, float | dict[IntEnum: float]]
-        :param index: Index of the RobotABC that should undergo the control logic parameter change with respect to this RobotAssemblyABC.
-        :type index: int
-        :return: None
-        :rtype: None
+            Requests in-place modification of the control logic parameters. 
+            
+            :param controlLogicType: An integer enum that corresponds to the control logic to be changed.
+            :type controlLogicType: IntEnum
+            :param parameters: The parameters that should be overridden (often through setattr, keys can be instance variable names). 
+            Parameters are often floats, but may be state lookup tables for torque values.
+            :type parameters: dict[str, float | dict[IntEnum: float]]
+            :param index: Index of the RobotABC that should undergo the control logic parameter change with respect to this RobotAssemblyABC.
+            :type index: int
+            :return: None
+            :rtype: None
         """
         robot = self.getRobot(index = index)
         robot.changeControlLogicParameters(controlLogicType, parameters)
 
     def changeMultipleControlLogicParameters(self, controlLogicType: IntEnum, parameters: list[dict[str, float | dict[IntEnum: float]]], index: list[int]) -> None:
-        """ Runs the same command as changeControlLogicParameters, except uses index aligned indicies and parameters; 
-        used to update in one cycle instead of issuing multiple commands.
+        """ 
+            Runs the same command as changeControlLogicParameters, except uses index aligned indicies and parameters; 
+            used to update in one cycle instead of issuing multiple commands.
 
-        :param controlLogicType: An integer enum that corresponds to the control logic to be changed.
-        :type controlLogicType: IntEnum
-        :param parameters: A list of parameter dictionaries that should be set for this controlLogicType
-        :type parameters: list[dict[str, float | dict[IntEnum: float]]] 
-        :param index: A list of indicies corresponding to the robots that are pairwise set to the parameters.
-        :type index: list[int]
-        :return: None
-        :rtype: None
+            :param controlLogicType: An integer enum that corresponds to the control logic to be changed.
+            :type controlLogicType: IntEnum
+            :param parameters: A list of parameter dictionaries that should be set for this controlLogicType
+            :type parameters: list[dict[str, float | dict[IntEnum: float]]] 
+            :param index: A list of indicies corresponding to the robots that are pairwise set to the parameters.
+            :type index: list[int]
+            :return: None
+            :rtype: None
         """
         for index, parameters in zip(index, parameters):
             self.changeControlLogicParameters(controlLogicType, parameters, index)
 
     def enableActuation(self, enable: bool) -> None:
         """ 
-        By default, actuation is turned off and should be enabled through this RPC call. Changes the actuation enable flag for
-        each RobotABC object.
-        
-        :param enable: A flag which determines whether or not output actuation should be performed. If disabled, output calculation
-        is still performed, but no outputs are sent out to actuators.
-        :type enable: bool
-        :return: None
-        :rtype: None
+            By default, actuation is turned off and should be enabled through this RPC call. Changes the actuation enable flag for
+            each RobotABC object.
+            
+            :param enable: A flag which determines whether or not output actuation should be performed. If disabled, output calculation
+            is still performed, but no outputs are sent out to actuators.
+            :type enable: bool
+            :return: None
+            :rtype: None
         """
         for robot in self.robots:
             robot.enableActuation(enable = enable)
 
     def getConfigurationParameters(self, controlLogicType: IntEnum, formatForConfiguration: bool) -> tuple[dict[str, float | int], ...]:
         """
-        Returns a set of configuration parameters defined by particular control logic. 
-        This may be used in two ways: for reading configuration into the GUI, or reading for export into a saved trial file.
-        This returns a tuple of configuration parameters (of the same control logic) for each RobotABC that is defined.
+            Returns a set of configuration parameters defined by particular control logic. 
+            This may be used in two ways: for reading configuration into the GUI, or reading for export into a saved trial file.
+            This returns a tuple of configuration parameters (of the same control logic) for each RobotABC that is defined.
 
-        :param controlLogicType: The corresponding IntEnum defined for the control logic that should be exported.
-        :type controlLogicType: IntEnum
-        :param formatForConfiguration: Flag where True formats should format objects as configuration for saved trial data. False
-        should be used for GUI configuration reading.
-        :type formatForConfiguration: bool
-        :return: Tuple containing configuration parameters for each RobotABC in this RobotAssemblyABC.
-        :rtype: tuple[dict[str, float | int], ...]
+            :param controlLogicType: The corresponding IntEnum defined for the control logic that should be exported.
+            :type controlLogicType: IntEnum
+            :param formatForConfiguration: Flag where True formats should format objects as configuration for saved trial data. False
+            should be used for GUI configuration reading.
+            :type formatForConfiguration: bool
+            :return: Tuple containing configuration parameters for each RobotABC in this RobotAssemblyABC.
+            :rtype: tuple[dict[str, float | int], ...]
         """
         configurationParameters = [robot.getConfigurationParameters(controlLogicType, formatForConfiguration) for robot in self.robots]
         return tuple(configurationParameters)
 
     def heartbeat(self, syn: str) -> str | None:
         """
-        Heartbeat pulse to check for alive connections between Client and Server. 
-        Returns "ACK" if and only if the initial response is "SYN".
-        :param syn: A synchronization string for the heartbeat command.
-        :type syn: str
-        :return: An acknowledgement string to the synchronization string. None if not "SYN"
-        :rtype: str | None
+            Heartbeat pulse to check for alive connections between Client and Server. 
+            Returns "ACK" if and only if the initial response is "SYN".
+
+            :param syn: A synchronization string for the heartbeat command.
+            :type syn: str
+            :return: An acknowledgement string to the synchronization string. None if not "SYN"
+            :rtype: str | None
         """
         if syn == "SYN":
             return "ACK"
     
     def restartSharedStartTime(self) -> None:
         """
-        Restarts the synchronized start time shared between multiprocesses for data send.
-        Datapoints should use this start time as a reference to offset future times with time.perf_counter().
-        Saved RPC calls are also cleared such that data trials only contain relevant calls since the restarted time.
+            Restarts the synchronized start time shared between multiprocesses for data send.
+            Datapoints should use this start time as a reference to offset future times with time.perf_counter().
+            Saved RPC calls are also cleared such that data trials only contain relevant calls since the restarted time.
 
-        :return: None
-        :rtype: None 
+            :return: None
+            :rtype: None 
         """
         self.setSharedStartTime(updateStartTime = time.perf_counter())
         self.apiCallsThisSession.clear()
 
     def startSend(self) -> None:
         """
-        Sets all bounded Event synchronization flags to start the data streams together.
+            Sets all bounded Event synchronization flags to start the data streams together.
 
-        :return: None
-        :rtype: None
+            :return: None
+            :rtype: None
         """
         for sendDataEvent in self.sendDataEvents:
             sendDataEvent.set()
 
     def stopProcess(self) -> None:
         """
-        Stops the RobotAssemblyABC start() loop to cleanly end.
+            Stops the RobotAssemblyABC start() loop to cleanly end.
 
-        :return: None
-        :rtype: None
+            :return: None
+            :rtype: None
         """
         self.exit.set()
 
     def stopSend(self) -> None:
         """
-        Clears bounded send multiprocessing.Event flags to stop the data streams together. 
+            Clears bounded send multiprocessing.Event flags to stop the data streams together. 
 
-        :return: None
-        :rtype: None
+            :return: None
+            :rtype: None
         """
         for sendDataEvent in self.sendDataEvents:
             sendDataEvent.clear()
     
     def exportAPICallEvents(self) -> list[tuple[float, str, dict]]:
         """
-        Returns a list of tuples containing the uptime, RPC function name, and parameters that were sent.
-        Function names that match names in IGNORED_EXPORT_API_CALLS are not included in this list.
+            Returns a list of tuples containing the uptime, RPC function name, and parameters that were sent.
+            Function names that match names in IGNORED_EXPORT_API_CALLS are not included in this list.
 
-        :return: List of tuples containing RPC calls executed since the last shared start time restart.
-        :rtype: list[tuple[float, str, dict]]
+            :return: List of tuples containing RPC calls executed since the last shared start time restart.
+            :rtype: list[tuple[float, str, dict]]
         """
         return self.apiCallsThisSession
     
     def turnOnOffControllerRobot(self, index: int, enable: bool) -> bool:
         """
-        Enables/Disables the RobotABC from executing control logic and reading sensor data. 
-        Disabled RobotABCs still be accessed to retrieve filler NaN data to complete the NameTuple fields, however.
+            Enables/Disables the RobotABC from executing control logic and reading sensor data. 
+            Disabled RobotABCs still be accessed to retrieve filler NaN data to complete the NameTuple fields, however.
 
-        :params index: Index of the RobotABC to be to be toggled.
-        :type index: int
-        :params enable: Flag to enable or disable the indexed RobotABC
-        :type bool
-        :return: Whether or not turning off the RobotABC was successful.
-        :rtype: bool
+            :params index: Index of the RobotABC to be to be toggled.
+            :type index: int
+            :params enable: Flag to enable or disable the indexed RobotABC
+            :type bool
+            :return: Whether or not turning off the RobotABC was successful.
+            :rtype: bool
         """
         robot = self.getRobot(index = index)
         return robot.turnOnOffRobot(enable)
@@ -460,15 +466,15 @@ class RobotAssemblyABC(IDataProducer):
 
     def remoteCommand(self, functionName: str, argumentParameters: dict[str, Any]) -> Any:
         """
-        Runs the RPC command received by the server, calling the function with the given parameters.
-        This function will return any return values back to the Client through a separate client topic.
+            Runs the RPC command received by the server, calling the function with the given parameters.
+            This function will return any return values back to the Client through a separate client topic.
 
-        :params functionName: The RPC function to call.
-        :type functionName: str
-        :params argumentParameters: A dictionary that contains the parameters to run the function with.
-        :type argumentParameters: dict[str, Any]
-        :return: Return value of the executed command
-        :rtype: Any
+            :params functionName: The RPC function to call.
+            :type functionName: str
+            :params argumentParameters: A dictionary that contains the parameters to run the function with.
+            :type argumentParameters: dict[str, Any]
+            :return: Return value of the executed command
+            :rtype: Any
         """
         logger.debug(f"Calling {functionName} with parameters {argumentParameters}")
         functionToCall = getattr(self, functionName) # Find the command by name
@@ -487,7 +493,7 @@ class RobotAssemblyABC(IDataProducer):
                 is assigned between multiple IDataProducers.
             :type timeSynchronizationCondition: multiprocessing.Condition | None
             :params **kwargs: Keyword arguments that are passed through setup functions of RobotABCs and Control Logic objects.
-            Necessary kwargs elements are listed below.
+                Necessary kwargs elements are listed below.
 
             :params sendEnd: Shared queue between producer and consumer. NamedTuple datapoints are added to this queue.
             :type sendEnd: multiprocessing.Queue 
@@ -586,21 +592,21 @@ class RobotAssemblyABC(IDataProducer):
     # Important that the measurements are kept as same (angular velocity is handled in a window, and recalculating it again will change values).
     def simulateControllerData(self, measurementDataFrames: list[pd.DataFrame], eventPipeLine: pd.DataFrame, **kwargs) -> Iterable[NamedTuple]:
         """
-        Function used to retest logic controllers against previously existing data (e.g. from a file).
-        This makes it able to validate the controller without it physically having to put it on again.
-        API functions may be called in between cycles. It is important that the measurements are kept as same
+            Function used to retest logic controllers against previously existing data (e.g. from a file). 
+            This makes it able to validate the controller without it physically having to put it on again. API functions may be called in between cycles. It is important that the measurements are kept as same
             (recalculating values within a window will change values due to values potentially not being available).
-        
-        :params measurementDataFrames: A list of pandas Dataframes referencing the data in the IMeasurementLists subclass that should \
-        be used in the controller simulation. 
-        :type measurementDataFrames: list[pd.DataFrame]
-        :params eventPipeLine: A pandas Dataframe listing the uptime, name of the function called, and the parameter (stored as JSON) to be \
-        executed before each control iteration. RPC calls that are listed in IGNORED_SIMULATED_API_CALLS are ignored.
-        :type eventPipeLine: pd.Dataframe
-        :params **kwargs: Other keyword arguments that should be passed to the simulatedSetup of RobotABC and the control logic objects.
-        :type **kwargs: dict
-        :return: List of NamedTuple datatypes that are exported running new control logic or parameters to be graphed or saved.
-        :rtype: Iterable[NamedTuple]
+            
+            :params measurementDataFrames: A list of pandas Dataframes referencing the data in the IMeasurementLists subclass that should
+                be used in the controller simulation. 
+            :type measurementDataFrames: list[pd.DataFrame]
+            :params eventPipeLine: A pandas Dataframe listing the uptime, name of the function called, and the parameter (stored as JSON) to be
+                executed before each control iteration. RPC calls that are listed in IGNORED_SIMULATED_API_CALLS are ignored.
+            :type eventPipeLine: pd.Dataframe
+            :params **kwargs: Other keyword arguments that should be passed to the simulatedSetup of RobotABC and the control logic objects.
+            :type **kwargs: dict[str, Any]
+
+            :return: List of NamedTuple datatypes that are exported running new control logic or parameters to be graphed or saved.
+            :rtype: Iterable[NamedTuple]
         """
         
         def getRunnableEvents(eventPipeLine: pd.DataFrame, apiEventIndex: int, lastTime: float):

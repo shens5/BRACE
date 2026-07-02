@@ -120,8 +120,8 @@ def saveConfiguration(parent: MainWindow | Simulator, configurationObjects: dict
         :param configurationObjects: The configuration widgets referenced by widget name.
         :type configurationObjects: dict[str, QWidget]
 
-        :return None
-        :rtype None
+        :return: None
+        :rtype: None
     """
     configurationData = getConfigurationParametersFromGUI(parent, configurationObjects)
     options = QFileDialog.Option()

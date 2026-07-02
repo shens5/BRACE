@@ -480,7 +480,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
             Gets the API Events that were called since the last remote start time update.
         
-            :returns a list of tuples containing the time, name, and parameters of the event.
+            :return: A list of tuples containing the time, name, and parameters of the event.
             :rtype: list[tuple[float, str, dict]]
         """
         return self.sendRemoteCommand('exportAPICallEvents', {})
@@ -504,8 +504,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             Reads the current configuration from the controller and updates the configuration
             box in the GUI.
 
-            :return None
-            :rtype None
+            :return: None
+            :rtype: None
         """
         self._updateFromReadControllerConfiguration(self.currentContextIndex)
 
@@ -515,8 +515,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             Reads all of the configuration from the remote and updates the configuration box
             in the GUI.
 
-            :return None
-            :rtype None
+            :return: None
+            :rtype: None
         """
         for i in range(len(self.graphContexts)):
             self._updateFromReadControllerConfiguration(i)
@@ -695,6 +695,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             :type legComboBox: QComboBox
             :param isLeft: Whether or not this is a left leg.
             :type isLeft: bool
+            :return: None
+            :rtype: None
         """
         side = PrefixNames.getLegSideLong(isLeft).lower()
         logger.info(f"[{legComboBox.currentText()}] selected on {side} side.")
@@ -805,8 +807,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             :param isChecked: Whether or not the enableTorqueButton is checked.
             :type isChecked: bool
             
-            :return None
-            :rtype None
+            :return: None
+            :rtype: None
         """
         if isChecked:
             self.enableTorqueButton.setText("Disable Torque")

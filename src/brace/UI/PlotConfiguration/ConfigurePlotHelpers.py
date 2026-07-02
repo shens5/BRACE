@@ -240,6 +240,7 @@ class PyQTBasePlot():
     def toggleLeftLines(self, visible: bool) -> None:
         """
             Toggles the left lines based on the desired visibility. Contains the simulator lines.
+
             :param visible: Whether or not the left lines should be visible.
             :type visible: bool
             :return: None
@@ -250,6 +251,7 @@ class PyQTBasePlot():
     def toggleRightLines(self, visible: bool) -> None:
         """
             Toggles the right lines based on the desired visibility. Contains the simulator lines.
+
             :param visible: Whether or not the right lines should be visible.
             :type visible: bool
             :return: None
@@ -275,7 +277,8 @@ class MplBasePlot():
     def __init__(self, matplotlibwidget: MatplotlibWidget, **kwargs):
         """
             For a given MatplotlibWidget, transparency picking can be enabled for legends
-            and hiding legends, left, and right with the "H", "L", and "R" hotkeys respectively. 
+            and hiding legends, left, and right with the "H", "L", and "R" hotkeys respectively.
+
             :param matplotlibwidget: The MatplotlibWidget for the given reading datatype.
             :type matplotlibwidget: MatplotlibWidget
         """
@@ -417,6 +420,7 @@ class MplBasePlot():
     def setHideableLines(self, leftLines: list[Line2D], rightLines: list[Line2D]) -> None:
         """
             Sets in the lines for left and right that are hideable with "L" and "R" respectively.
+
             :param leftLines: Left lines to be hidden with "L".
             :type leftLines: list[Line2D]
             :param rightLines: Right lines to be hidden with "R".
@@ -599,6 +603,7 @@ def setPlotLayout(plots: np.ndarray) -> None:
 def getLeftLabelFontFormat(ptSize: int = 12) -> QtGui.QFont:
     """
         Creates the font format for the left axis of each graph.
+
         :param ptSize: The size of the font.
         :type ptSize: int
         :return: The font to use in the graphs.
@@ -672,7 +677,8 @@ def addLegLegend(plot: PlotItem, leftLeg: PlotDataItem, rightLeg: PlotDataItem) 
     legend.addItem(rightLeg, "R")
     return legend
 
-""" The four plots below are stock standard plots used for the sensor (and derived) data. Assumption made for these plots:
+""" 
+    The four plots below are stock standard plots used for the sensor (and derived) data. Assumption made for these plots:
     - Knee Angle plot is available and thus will scroll with that plot.
     - Legends for thresholding are handled outside of these plots.
 """
@@ -845,7 +851,8 @@ def addSimTorqueLines(fig: PlotItem, lineFontSize: int = 1) -> tuple[PlotDataIte
                                             clipToView = True, skipFiniteCheck = True)
     return lineSimDesiredRestrictionsL, lineSimDesiredRestrictionsR
 
-""" For custom gap sizes use Qt.PenStyle.CustomDashLine
+""" 
+    For custom gap sizes use Qt.PenStyle.CustomDashLine
     then use setDashPattern(dot, gap)
 """
 
@@ -872,6 +879,7 @@ def addSimStateLines(fig: PlotItem, lineFontSize: int = 1) -> tuple[PlotDataItem
 def updateLegend(legend: LegendItem) -> None:
     """ 
         Toggles the visibility of the legend. Used when pressing the "H" hotkey
+        
         :params legend: The legend to change visibility.
         :type legend: LegendItem
         :return: None

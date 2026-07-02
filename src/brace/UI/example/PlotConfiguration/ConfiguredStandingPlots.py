@@ -89,9 +89,6 @@ class StandingPlotsPyQt(PyQTBasePlot):
             :type simulator: bool
             :params kwargs: Parameters that may be passed in for defaults such as values for threshold lines.
             :type kwargs: dict[str, Any]
-
-            :return: None
-            :rtype: None
         """
 
         super().__init__(graphicsLayoutWidget, simulator, **kwargs)

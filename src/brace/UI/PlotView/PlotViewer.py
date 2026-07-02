@@ -30,6 +30,7 @@ class DatatypeImporter():
         
             :param dataset: Series data from the data file. 
             :type dataset: pandas.Series
+
             :return: Generator containing a tuple of the name and the list of values.
             :rtype: Generator[tuple[str, list[float | int]]]
         """
@@ -46,6 +47,7 @@ class DatatypeImporter():
 
             :param datagroup: The Group from the data file. 
             :type datagroup: h5py.Group
+
             :return: Generator containing a tuple of the name and the list of values.
             :rtype: Generator[tuple[str, list[float | int]]]
         """
@@ -66,6 +68,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
 
             :param datatype: The datatype to create a new tab to.
             :type datatype: type
+
             :return: The newly created widget containing the Matplotlib plot.
             :rtype: MatplotlibWidget
         """
@@ -83,6 +86,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :type dataType: type
             :param axisMaps: The dictionary that organizes the lines hierarchically from type then by attribute.
             :type axisMaps: dict[type, dict[str, Line2D]]
+
             :return: Set of Axes that have at least one line connected to the set of dataTypes.
             :rtype: set[Axes]
         """
@@ -107,6 +111,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :param addSuffix: Appends the index as a suffix on the name of the attribute in the DataFrame (e.g. kneeAngle -> kneeAngleL). 
             Default: True 
             :type addSuffix: bool
+
             :return: Tuple containing the time series (Unix-epoch time and uptime) and a DataFrame containing the rest of the data.
             :rtype: tuple[pandas.Series, pandas.Series, pandas.DataFrame]
         """
@@ -125,13 +130,14 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
         """
             Parses the parquet, returning all of the data without removing time or adding suffixes. Used mostly by simulation.
 
-`           :param ds: The DataFrame containing all of the data (mixed with other datatypes)
+            :param ds: The DataFrame containing all of the data (mixed with other datatypes)
             :type ds: pandas.DataFrame
             :param dataType: The data type to check within the DataFrame.
             :type dataType: type
             :param index: The string index that hierarchically within the datatype (e.g. "L" and "R" in left and right). 
             Default: None (indicating flat).
             :type index: str
+
             :return: Pandas DataFrame containing the data, unaltered.
             :rtype: pandas.DataFrame
         """
@@ -152,6 +158,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :param index: The string index that hierarchically within the datatype (e.g. "L" and "R" in left and right). 
             Default: None (indicating flat).
             :type index: str
+
             :return: Pandas DataFrame containing the data, unaltered.
             :rtype: pandas.DataFrame
         """
@@ -172,6 +179,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :param index: The string index that hierarchically within the datatype (e.g. "L" and "R" in left and right). 
             Default: None (indicating flat).
             :type index: str
+
             :return: Whether or not the index is in the DataFrame.
             :rtype: bool
         """
@@ -192,6 +200,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :type dataType: type
             :param ds: The DataFrame containing all of the data.
             :type ds: pandas.DataFrame
+
             :return: None
             :rtype: None
         """
@@ -228,6 +237,7 @@ class PlotWindow(QtWidgets.QMainWindow, Ui_PlotWindow):
             :type dataType: type
             :param ds: The HDFStore containing all of the data.
             :type ds: pandas.HDFStore
+            
             :return: None
             :rtype: None
         """

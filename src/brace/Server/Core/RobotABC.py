@@ -12,23 +12,23 @@ logger = logging.getLogger("logger")
 
 class RobotABC():
     """ 
-    A functional robotic set of input and output communications interfaces and safety control layers that
-    behave under a set of control logic classes.
+        A functional robotic set of input and output communications interfaces and safety control layers that
+        behave under a set of control logic classes.
     """
 
     def __init__(self, controlLogic: dict[IntEnum, Callable[[int], IControlLogic]],
                  debugMode: bool, index: int, initialControlLogicType: IntEnum):
         """
-        :params controlLogic: A dictionary of IntEnums as the keys and a generator that creates control logic classes
-        as a value, taking the index as a parameter.
-        :type controlLogic: dict[IntEnum, Callable[[int], IControlLogic]]
-        :params debugMode: A boolean that refers to whether or not actuation should be started at the beginning.
-        :type debugMode: bool
-        :params index: Index of the RobotABC with respect to its position in RobotAssemblyABC.
-        :type index: int
-        :params initialControlLogicType: The initialized control logic type at the beginning of creation. This should be an IntEnum
-        based on what is available in the controlLogic dictionary.
-        :type initialControlLogicType: IntEnum
+            :params controlLogic: A dictionary of IntEnums as the keys and a generator that creates control logic classes
+                as a value, taking the index as a parameter.
+            :type controlLogic: dict[IntEnum, Callable[[int], IControlLogic]]
+            :params debugMode: A boolean that refers to whether or not actuation should be started at the beginning.
+            :type debugMode: bool
+            :params index: Index of the RobotABC with respect to its position in RobotAssemblyABC.
+            :type index: int
+            :params initialControlLogicType: The initialized control logic type at the beginning of creation. This should be an IntEnum
+                based on what is available in the controlLogic dictionary.
+            :type initialControlLogicType: IntEnum
         """
         self.measurementLists: IMeasurementLists = None 
 
@@ -169,9 +169,9 @@ class RobotABC():
 
             :params controlLogicType: The IntEnum for the control logic object that should be received.
             :type controlLogicType: IntEnum
-            :params formatForConfiguration: A boolean that indicates whether or not the return configuration should be formatted for the data file configuration
-        (e.g. dictionary with strings as keys instead of Enums, to preserve names).
-        Should be true if for file (such as exported data trial configuration), false for regular GUI management.
+            :params formatForConfiguration: A boolean that indicates whether or not the return configuration should be 
+                formatted for the data file configuration (e.g. dictionary with strings as keys instead of Enums, to preserve names).
+                Should be true if for file (such as exported data trial configuration), false for regular GUI management.
             :type formatForConfiguration: bool
 
             :return: None
@@ -212,9 +212,9 @@ class RobotABC():
 
             :params deltaTimeAll: A list of floats that refers to the amount of time between control iterations.
             :type deltaTimeAll: Iterable[float]
-
-            :return The IMeasurementList that was updated.
-            :rtype IMeasurementLists
+            
+            :return: The IMeasurementList that was updated.
+            :rtype: IMeasurementLists
         """
         # Run the measurements on input coms.
         self.measurementLists.runMeasurements(deltaTimeAll = deltaTimeAll, inputComs = self.inputComs)

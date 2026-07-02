@@ -65,7 +65,7 @@ class ButtonPress(IDataProducer):
             Resets the multiprocessing Events of this object.
 
             :return: None
-            :type: None
+            :rtype: None
         """
         self.exit.clear()
         self.sendData.clear()
