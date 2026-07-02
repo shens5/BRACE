@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[project]
+name = "brace"
+dynamic = ["version"]
+dependencies = [
+    "numpy==2.4.6",
+    "matplotlib==3.10.9",
+    "pyqtgraph==0.14.0",
+    "PySide6-Essentials==6.9.0; sys_platform == 'win32'",
+    "PySide6-Essentials; sys_platform == 'linux'",
+    "sortedcontainers==2.4.0",
+    "scipy==1.17.1",
+    "gpiozero==2.0.1",
+    "lgpio==0.2.2.0; sys_platform == 'linux'",
+    "pandas==3.0.3",
+    "paho-mqtt==2.1.0",
+    "dill==0.4.1",
+    "h5py==3.16.0",
+    "bidict==0.23.1",
+
+    "pyarrow==24.0.0; sys_platform == 'win32'",
+    "auto-py-to-exe==2.50.1; sys_platform == 'win32'",
+    "bidict==0.23.1; sys_platform == 'win32'",
+    "tables==3.11.1; sys_platform == 'win32'"
+]
+
+requires-python = ">=3.12"
+authors = [
+  {name = "Scott Shen"},
+  {name = "Noah Rubin"},
+  {name = "Maya Panicker"},
+  {name = "Manuel Duran"},
+  {name = "Thomas Bulea"}
+]
+description = "BRACE: A Software Framework for Clinical Robotics Research"
+readme = "README.md"
+#license = "GPL-3.0"
+#license-files = ["LICEN[CS]E.*"]
+keywords = ["forLater"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+[project.optional-dependencies]
+zaber = [
+    "zaber-motion==9.3.0",
+    "pyserial==3.5"
+]
+can = [
+    "python-can==4.5.0"
+]
+
+[project.urls]
+Repository = "https://github.com/shens5/UbiquitousUse"

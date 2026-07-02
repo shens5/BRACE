@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Simulator</class>
+ <widget class="QMainWindow" name="Simulator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1440</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Simulator</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="centralWidgetGridLayout" columnstretch="5,1">
+    <property name="bottomMargin">
+     <number>9</number>
+    </property>
+    <item row="0" column="1">
+     <layout class="QGridLayout" name="configurationGridLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="2" column="0">
+       <widget class="SimulatorConfigurationButtons" name="configurationButtons" native="true"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="ConfigurationGrid" name="configurationGridNew" native="true"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="ConfigurationGrid" name="configurationGridOld" native="true"/>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="PlotsPage" name="plotsPage" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1440</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuColors">
+     <property name="title">
+      <string>Colors</string>
+     </property>
+     <addaction name="actionLightMode"/>
+     <addaction name="actionDarkMode"/>
+     <addaction name="actionSystemDefault"/>
+    </widget>
+    <addaction name="menuColors"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ApplicationExit"/>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionLightMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Light Mode</string>
+   </property>
+  </action>
+  <action name="actionDarkMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark Mode</string>
+   </property>
+  </action>
+  <action name="actionSystemDefault">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>System Default</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ConfigurationGrid</class>
+   <extends>QWidget</extends>
+   <header>brace.UI.ConfigurationGrid</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PlotsPage</class>
+   <extends>QWidget</extends>
+   <header>brace.UI.PlotsPage</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SimulatorConfigurationButtons</class>
+   <extends>QWidget</extends>
+   <header>brace.UI.SimulatorConfigurationButtons</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>Simulator</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>719</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

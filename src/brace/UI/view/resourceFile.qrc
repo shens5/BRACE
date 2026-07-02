@@ -1,0 +1,6 @@
+<RCC>
+  <qresource lang="python" prefix="view">
+    <file>icons/save-icon.png</file>
+    <file>icons/save-svgrepo.svg</file>
+  </qresource>
+</RCC>
