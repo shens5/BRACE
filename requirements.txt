@@ -1,18 +1,18 @@
-numpy==2.4.6,
-matplotlib==3.10.9,
-pyqtgraph==0.14.0,
-PySide6-Essentials==6.9.0; sys_platform == 'win32',
-PySide6-Essentials; sys_platform == 'linux',
-sortedcontainers==2.4.0,
-scipy==1.17.1,
-gpiozero==2.0.1,
-lgpio==0.2.2.0; sys_platform == 'linux',
-pandas==3.0.3,
-paho-mqtt==2.1.0,
-dill==0.4.1,
-h5py==3.16.0,
-bidict==0.23.1,
+numpy==2.4.6
+matplotlib==3.10.9
+pyqtgraph==0.14.0
+PySide6-Essentials==6.9.0; sys_platform == 'win32'
+PySide6-Essentials; sys_platform == 'linux'
+sortedcontainers==2.4.0
+scipy==1.17.1
+gpiozero==2.0.1
+lgpio==0.2.2.0; sys_platform == 'linux'
+pandas==3.0.3
+paho-mqtt==2.1.0
+dill==0.4.1
+h5py==3.16.0
+bidict==0.23.1
 
-pyarrow==24.0.0; sys_platform == 'win32',
-bidict==0.23.1; sys_platform == 'win32',
-tables==3.11.1; sys_platform == 'win32'
+pyarrow==24.0.0; sys_platform == 'win32'
+bidict==0.23.1; sys_platform == 'win32'
+tables==3.11.1; sys_platform == 'win32
