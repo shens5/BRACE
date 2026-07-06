@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.RealTimeGraphing.Graphing package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.Server package" href="brace.Server.html" />
+    <link rel="prev" title="brace.RealTimeGraphing package" href="brace.RealTimeGraphing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-realtimegraphing-graphing-package">
+<h1>brace.RealTimeGraphing.Graphing package<a class="headerlink" href="#brace-realtimegraphing-graphing-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing.AnimatedGraphManager">
+<span id="brace-realtimegraphing-graphing-animatedgraphmanager-module"></span><h2>brace.RealTimeGraphing.Graphing.AnimatedGraphManager module<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing.AnimatedGraphManager" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.AnimatedGraphManager.</span></span><span class="sig-name descname"><span class="pre">AnimatedGraphManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TRIAL_TIME</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FPS</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realTimeType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType"><span class="pre">RealTimeType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">RealTimeType.WRAPAROUND</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'matplotlib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that manages a set of animated plots and stores in the data internally.
+This serves as a consumer of a queue that takes in a NamedTuple that 
+contains n number of measurements and a timestamp.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.addNewDatastream">
+<span class="sig-name descname"><span class="pre">addNewDatastream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Figure</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GraphicsLayoutWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namedTupleType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propertyDataMapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PlotDataItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphDownSampleRate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TIME_RANGE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.addNewDatastream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.addNewDatastream" title="Link to this definition">¶</a></dt>
+<dd><p>Registers a new NamedTuple type and the corresponding plots and lines to be graphed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em><em> | </em><em>pyqtgraph.GraphicsLayoutWidget</em>) – Preconfigured figure from plt.subplots(). Or the GraphicsLayoutWidget that is in the GUI.</p></li>
+<li><p><strong>ax</strong> (<em>numpy.ndarray</em><em>[</em><em>matplotlib.axes.Axes</em><em>] </em><em>| </em><em>numpy.ndarray</em><em>[</em><em>PlotItem</em><em>]</em>) – Axes preconfigured from plt.subplots() or handcreated for pyqtgraph. 
+Most likely a 2D array used to manipulate the subplots.</p></li>
+<li><p><strong>namedTupleType</strong> (<em>type</em>) – A NamedTuple implementation (type) that represents a datapoint for this particular datastream.</p></li>
+<li><p><strong>propertyDataMapping</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Line2D</em><em>] </em><em>| </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>PlotDataItem</em><em>]</em>) – A dictionary mapping between the lines and the instance variables
+of the namedTupleType.</p></li>
+<li><p><strong>graphDownSampleRate</strong> (<em>int</em>) – The number of samples in between a datapoint when real time graphing.</p></li>
+<li><p><strong>MAX_TIME_RANGE</strong> (<em>float</em>) – The length of time in seconds that the graphing will sample (i.e. from the last datapoint, how far back it should start).</p></li>
+<li><p><strong>func</strong> (<em>Callable</em><em>[</em><em>[</em><em>Figure</em><em>, </em><em>np.ndarray</em><em>[</em><em>Axes</em><em>]</em><em>, </em><em>dict</em><em>]</em><em>, </em><em>None</em><em>]</em>) – Callback function that handles the final drawing of the graph after finishing the real time graph.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.clearQueues">
+<span class="sig-name descname"><span class="pre">clearQueues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.clearQueues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.clearQueues" title="Link to this definition">¶</a></dt>
+<dd><p>Empties the multiprocessing queue to remove old datapoints that may be in the queue
+to prevent leakages into future plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.close" title="Link to this definition">¶</a></dt>
+<dd><p>Closes the queue for any processing. Commands other than setting
+the multiprocessing queue are not considered safe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.drawFinalGraph">
+<span class="sig-name descname"><span class="pre">drawFinalGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.drawFinalGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.drawFinalGraph" title="Link to this definition">¶</a></dt>
+<dd><p>Draws the final graph with all of the datapoints added and with the x-axis and y-axis limits updated to fit the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Dictionary of keywords that should be applied to the callback function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getCounter">
+<span class="sig-name descname"><span class="pre">getCounter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.getCounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getCounter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getQueue">
+<span class="sig-name descname"><span class="pre">getQueue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Queue</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.getQueue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getQueue" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the multiprocessing queue that should be used for queuing NamedTuple messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Multiprocessing queue that the AnimatedGraphManager should use for</p>
+</dd>
+</dl>
+<p>reading datapoints.
+:rtype: multiprocessing.Queue</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.mplStart">
+<span class="sig-name descname"><span class="pre">mplStart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.mplStart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.mplStart" title="Link to this definition">¶</a></dt>
+<dd><p>Main loop that reads the queue and updates the plot, within a specific time frame. 
+This is a legacy plotting to be used with Matplotlib.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.noAnimation">
+<span class="sig-name descname"><span class="pre">noAnimation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.noAnimation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.noAnimation" title="Link to this definition">¶</a></dt>
+<dd><p>This function simply parses all of the data until all the data is empty.
+This is most useful in plotting static plots, such as those with the Simulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtDraw">
+<span class="sig-name descname"><span class="pre">qtDraw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GraphicsLayoutWidget</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.qtDraw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtDraw" title="Link to this definition">¶</a></dt>
+<dd><p>This function should be executed periodically on a timer (QTimer works well) during data streaming.
+This plots the datapoints of the figure given; not all figures are drawn as an optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fig</strong> (<em>GraphicsLayoutWidget</em>) – The GraphicsLayoutWidget or Figure whose plots should be drawn using the currently available
+datapoints.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtRun">
+<span class="sig-name descname"><span class="pre">qtRun</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.qtRun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtRun" title="Link to this definition">¶</a></dt>
+<dd><p>This function should be run in the background (thread-level parallelism) when data streaming
+is executed. This parses the datapoints, but does not draw them outright. For pyqtgraph plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.reset" title="Link to this definition">¶</a></dt>
+<dd><p>Resets the datalines in this AnimatedGraphManager for all data.
+Flags for streaming are also reset. This should be performed
+every stream session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setQueue">
+<span class="sig-name descname"><span class="pre">setQueue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Queue</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.setQueue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setQueue" title="Link to this definition">¶</a></dt>
+<dd><p>Supplies a multiprocessing queue (other than the one created automatically in the AnimatedGraphManager)
+that should be used for reading datapoints in this AnimatedGraphManager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>queue</strong> – The multiprocessing queue to read from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setupAnimation">
+<span class="sig-name descname"><span class="pre">setupAnimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Figure</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#AnimatedGraphManager.setupAnimation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setupAnimation" title="Link to this definition">¶</a></dt>
+<dd><p>Sets up an matplotlib animation for the figure. Blitting is done to
+increase performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fig</strong> (<em>Figure</em>) – The matplotlib figure to be animated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.FigureAxes">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.AnimatedGraphManager.</span></span><span class="sig-name descname"><span class="pre">FigureAxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GraphicsLayoutWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Figure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#FigureAxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.FigureAxes" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.MismatchedTupleException">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.AnimatedGraphManager.</span></span><span class="sig-name descname"><span class="pre">MismatchedTupleException</span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#MismatchedTupleException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.MismatchedTupleException" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised for differences between the size of the tuple from the producer and the total number of datasets in the graph being drawn.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.AnimatedGraphManager.</span></span><span class="sig-name descname"><span class="pre">RealTimeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/AnimatedGraphManager.html#RealTimeType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>Enum for classifying two types of real time drawing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType.SLIDING_WINDOW">
+<span class="sig-name descname"><span class="pre">SLIDING_WINDOW</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType.SLIDING_WINDOW" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType.WRAPAROUND">
+<span class="sig-name descname"><span class="pre">WRAPAROUND</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType.WRAPAROUND" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing.DataStream">
+<span id="brace-realtimegraphing-graphing-datastream-module"></span><h2>brace.RealTimeGraphing.Graphing.DataStream module<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing.DataStream" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.DataStream.</span></span><span class="sig-name descname"><span class="pre">DataLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Line2D</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PlotDataItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propertyName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'matplotlib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that plots the lines on the graph identifying with NamedTuple fields.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.clearDataLine">
+<span class="sig-name descname"><span class="pre">clearDataLine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.clearDataLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.clearDataLine" title="Link to this definition">¶</a></dt>
+<dd><p>Clears out all the data in this line including all caches and stored data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.getLine">
+<span class="sig-name descname"><span class="pre">getLine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Line2D</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PlotDataItem</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.getLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.getLine" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the line element for this DataLine that draws in the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The line element that draws in the plots.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Line2D | PlotDataItem</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.getPropertyName">
+<span class="sig-name descname"><span class="pre">getPropertyName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.getPropertyName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.getPropertyName" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the field name of the line, that is based on the NamedTuple name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The field name of NamedTuple that belongs to this line.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.updateLine">
+<span class="sig-name descname"><span class="pre">updateLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startingIndex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampleNumber</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.updateLine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.updateLine" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the line based on a starting index and goes to the end of the array, sampling
+1:sampleNumber for the time series datasets. The last element is plotted. This
+type of plotting is generally used for the “wraparound” type plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startingIndex</strong> (<em>int</em>) – The index of the data that should be started for plotting.</p></li>
+<li><p><strong>sampleNumber</strong> (<em>int</em>) – How many elements to skip before the next sample is plotted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.updateLine2">
+<span class="sig-name descname"><span class="pre">updateLine2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startingIndex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampleNumber</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.updateLine2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.updateLine2" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the line based on a starting index and goes to the end of the array, sampling
+1:sampleNumber for the time series datasets, caching it frame-by-frame for performance.
+The last element is plotted. This type of plotting is generally used for the “sliding window” type plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startingIndex</strong> (<em>int</em>) – The index of the data that should be started for plotting.</p></li>
+<li><p><strong>sampleNumber</strong> (<em>int</em>) – How many elements to skip before the next sample is plotted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataLine.updatePoints">
+<span class="sig-name descname"><span class="pre">updatePoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataLine.updatePoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine.updatePoints" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the internally listed datapoints and the lines for each related dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>] </em><em>| </em><em>list</em><em>[</em><em>float</em><em>]</em>) – A list of data indicating the time component that should be paired with the y-axis data.</p></li>
+<li><p><strong>y</strong> (<em>np.ndarray</em><em>[</em><em>float</em><em>] </em><em>| </em><em>list</em><em>[</em><em>float</em><em>]</em>) – : A list of data that should be paired with the time series which is stored and 
+can be plotted against the axis lines.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.DataStream.</span></span><span class="sig-name descname"><span class="pre">DataStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GraphicsLayoutWidget</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Figure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PlotDataItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namedTupleType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphDownSampleRate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_TIME_RANGE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'matplotlib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class that bridges the figure drawing from the lines and the NamedTuple that is
+assigned to the lines.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.clearData">
+<span class="sig-name descname"><span class="pre">clearData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.clearData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.clearData" title="Link to this definition">¶</a></dt>
+<dd><p>Clears out the data in all the datalines and in the time list.
+Indexing for the plots is reset back to the beginning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.draw" title="Link to this definition">¶</a></dt>
+<dd><p>Draws the plot in the wraparound configuration. If the last datapoint has a time that reaches beyond a multiple
+of the MAX_TIME_RANGE, then it will refresh and adjust the x-axis limits as needed so that the plotting can continue
+from the furthest left onwards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.drawFinal">
+<span class="sig-name descname"><span class="pre">drawFinal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.drawFinal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.drawFinal" title="Link to this definition">¶</a></dt>
+<dd><p>Draws the plot in the final draw configuration. This contains all of the datapoints and updates the 
+x-axis and y-axis limits so that it fits the minimum and maximum values of each of the datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>padding</strong> (<em>float</em>) – The percentage padding that should be included in the plots after the final draw. Default is 0.00,
+indicating hard fit.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.drawSlidingWindow">
+<span class="sig-name descname"><span class="pre">drawSlidingWindow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.drawSlidingWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.drawSlidingWindow" title="Link to this definition">¶</a></dt>
+<dd><p>Draws the plot in the sliding window-type configuration. Determines the window where the
+furthest right refers to the most immediate datapoint that was added, and the furthest left
+is the datapoint from t[-1] - MAX_TIME_RANGE forward. If there are no datapoints from that
+range nothing is drawn, but the x-axis limits are still set to this window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.getDatalines">
+<span class="sig-name descname"><span class="pre">getDatalines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine" title="brace.RealTimeGraphing.Graphing.DataStream.DataLine"><span class="pre">DataLine</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.getDatalines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.getDatalines" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the point/line relations between the plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of DataLines for this DataStream object</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#brace.RealTimeGraphing.Graphing.DataStream.DataLine" title="brace.RealTimeGraphing.Graphing.DataStream.DataLine">DataLine</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.getLines">
+<span class="sig-name descname"><span class="pre">getLines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotDataItem</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.getLines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.getLines" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the individual list of lines that should have data plotted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of lines that plot datapoints.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[Line2D] | list[PlotDataItem]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.updatePoints">
+<span class="sig-name descname"><span class="pre">updatePoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tPoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.updatePoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.updatePoints" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the data points with new data (low level) for the dataLines</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>property</strong> (<em>str</em>) – The NamedTuple field name that should be updated with the new data points.</p></li>
+<li><p><strong>tPoints</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The time list of points to update.</p></li>
+<li><p><strong>dataPoints</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The y-axis points that should be aligned with the tPoints.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.DataStream.DataStream.updateTime">
+<span class="sig-name descname"><span class="pre">updateTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timePoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/DataStream.html#DataStream.updateTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.DataStream.DataStream.updateTime" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the time points with new data (high level)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timePoints</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – list of time points to append to the end.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing.IDataProducer">
+<span id="brace-realtimegraphing-graphing-idataproducer-module"></span><h2>brace.RealTimeGraphing.Graphing.IDataProducer module<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing.IDataProducer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.IDataProducer.</span></span><span class="sig-name descname"><span class="pre">IDataProducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UPDATE_RATE_PER_SECOND</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TRIAL_TIME</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Synchronized</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>A class for data producers that run on an update rate that create NamedTuple
+datapoints. These are generally then read in by the AnimatedGraphManager.
+These datapoints can be synchronized in time with a shared start time.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.DATA_TOPIC">
+<span class="sig-name descname"><span class="pre">DATA_TOPIC</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'datatypes'</span></span><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.DATA_TOPIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.getSharedStartTime">
+<span class="sig-name descname"><span class="pre">getSharedStartTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Synchronized</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.getSharedStartTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.getSharedStartTime" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the shared startTime for this IDataProducer. This should be used to get the primary IDataProducer
+startTime that should be shared for all the secondaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shared start time that should be shared between the IDataProducers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>multiprocessing.Value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.setSharedStartTime">
+<span class="sig-name descname"><span class="pre">setSharedStartTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updateStartTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeSynchronizationCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Condition</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.setSharedStartTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.setSharedStartTime" title="Link to this definition">¶</a></dt>
+<dd><p>This should be started in the running loop of each IDataProducer. 
+Sets the startTime value only if this startTime is the primary to synchronize
+the startTime values. If it is the secondary datastream, then it will pause execution until
+the synchronized time is set from the primary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>updateStartTime</strong> (<em>float</em>) – A double-precision floating point number representing
+the start time before the while loop. This value is used to synchronize startTime
+in multiple processes to achieve more accurate timing.</p></li>
+<li><p><strong>timeSynchronizationCondition</strong> (<em>multiprocessing.synchronize.Condition</em>) – Multiprocessing condition that pauses execution of the subprocess
+until the primary sets up the startTime.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.start">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeSynchronizationCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Condition</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.start" title="Link to this definition">¶</a></dt>
+<dd><p>Main update function that runs through data logic and produces output data. Output data in the form of a NamedTuple is
+added into a shared queue between producer and consumer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeSynchronizationCondition</strong> (<em>multiprocessing.synchronize.Condition</em>) – Condition that pauses secondaries flow until the time is set by a primary.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments that should be passed in for all other IDataProducers implementing this function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.RealTimeGraphing.html">brace.RealTimeGraphing package</a><ul>
+      <li>Previous: <a href="brace.RealTimeGraphing.html" title="previous chapter">brace.RealTimeGraphing package</a></li>
+      <li>Next: <a href="brace.Server.html" title="next chapter">brace.Server package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.RealTimeGraphing.Graphing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.UI.PlotView package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.example package" href="brace.example.html" />
+    <link rel="prev" title="brace.UI.PlotConfiguration package" href="brace.UI.PlotConfiguration.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-ui-plotview-package">
+<h1>brace.UI.PlotView package<a class="headerlink" href="#brace-ui-plotview-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.UI.PlotView.PlotViewer">
+<span id="brace-ui-plotview-plotviewer-module"></span><h2>brace.UI.PlotView.PlotViewer module<a class="headerlink" href="#module-brace.UI.PlotView.PlotViewer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.DatatypeImporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.PlotView.PlotViewer.</span></span><span class="sig-name descname"><span class="pre">DatatypeImporter</span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#DatatypeImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.DatatypeImporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.DatatypeImporter.fromHDF5">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fromHDF5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datagroup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Group</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#DatatypeImporter.fromHDF5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromHDF5" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the values name of the fields and values from the HDF5 file (less supported). 
+The time related fields are stripped out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datagroup</strong> (<em>h5py.Group</em>) – The Group from the data file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generator containing a tuple of the name and the list of values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generator[tuple[str, list[float | int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.DatatypeImporter.fromParquet">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fromParquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#DatatypeImporter.fromParquet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromParquet" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the values name of the fields and values from the parquet file (better supported). 
+The time related fields are stripped out because these values are already extracted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<em>pandas.Series</em>) – Series data from the data file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generator containing a tuple of the name and the list of values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generator[tuple[str, list[float | int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.PlotView.PlotViewer.</span></span><span class="sig-name descname"><span class="pre">PlotWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_PlotWindow</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.addNewTab">
+<span class="sig-name descname"><span class="pre">addNewTab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MatplotlibWidget</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.addNewTab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.addNewTab" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a new tab containing containing a Matplotlib widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datatype</strong> (<em>type</em>) – The datatype to create a new tab to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The newly created widget containing the Matplotlib plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MatplotlibWidget</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.checkParquetIndex">
+<span class="sig-name descname"><span class="pre">checkParquetIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.checkParquetIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.checkParquetIndex" title="Link to this definition">¶</a></dt>
+<dd><p>Checks whether or not the index is found in the parquet file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>pandas.DataFrame</em>) – The DataFrame containing all of the data (mixed with other datatypes)</p></li>
+<li><p><strong>name</strong> – The name of the data type to check within the DataFrame.</p></li>
+<li><p><strong>index</strong> – The string index that hierarchically within the datatype (e.g. “L” and “R” in left and right).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Default: None (indicating flat).
+:type index: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not the index is in the DataFrame.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.getAssociatedAxes">
+<span class="sig-name descname"><span class="pre">getAssociatedAxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axisMaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Axes</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.getAssociatedAxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.getAssociatedAxes" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all of the axes where at least one line is related in the datalines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataType</strong> (<em>type</em>) – The datatype to be checked for axes in the map.</p></li>
+<li><p><strong>axisMaps</strong> (<em>dict</em><em>[</em><em>type</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Line2D</em><em>]</em><em>]</em>) – The dictionary that organizes the lines hierarchically from type then by attribute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of Axes that have at least one line connected to the set of dataTypes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set[Axes]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataHdf5">
+<span class="sig-name descname"><span class="pre">graphLegDataHdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Figure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axisMaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdfS</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HDFStore</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.graphLegDataHdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataHdf5" title="Link to this definition">¶</a></dt>
+<dd><p>Graphs the data from the HDF5 file by updating the datastreams to include the datapoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.Figure</em>) – The Figure containing all the axes.</p></li>
+<li><p><strong>axisMaps</strong> (<em>dict</em><em>[</em><em>type</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Line2D</em><em>]</em><em>]</em>) – The dictionary that organizes the lines hierarchically from type then by attribute.</p></li>
+<li><p><strong>dataType</strong> (<em>type</em>) – The data type that should be graphed on the axes.</p></li>
+<li><p><strong>ds</strong> (<em>pandas.HDFStore</em>) – The HDFStore containing all of the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataParquet">
+<span class="sig-name descname"><span class="pre">graphLegDataParquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Figure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axisMaps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Line2D</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.graphLegDataParquet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataParquet" title="Link to this definition">¶</a></dt>
+<dd><p>Graphs the data from the parquet file by updating the datastreams to include the datapoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>matplotlib.Figure</em>) – The Figure containing all the axes.</p></li>
+<li><p><strong>axisMaps</strong> (<em>dict</em><em>[</em><em>type</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Line2D</em><em>]</em><em>]</em>) – The dictionary that organizes the lines hierarchically from type then by attribute.</p></li>
+<li><p><strong>dataType</strong> (<em>type</em>) – The data type that should be graphed on the axes.</p></li>
+<li><p><strong>ds</strong> (<em>pandas.DataFrame</em>) – The DataFrame containing all of the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.openDataset">
+<span class="sig-name descname"><span class="pre">openDataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.openDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.openDataset" title="Link to this definition">¶</a></dt>
+<dd><p>Main function that opens a file dialog to input a file. 
+Then opens the dataset and graphs the data. Currently “.parquet” and “.h5” are supported,
+with parquet files being supported the best.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet">
+<span class="sig-name descname"><span class="pre">parseParquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addSuffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.parseParquet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet" title="Link to this definition">¶</a></dt>
+<dd><p>Reads in the data from the parquet file format, separating the time data and the other leg data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>pandas.DataFrame</em>) – The DataFrame containing all of the data (mixed with other datatypes)</p></li>
+<li><p><strong>dataType</strong> (<em>type</em>) – The data type to check within the DataFrame.</p></li>
+<li><p><strong>index</strong> – The string index that hierarchically within the datatype (e.g. “L” and “R” in left and right).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Default: None (indicating flat).
+:type index: str
+:param addSuffix: Appends the index as a suffix on the name of the attribute in the DataFrame (e.g. kneeAngle -&gt; kneeAngleL). 
+Default: True 
+:type addSuffix: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple containing the time series (Unix-epoch time and uptime) and a DataFrame containing the rest of the data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[pandas.Series, pandas.Series, pandas.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet2">
+<span class="sig-name descname"><span class="pre">parseParquet2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.parseParquet2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet2" title="Link to this definition">¶</a></dt>
+<dd><p>Parses the parquet, returning all of the data without removing time or adding suffixes. Used mostly by simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>pandas.DataFrame</em>) – The DataFrame containing all of the data (mixed with other datatypes)</p></li>
+<li><p><strong>dataType</strong> (<em>type</em>) – The data type to check within the DataFrame.</p></li>
+<li><p><strong>index</strong> – The string index that hierarchically within the datatype (e.g. “L” and “R” in left and right).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Default: None (indicating flat).
+:type index: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame containing the data, unaltered.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.parseParquetString">
+<span class="sig-name descname"><span class="pre">parseParquetString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#PlotWindow.parseParquetString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquetString" title="Link to this definition">¶</a></dt>
+<dd><p>Parses the parquet file, using specifically the string instead of providing the type. Remains unaltered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>pandas.DataFrame</em>) – The DataFrame containing all of the data (mixed with other datatypes)</p></li>
+<li><p><strong>name</strong> – The name of the data type to check within the DataFrame.</p></li>
+<li><p><strong>index</strong> – The string index that hierarchically within the datatype (e.g. “L” and “R” in left and right).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Default: None (indicating flat).
+:type index: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame containing the data, unaltered.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.PlotWindow.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;PlotWindow&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QMainWindow&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.PlotWindow.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.PlotView.PlotViewer.main">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.PlotView.PlotViewer.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/PlotView/PlotViewer.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotView.PlotViewer.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-brace.UI.PlotView">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.UI.PlotView" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.UI.html">brace.UI package</a><ul>
+      <li>Previous: <a href="brace.UI.PlotConfiguration.html" title="previous chapter">brace.UI.PlotConfiguration package</a></li>
+      <li>Next: <a href="brace.example.html" title="next chapter">brace.example package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.UI.PlotView.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

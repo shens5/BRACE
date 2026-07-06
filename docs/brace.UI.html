@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.UI package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.UI.GUIController package" href="brace.UI.GUIController.html" />
+    <link rel="prev" title="brace.Server.GPIOSynch package" href="brace.Server.GPIOSynch.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-ui-package">
+<h1>brace.UI package<a class="headerlink" href="#brace-ui-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brace.UI.GUIController.html">brace.UI.GUIController package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#module-brace.UI.GUIController.DataExporters">brace.UI.GUIController.DataExporters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.AbstractDataExporter"><code class="docutils literal notranslate"><span class="pre">AbstractDataExporter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportData"><code class="docutils literal notranslate"><span class="pre">AbstractDataExporter.exportData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportDatastreamData"><code class="docutils literal notranslate"><span class="pre">AbstractDataExporter.exportDatastreamData()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.HDF5Exporter"><code class="docutils literal notranslate"><span class="pre">HDF5Exporter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.HDF5Exporter.exportData"><code class="docutils literal notranslate"><span class="pre">HDF5Exporter.exportData()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.ParquetExporter"><code class="docutils literal notranslate"><span class="pre">ParquetExporter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.ParquetExporter.exportData"><code class="docutils literal notranslate"><span class="pre">ParquetExporter.exportData()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.formatLeftRight"><code class="docutils literal notranslate"><span class="pre">formatLeftRight()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.isNanDatastream"><code class="docutils literal notranslate"><span class="pre">isNanDatastream()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#module-brace.UI.GUIController.InitializationFunctions">brace.UI.GUIController.InitializationFunctions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.getDefaultsDictionary"><code class="docutils literal notranslate"><span class="pre">getDefaultsDictionary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.getSettingsDictionary"><code class="docutils literal notranslate"><span class="pre">getSettingsDictionary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeDefaultParameters"><code class="docutils literal notranslate"><span class="pre">initializeDefaultParameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeLegEntries"><code class="docutils literal notranslate"><span class="pre">initializeLegEntries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeLimits"><code class="docutils literal notranslate"><span class="pre">initializeLimits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.loadInitFile"><code class="docutils literal notranslate"><span class="pre">loadInitFile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.setConfigurationDictionaries"><code class="docutils literal notranslate"><span class="pre">setConfigurationDictionaries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.setSingleConfigurationDictionaries"><code class="docutils literal notranslate"><span class="pre">setSingleConfigurationDictionaries()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#module-brace.UI.GUIController.PlotHelpers">brace.UI.GUIController.PlotHelpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.canHide"><code class="docutils literal notranslate"><span class="pre">canHide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.changePlotBackground"><code class="docutils literal notranslate"><span class="pre">changePlotBackground()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.changeStyle"><code class="docutils literal notranslate"><span class="pre">changeStyle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.createHidingBoxes"><code class="docutils literal notranslate"><span class="pre">createHidingBoxes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.setColorActionGroups"><code class="docutils literal notranslate"><span class="pre">setColorActionGroups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.setPlotVisibility"><code class="docutils literal notranslate"><span class="pre">setPlotVisibility()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.showBottomRowLabel"><code class="docutils literal notranslate"><span class="pre">showBottomRowLabel()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#module-brace.UI.GUIController.UIConfigurationHelpers">brace.UI.GUIController.UIConfigurationHelpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.UIConfigurationHelpers.getConfigurationChanges"><code class="docutils literal notranslate"><span class="pre">getConfigurationChanges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.UIConfigurationHelpers.getConfigurationParametersFromGUI"><code class="docutils literal notranslate"><span class="pre">getConfigurationParametersFromGUI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.UIConfigurationHelpers.getLegElementsByPrefix"><code class="docutils literal notranslate"><span class="pre">getLegElementsByPrefix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.UIConfigurationHelpers.hideItem"><code class="docutils literal notranslate"><span class="pre">hideItem()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.UIConfigurationHelpers.saveConfiguration"><code class="docutils literal notranslate"><span class="pre">saveConfiguration()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.GUIController.html#module-brace.UI.GUIController">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="brace.UI.PlotConfiguration.html">brace.UI.PlotConfiguration package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotConfiguration.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotConfiguration.html#module-brace.UI.PlotConfiguration.ConfigurePlotHelpers">brace.UI.PlotConfiguration.ConfigurePlotHelpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.keyPressEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setLeftLineEntries"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.setLeftLineEntries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setLegendEntries"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.setLegendEntries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setRightLineEntries"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.setRightLineEntries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setSimLeftLineEntries"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.setSimLeftLineEntries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setSimRightLineEntries"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.setSimRightLineEntries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleAllFromLegend"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleAllFromLegend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleLeftLegs"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleLeftLegs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleLeg"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleLeg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleRightLegs"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleRightLegs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleSimLeftLegs"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleSimLeftLegs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleSimRightLegs"><code class="docutils literal notranslate"><span class="pre">HideableElementsGraphicsLayoutWidget.toggleSimRightLegs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot"><code class="docutils literal notranslate"><span class="pre">MplBasePlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addFsrPlot"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addFsrPlot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addKneeAnglePlot"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addKneeAnglePlot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addOnPickEvent"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addOnPickEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addPickableLegend"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addPickableLegend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addThresholdLines"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addThresholdLines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addTorquePlot"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addTorquePlot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addWindowedAngularVelocityPlot"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.addWindowedAngularVelocityPlot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getAxes"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.getAxes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getAxesMaps"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.getAxesMaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getFigure"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.getFigure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getFigureAxesAxesMapTriple"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.getFigureAxesAxesMapTriple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.on_pick"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.on_pick()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.on_press"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.on_press()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.removeTickNumbers"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.removeTickNumbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.setHideableLegends"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.setHideableLegends()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.setHideableLines"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.setHideableLines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.updateFinalPlotMatplotlib"><code class="docutils literal notranslate"><span class="pre">MplBasePlot.updateFinalPlotMatplotlib()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.getFigureAxesAxesMapTriple"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot.getFigureAxesAxesMapTriple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.getSimulatorAxisMaps"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot.getSimulatorAxisMaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.setThresholdLinesHelper"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot.setThresholdLinesHelper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.toggleLeftLines"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot.toggleLeftLines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.toggleRightLines"><code class="docutils literal notranslate"><span class="pre">PyQTBasePlot.toggleRightLines()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addFsrPlot"><code class="docutils literal notranslate"><span class="pre">addFsrPlot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addKneeAnglePlot"><code class="docutils literal notranslate"><span class="pre">addKneeAnglePlot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addLegLegend"><code class="docutils literal notranslate"><span class="pre">addLegLegend()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimKneeAngleLines"><code class="docutils literal notranslate"><span class="pre">addSimKneeAngleLines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimStateLines"><code class="docutils literal notranslate"><span class="pre">addSimStateLines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimTorqueLines"><code class="docutils literal notranslate"><span class="pre">addSimTorqueLines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addThresholdLegend"><code class="docutils literal notranslate"><span class="pre">addThresholdLegend()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addThresholdLines"><code class="docutils literal notranslate"><span class="pre">addThresholdLines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addTorquePlot"><code class="docutils literal notranslate"><span class="pre">addTorquePlot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addWindowedAngularVelocityPlot"><code class="docutils literal notranslate"><span class="pre">addWindowedAngularVelocityPlot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.getLeftLabelFontFormat"><code class="docutils literal notranslate"><span class="pre">getLeftLabelFontFormat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.setGraphLayout"><code class="docutils literal notranslate"><span class="pre">setGraphLayout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.setPlotLayout"><code class="docutils literal notranslate"><span class="pre">setPlotLayout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.updateLegend"><code class="docutils literal notranslate"><span class="pre">updateLegend()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotConfiguration.html#module-brace.UI.PlotConfiguration">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="brace.UI.PlotView.html">brace.UI.PlotView package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotView.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotView.html#module-brace.UI.PlotView.PlotViewer">brace.UI.PlotView.PlotViewer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter"><code class="docutils literal notranslate"><span class="pre">DatatypeImporter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromHDF5"><code class="docutils literal notranslate"><span class="pre">DatatypeImporter.fromHDF5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromParquet"><code class="docutils literal notranslate"><span class="pre">DatatypeImporter.fromParquet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow"><code class="docutils literal notranslate"><span class="pre">PlotWindow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.addNewTab"><code class="docutils literal notranslate"><span class="pre">PlotWindow.addNewTab()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.checkParquetIndex"><code class="docutils literal notranslate"><span class="pre">PlotWindow.checkParquetIndex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.getAssociatedAxes"><code class="docutils literal notranslate"><span class="pre">PlotWindow.getAssociatedAxes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataHdf5"><code class="docutils literal notranslate"><span class="pre">PlotWindow.graphLegDataHdf5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataParquet"><code class="docutils literal notranslate"><span class="pre">PlotWindow.graphLegDataParquet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.openDataset"><code class="docutils literal notranslate"><span class="pre">PlotWindow.openDataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet"><code class="docutils literal notranslate"><span class="pre">PlotWindow.parseParquet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet2"><code class="docutils literal notranslate"><span class="pre">PlotWindow.parseParquet2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquetString"><code class="docutils literal notranslate"><span class="pre">PlotWindow.parseParquetString()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">PlotWindow.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="brace.UI.PlotView.html#module-brace.UI.PlotView">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.UI.ConfigurationGrid">
+<span id="brace-ui-configurationgrid-module"></span><h2>brace.UI.ConfigurationGrid module<a class="headerlink" href="#module-brace.UI.ConfigurationGrid" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.ConfigurationGrid.ConfigurationGrid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.ConfigurationGrid.</span></span><span class="sig-name descname"><span class="pre">ConfigurationGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/ConfigurationGrid.html#ConfigurationGrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.ConfigurationGrid.ConfigurationGrid" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_ConfigurationGrid</span></code></p>
+<p>This widget is the Configuration box that contains all of the
+fields that may be used in changing parameters in the remote.
+It is also used in the simulator, with one constant set on the top
+and another mutable set on the bottom.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.ConfigurationGrid.ConfigurationGrid.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ConfigurationGrid&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.ConfigurationGrid.ConfigurationGrid.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.ExperimentGroup">
+<span id="brace-ui-experimentgroup-module"></span><h2>brace.UI.ExperimentGroup module<a class="headerlink" href="#module-brace.UI.ExperimentGroup" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.ExperimentGroup.ExperimentGroup">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.ExperimentGroup.</span></span><span class="sig-name descname"><span class="pre">ExperimentGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/ExperimentGroup.html#ExperimentGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.ExperimentGroup.ExperimentGroup" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_UBQVisitTrials</span></code></p>
+<p>This widget is found on the right of the calibrate button.
+Sets subject, visit, and trial numbers that are used in the filenames of saved files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.ExperimentGroup.ExperimentGroup.getNumbers">
+<span class="sig-name descname"><span class="pre">getNumbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/ExperimentGroup.html#ExperimentGroup.getNumbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.ExperimentGroup.ExperimentGroup.getNumbers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.ExperimentGroup.ExperimentGroup.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;ExperimentGroup&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.ExperimentGroup.ExperimentGroup.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.GraphContext">
+<span id="brace-ui-graphcontext-module"></span><h2>brace.UI.GraphContext module<a class="headerlink" href="#module-brace.UI.GraphContext" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GraphContext.GraphContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GraphContext.</span></span><span class="sig-name descname"><span class="pre">GraphContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget" title="brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget"><span class="pre">HideableElementsGraphicsLayoutWidget</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axisLines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PlotDataItem</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulatorAxisLines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">PlotDataItem</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toggleHBoxLayout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QHBoxLayout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getConfigurationChangesFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#brace.UI.ConfigurationGrid.ConfigurationGrid" title="brace.UI.ConfigurationGrid.ConfigurationGrid"><span class="pre">ConfigurationGrid</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validateConfigurationFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.UI.ConfigurationGrid.ConfigurationGrid" title="brace.UI.ConfigurationGrid.ConfigurationGrid"><span class="pre">ConfigurationGrid</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeConfigurationChangesFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resetGraphXLimitsFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readConfigurationFromControllerFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readConfigurationFromSaveFileFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjustPlotThresholdValuesFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">MainWindow</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Simulator</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/GraphContext.html#GraphContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GraphContext.GraphContext" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A GraphContext wraps up a set of related widgets, datatypes, and callable functions that should be
+used together especially with the context of the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<a class="reference internal" href="brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget" title="brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget"><em>HideableElementsGraphicsLayoutWidget</em></a>) – The HideableElementsGraphicsLayoutWidget or GraphicsLayoutWidget that contains the plots.</p></li>
+<li><p><strong>axes</strong> (<em>numpy.ndarray</em><em>[</em><em>PlotItem</em><em>]</em>) – The array of PlotItems that the fig contains.</p></li>
+<li><p><strong>axisLines</strong> (<em>dict</em><em>[</em><em>type</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>Line2D</em><em>]</em><em>]</em>) – The dictionary that organizes the graph lines hierarchically by type then by attribute.</p></li>
+<li><p><strong>simulatorAxisLines</strong> (<em>dict</em><em>[</em><em>type</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>PlotDataItem</em><em>]</em><em>]</em>) – The dictionary that organizes simulator graph lines hierarchically by type then by attribute.</p></li>
+<li><p><strong>toggleHBoxLayout</strong> – The small horizontal box layout that contains programmatically defined checkboxes for hiding/showing</p></li>
+</ul>
+</dd>
+</dl>
+<p>checkboxes for the plots.
+:type toggleHBoxLayout: QHBoxLayout
+:param dataType: The data type that overall belongs to this particular set of plots.
+:type dataType: type
+:param controlLogicType: The enum of the respective control logic with this particular dataset.
+:type controlLogicType: IntEnum
+:param getConfigurationChangesFunc: A Callable function that gets the current configuration from the GUI
+:type getConfigurationChangesFunc: Callable[[dict[str, QWidget], ConfigurationGrid], tuple[dict[str, Any], dict[str, Any]]]
+:param validateConfigurationFunc: A Callable function that validates the configuration input in the GUI.
+:type validateConfigurationFunc: Callable[[ConfigurationGrid, bool, bool, dict[str, float]], bool]
+:param writeConfigurationChangesFunc: A Callable function that writes the configuration to the remote and may update threshold lines.
+:type writeConfigurationChangesFunc: Callable[[dict[str, Any], dict[str, Any]], None]
+:param resetGraphXLimitsFunc: A Callable function that resets the graphs back to some initial state before streaming starts again.
+:type resetGraphXLimitsFunc: Callable[[np.ndarray[PlotItem], int], None]
+:param readConfigurationFromControllerFunc: A Callable function that reads the configuration from the remote to the GUI.
+:type readConfigurationFromControllerFunc: Callable[[dict[str, Any], bool], None]
+:param readConfigurationFromSaveFileFunc: A Callable function that reads the configuration from JSON configuration file to the GUI.
+:type readConfigurationFromSaveFileFunc: Callable[[dict[str, QWidget], dict[str, Any], bool], None]
+:param adjustPlotThresholdValuesFunc: A Callable function that adjusts any threshold lines in the plots particularly when parameters are updated.
+:type adjustPlotThresholdValuesFunc: Callable[[MainWindow | Simulator, dict[str, Any], dict[str, Any]], None]</p>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.LoggingHelpers">
+<span id="brace-ui-logginghelpers-module"></span><h2>brace.UI.LoggingHelpers module<a class="headerlink" href="#module-brace.UI.LoggingHelpers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.TextBrowserHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.LoggingHelpers.</span></span><span class="sig-name descname"><span class="pre">TextBrowserHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/LoggingHelpers.html#TextBrowserHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.LoggingHelpers.TextBrowserHandler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.TextBrowserHandler.RED_WARN">
+<span class="sig-name descname"><span class="pre">RED_WARN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RED_WARN'</span></span><a class="headerlink" href="#brace.UI.LoggingHelpers.TextBrowserHandler.RED_WARN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.TextBrowserHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/LoggingHelpers.html#TextBrowserHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.LoggingHelpers.TextBrowserHandler.emit" title="Link to this definition">¶</a></dt>
+<dd><p>Emits out the record onto the textbox. If the record
+is given a RED_WARN, then the text will be bolded.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.TextBrowserHandler.lock">
+<span class="sig-name descname"><span class="pre">lock</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RLock(None,</span> <span class="pre">0)&gt;</span></span><a class="headerlink" href="#brace.UI.LoggingHelpers.TextBrowserHandler.lock" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.TextBrowserHandler.textBrowser">
+<span class="sig-name descname"><span class="pre">textBrowser</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">QTextBrowser</span></span><a class="headerlink" href="#brace.UI.LoggingHelpers.TextBrowserHandler.textBrowser" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.joinStringsWithSpace">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.LoggingHelpers.</span></span><span class="sig-name descname"><span class="pre">joinStringsWithSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">argv</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/brace/UI/LoggingHelpers.html#joinStringsWithSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.LoggingHelpers.joinStringsWithSpace" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.LoggingHelpers.redBoldText">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.LoggingHelpers.</span></span><span class="sig-name descname"><span class="pre">redBoldText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stringToBold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/brace/UI/LoggingHelpers.html#redBoldText"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.LoggingHelpers.redBoldText" title="Link to this definition">¶</a></dt>
+<dd><p>Formats the text to be red and bold when displayed out to the textbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stringToBold</strong> (<em>str</em>) – The string that should be displayed as bold.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A bolded and red string using tags.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.PlotsPage">
+<span id="brace-ui-plotspage-module"></span><h2>brace.UI.PlotsPage module<a class="headerlink" href="#module-brace.UI.PlotsPage" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.PlotsPage.PlotsPage">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.PlotsPage.</span></span><span class="sig-name descname"><span class="pre">PlotsPage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/PlotsPage.html#PlotsPage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.PlotsPage.PlotsPage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_PlotsPage</span></code></p>
+<p>The box on the GUI that contains the plots in separate tabs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.PlotsPage.PlotsPage.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;PlotsPage&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.PlotsPage.PlotsPage.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.SaveDialog">
+<span id="brace-ui-savedialog-module"></span><h2>brace.UI.SaveDialog module<a class="headerlink" href="#module-brace.UI.SaveDialog" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.SaveDialog.SaveDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.SaveDialog.</span></span><span class="sig-name descname"><span class="pre">SaveDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/SaveDialog.html#SaveDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.SaveDialog.SaveDialog" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_SaveDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>This dialog box is shown when the user stops streaming. It will
+ask the user whether or not the streamed data should be saved before
+enacting on the user decision.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.SaveDialog.SaveDialog.exporterFactory">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exporterFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter"><span class="pre">AbstractDataExporter</span></a></span></span><a class="reference internal" href="_modules/brace/UI/SaveDialog.html#SaveDialog.exporterFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.SaveDialog.SaveDialog.exporterFactory" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the exporter based on the suffix of the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>suffix</strong> (<em>str</em>) – The file extension to be used for the file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The exporter that should be used for the graphed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="brace.UI.GUIController.html#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter">AbstractDataExporter</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.SaveDialog.SaveDialog.saveStreamedData">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">saveStreamedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/SaveDialog.html#SaveDialog.saveStreamedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.SaveDialog.SaveDialog.saveStreamedData" title="Link to this definition">¶</a></dt>
+<dd><p>Saves the stream data, getting the experiment numbers and formatting the time in the filename.
+Trial numbers are incremented after a successful save for convenience.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The parent saving GUI that runs this dialog.</p></li>
+<li><p><strong>animatedGraphManager</strong> (<a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><em>AnimatedGraphManager</em></a>) – The manager that holds all of the graphed data to be exported.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The estimated time when the stream was started using seconds from the Unix epoch.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The Enum type that facilitates the state of which control logic was used. Used in converting values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.SaveDialog.SaveDialog.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SaveDialog&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#41</span> <span class="pre">type=Slot,</span> <span class="pre">signature=saveStreamedData()</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.SaveDialog.SaveDialog.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.SimulatorConfigurationButtons">
+<span id="brace-ui-simulatorconfigurationbuttons-module"></span><h2>brace.UI.SimulatorConfigurationButtons module<a class="headerlink" href="#module-brace.UI.SimulatorConfigurationButtons" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.SimulatorConfigurationButtons.</span></span><span class="sig-name descname"><span class="pre">SimulatorConfigurationButtons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/SimulatorConfigurationButtons.html#SimulatorConfigurationButtons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_ConfigurationButtons</span></code></p>
+<p>These are the configuration buttons used in the simulator underneath the
+configuration box.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SimulatorConfigurationButtons&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons.toggleConfigurationButtons">
+<span class="sig-name descname"><span class="pre">toggleConfigurationButtons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/SimulatorConfigurationButtons.html#SimulatorConfigurationButtons.toggleConfigurationButtons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.SimulatorConfigurationButtons.SimulatorConfigurationButtons.toggleConfigurationButtons" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.WindowConfigurationButtons">
+<span id="brace-ui-windowconfigurationbuttons-module"></span><h2>brace.UI.WindowConfigurationButtons module<a class="headerlink" href="#module-brace.UI.WindowConfigurationButtons" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.WindowConfigurationButtons.WindowConfigurationButtons">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.WindowConfigurationButtons.</span></span><span class="sig-name descname"><span class="pre">WindowConfigurationButtons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/UI/WindowConfigurationButtons.html#WindowConfigurationButtons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.WindowConfigurationButtons.WindowConfigurationButtons" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Ui_ConfigurationButtons</span></code></p>
+<p>These are the configuration buttons that are in the main GUI
+that are found below the configuration box.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.UI.WindowConfigurationButtons.WindowConfigurationButtons.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;WindowConfigurationButtons&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#brace.UI.WindowConfigurationButtons.WindowConfigurationButtons.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.WindowConfigurationButtons.WindowConfigurationButtons.toggleDisabledConfigurationWidgets">
+<span class="sig-name descname"><span class="pre">toggleDisabledConfigurationWidgets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/WindowConfigurationButtons.html#WindowConfigurationButtons.toggleDisabledConfigurationWidgets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.WindowConfigurationButtons.WindowConfigurationButtons.toggleDisabledConfigurationWidgets" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.UI">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.UI" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+      <li>Previous: <a href="brace.Server.GPIOSynch.html" title="previous chapter">brace.Server.GPIOSynch package</a></li>
+      <li>Next: <a href="brace.UI.GUIController.html" title="next chapter">brace.UI.GUIController package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.UI.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

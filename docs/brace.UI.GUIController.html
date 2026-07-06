@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.UI.GUIController package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.UI.PlotConfiguration package" href="brace.UI.PlotConfiguration.html" />
+    <link rel="prev" title="brace.UI package" href="brace.UI.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-ui-guicontroller-package">
+<h1>brace.UI.GUIController package<a class="headerlink" href="#brace-ui-guicontroller-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.UI.GUIController.DataExporters">
+<span id="brace-ui-guicontroller-dataexporters-module"></span><h2>brace.UI.GUIController.DataExporters module<a class="headerlink" href="#module-brace.UI.GUIController.DataExporters" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">AbstractDataExporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>An abstract class that exports the datastreams into a certain format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter.exportData">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method that should be implemented by all exporting classes, which formats the dataset into
+the desired data structure and file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><em>AnimatedGraphManager</em></a>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter.exportDatastreamData">
+<span class="sig-name descname"><span class="pre">exportDatastreamData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter.exportDatastreamData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportDatastreamData" title="Link to this definition">¶</a></dt>
+<dd><p>A helper that yields the type and the datastream data from the datastreams of an AnimatedGraphManager.
+Two times are listed, “t” which refers to the time offset to the local time which may be less precise (but useful for general times).
+Or “uptime” which should be used for all analyses as this time is offset from the beginning of the stream time (and is more precise).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><em>AnimatedGraphManager</em></a>) – The AnimatedGraphManager whose data should be exported.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The local time of the time when the datastream was started (in seconds).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A generator containing a tuple of the type and the data of that datastream.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generator[type, dict[str, list[float | int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.HDF5Exporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">HDF5Exporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#HDF5Exporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.HDF5Exporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDataExporter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.HDF5Exporter.exportData">
+<span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#HDF5Exporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.HDF5Exporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method that should be implemented by all exporting classes, which formats the dataset into
+the desired data structure and file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><em>AnimatedGraphManager</em></a>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.ParquetExporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">ParquetExporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#ParquetExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.ParquetExporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDataExporter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.ParquetExporter.exportData">
+<span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><span class="pre">AnimatedGraphManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#ParquetExporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.ParquetExporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>Exports the data in the parquet file format, hierarchically setting the data in “L” and “R” paths,
+scrunching down the table into a single column to fit in the row of a parquet file. Configuration and APIEvents
+are also first-class attributes of this file format (as metadata).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager" title="brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager"><em>AnimatedGraphManager</em></a>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.formatLeftRight">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">formatLeftRight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastreamData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#formatLeftRight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.formatLeftRight" title="Link to this definition">¶</a></dt>
+<dd><p>Formats the data into left and right based on the L or R at the end of the name of the attribute.
+If there is no L or R, then the value goes to both legs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datastreamData</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>[</em><em>float</em><em> | </em><em>int</em><em>]</em><em>]</em>) – Data formatted in a dictionary of a list of floats or ints.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data sorted into left and right dictionaries by the attribute name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, list[float | int], dict[str, list[float | int]]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.isNanDatastream">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">isNanDatastream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#isNanDatastream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.isNanDatastream" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the datastream given for a left or right leg is NaN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params datastream<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The left or right leg datastream</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether or not the datastream only has NaNs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.GUIController.InitializationFunctions">
+<span id="brace-ui-guicontroller-initializationfunctions-module"></span><h2>brace.UI.GUIController.InitializationFunctions module<a class="headerlink" href="#module-brace.UI.GUIController.InitializationFunctions" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.getDefaultsDictionary">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">getDefaultsDictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initFileConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#getDefaultsDictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.getDefaultsDictionary" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the subdictionary under “defaults”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initFileConfiguration</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em> | </em><em>int</em><em>]</em>) – The default values for the configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subdictionary underneath the defaults header</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.getSettingsDictionary">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">getSettingsDictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initFileConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#getSettingsDictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.getSettingsDictionary" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the subdictionary under “settings”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initFileConfiguration</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em> | </em><em>int</em><em>]</em>) – The default values for the configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Subdictionary underneath the settings header</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.initializeDefaultParameters">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">initializeDefaultParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">defaultParameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationObjects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#initializeDefaultParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.initializeDefaultParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the default values for the parameters that are listed in the .ini file. Currently
+only QComboBox, QSpinBox, and QDoubleSpinBox are supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>defaultParameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The default values for the parameters in the configuration widget.</p></li>
+<li><p><strong>configurationObjects</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QtWidgets.QWidget</em><em>]</em>) – The configuration widgets dictionary that references widgets by name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.initializeLegEntries">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">initializeLegEntries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">legInformation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legComboBoxLeft</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QComboBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legComboBoxRight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QComboBox</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#initializeLegEntries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.initializeLegEntries" title="Link to this definition">¶</a></dt>
+<dd><p>Populates the entries in the .ini file with the relevant
+leg entries of the combobox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>legInformation</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Dictionary containing the string and other relevant information of the leg serial.</p></li>
+<li><p><strong>legComboBoxLeft</strong> (<em>QtWidgets.QComboBox</em>) – The left combobox leg for the leg to be populated with entries.</p></li>
+<li><p><strong>legComboBoxRight</strong> (<em>QtWidgets.QComboBox</em>) – The right combobox leg for the leg to be populated with entries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.initializeLimits">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">initializeLimits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limitInformation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationObjects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#initializeLimits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.initializeLimits" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the limits for configuration objects using the information set up in the .ini
+file for the minimum, maximum, and stepSize of the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>limitInformation</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em> | </em><em>float</em><em>]</em><em>]</em>) – The minimum, maximum, and stepSize limits information for the configuration object.</p></li>
+<li><p><strong>configurationObjects</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QtWidgets.QWidget</em><em>]</em>) – The configuration widgets dictionary that references widgets by name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.loadInitFile">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">loadInitFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileLocation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#loadInitFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.loadInitFile" title="Link to this definition">¶</a></dt>
+<dd><p>Load the .ini file, which is intended to be a toml file. It is formatted as a nested dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the information inside the .ini file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.setConfigurationDictionaries">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">setConfigurationDictionaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">referenceConfigurationNames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internalDictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#setConfigurationDictionaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.setConfigurationDictionaries" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a dictionary of the relevant configuration elements referenced by the name for easy access.
+The names are given as prefixes and the relevant widget has the L and R appended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>referenceConfigurationNames</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of configuration name prefixes</p></li>
+<li><p><strong>internalDictionary</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QtWidgets.QWidget</em><em>]</em>) – Dictionary from the configuration box containing the attribute name and the widgets.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A consolidated dictionary of left and right widgets containing relevant parameter fields.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, QtWidgets.QWidget]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.InitializationFunctions.setSingleConfigurationDictionaries">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.InitializationFunctions.</span></span><span class="sig-name descname"><span class="pre">setSingleConfigurationDictionaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">referenceConfigurationNames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internalDictionary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/InitializationFunctions.html#setSingleConfigurationDictionaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.InitializationFunctions.setSingleConfigurationDictionaries" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the configuration for any single fields that are assigned for both left and right 
+(and thus do not fit in the use of setConfigurationDictionaries).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>referenceConfigurationNames</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of configuration name prefixes</p></li>
+<li><p><strong>internalDictionary</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QtWidgets.QWidget</em><em>]</em>) – Dictionary from the configuration box containing the attribute name and the widgets.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary consisting of relevant single type parameter fields.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, QtWidgets.QWidget]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.GUIController.PlotHelpers">
+<span id="brace-ui-guicontroller-plothelpers-module"></span><h2>brace.UI.GUIController.PlotHelpers module<a class="headerlink" href="#module-brace.UI.GUIController.PlotHelpers" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.canHide">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">canHide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotIndexToCheck</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#canHide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.canHide" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to determine whether it is the last plot (and thus shouldn’t be hidden)
+to workaround issue with corrupted graphs on hiding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<em>numpy.ndarray</em><em>[</em><em>PlotItem</em><em>]</em>) – The set of plots containing hideable plots.</p></li>
+<li><p><strong>plotIndexToCheck</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – A tuple containing the indicies of the plot to check.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.changePlotBackground">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">changePlotBackground</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#changePlotBackground"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.changePlotBackground" title="Link to this definition">¶</a></dt>
+<dd><p>Goes through the GraphContexts of the MainWindow
+changing all the plots to have a dark background color if dark mode
+is used, and white background is light mode is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> (<em>MainWindow</em>) – The MainWindow containing the GraphContexts.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.changeStyle">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">changeStyle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#changeStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.changeStyle" title="Link to this definition">¶</a></dt>
+<dd><p>Changes the style by applying the stylehint color scheme for the Qt window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is running this command.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.createHidingBoxes">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">createHidingBoxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graphContexts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="brace.UI.html#brace.UI.GraphContext.GraphContext" title="brace.UI.GraphContext.GraphContext"><span class="pre">GraphContext</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#createHidingBoxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.createHidingBoxes" title="Link to this definition">¶</a></dt>
+<dd><p>Populate the checkboxes that hide the plots when not needed. This is done
+across all of the GraphContexts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> – The parent object calling this method, containing the GraphContexts</p>
+</dd>
+</dl>
+<p>that should have their plots with hiding checkboxes.
+:type parent: MainWindow
+:param graphContext: GraphContexts containing the plots with that should have their plots with hideable checkboxes.
+:type graphContext: list[GraphContext]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.setColorActionGroups">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">setColorActionGroups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QActionGroup</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#setColorActionGroups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.setColorActionGroups" title="Link to this definition">¶</a></dt>
+<dd><p>Sets up the ActionGroup in the menu panel to trigger changing the style
+when light/dark mode is changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent</strong> (<em>MainWindow</em><em> | </em><em>Simulator</em>) – The main GUI that is running this command.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The QActionGroup that handles the style changes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QActionGroup</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.setPlotVisibility">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">setPlotVisibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphContext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="brace.UI.html#brace.UI.GraphContext.GraphContext" title="brace.UI.GraphContext.GraphContext"><span class="pre">GraphContext</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotIndexesToHide</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shouldBeVisible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#setPlotVisibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.setPlotVisibility" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the visibility of the plots should the checkbox be unchecked, hiding them as necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graphContext</strong> (<a class="reference internal" href="brace.UI.html#brace.UI.GraphContext.GraphContext" title="brace.UI.GraphContext.GraphContext"><em>GraphContext</em></a>) – The graphContext containing the plot that should be hidden or shown.</p></li>
+<li><p><strong>plotIndexesToHide</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – The tuple indicies of the plot that should be hidden.</p></li>
+<li><p><strong>shouldBeVisible</strong> (<em>bool</em>) – Whether or not the plots should be hidden or shown.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.PlotHelpers.showBottomRowLabel">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.PlotHelpers.</span></span><span class="sig-name descname"><span class="pre">showBottomRowLabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">PlotItem</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/PlotHelpers.html#showBottomRowLabel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.PlotHelpers.showBottomRowLabel" title="Link to this definition">¶</a></dt>
+<dd><p>Adjusts the plots so that only the last plot shows the axis bottoms (since all the plots)
+have linked X-axes. This changes when plots are hidden and shown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axes</strong> (<em>numpy.ndarray</em><em>[</em><em>PlotItem</em><em>]</em>) – The set of plots containing the last plot to show axis bottoms.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.GUIController.UIConfigurationHelpers">
+<span id="brace-ui-guicontroller-uiconfigurationhelpers-module"></span><h2>brace.UI.GUIController.UIConfigurationHelpers module<a class="headerlink" href="#module-brace.UI.GUIController.UIConfigurationHelpers" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.UIConfigurationHelpers.getConfigurationChanges">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.UIConfigurationHelpers.</span></span><span class="sig-name descname"><span class="pre">getConfigurationChanges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configurationObjects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationWidgetLookup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/UIConfigurationHelpers.html#getConfigurationChanges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.UIConfigurationHelpers.getConfigurationChanges" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the configuration values for both left and right configuration fields and places
+them into two separate dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configurationObjects</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QWidget</em><em>]</em>) – The configuration widget objects referenceable by name.</p></li>
+<li><p><strong>configurationWidgetLookup</strong> – A lookup between the name of the attribute in the remote control logic object</p></li>
+</ul>
+</dd>
+</dl>
+<p>and the name of the field as the configuration widget.
+:type configurationWidgetLookup: dict[str, str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Left and right configuration referencing the configuration widget name instead of the control logic object name.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[dict[str, str | int | float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.UIConfigurationHelpers.getConfigurationParametersFromGUI">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.UIConfigurationHelpers.</span></span><span class="sig-name descname"><span class="pre">getConfigurationParametersFromGUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Simulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationObjects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/UIConfigurationHelpers.html#getConfigurationParametersFromGUI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.UIConfigurationHelpers.getConfigurationParametersFromGUI" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function that gets the configuration values from the GUI. Configuration
+is obtained using the widget name. Only active legs are exported. Thus one left and right leg configurations
+can be merged by opening separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>MainWindow</em><em> | </em><em>Simulator</em>) – The calling GUI running this function.</p></li>
+<li><p><strong>configurationObjects</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QWidget</em><em>]</em>) – The configuration widgets referenced by widget name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing all of the widget names and values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.UIConfigurationHelpers.getLegElementsByPrefix">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.UIConfigurationHelpers.</span></span><span class="sig-name descname"><span class="pre">getLegElementsByPrefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configurationObjectsNew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widgetPrefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">QWidget</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/UIConfigurationHelpers.html#getLegElementsByPrefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.UIConfigurationHelpers.getLegElementsByPrefix" title="Link to this definition">¶</a></dt>
+<dd><p>Gets tuple of leg elements with a given prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configurationObjectsNew</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QWidget</em><em>]</em>) – Dictionary of QWidgets referenced by name.</p></li>
+<li><p><strong>widgetPrefix</strong> (<em>str</em>) – The prefix for a given QWidget that should be referenced.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of QWidget objects retrieved given the widgetPrefix. Belonging to both belongs to the first element</p>
+</dd>
+</dl>
+<p>in the tuple.
+:rtype: tuple[QWidget, QWidget]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.UIConfigurationHelpers.hideItem">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.UIConfigurationHelpers.</span></span><span class="sig-name descname"><span class="pre">hideItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configurationWidgetName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationWidgetObject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hideLeftLegConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hideRightLegConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/UIConfigurationHelpers.html#hideItem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.UIConfigurationHelpers.hideItem" title="Link to this definition">¶</a></dt>
+<dd><p>Hides or shows the leg widget items. This is done when the leg is not active.
+If at least one leg is active, then leg widgets that belong to both will be shown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configurationWidgetName</strong> (<em>str</em>) – Name of the configuration widget.</p></li>
+<li><p><strong>configurationWidgetObject</strong> (<em>QWidget</em>) – The configuration widget to hide or show.</p></li>
+<li><p><strong>hideLeftLegConfiguration</strong> (<em>bool</em>) – Whether or not the left leg configuration should be hidden or shown.</p></li>
+<li><p><strong>hideRightLegConfiguration</strong> (<em>bool</em>) – Whether or not the right leg configuration should be hidden or shown.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.UIConfigurationHelpers.saveConfiguration">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.UIConfigurationHelpers.</span></span><span class="sig-name descname"><span class="pre">saveConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Simulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configurationObjects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">QWidget</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/UIConfigurationHelpers.html#saveConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.UIConfigurationHelpers.saveConfiguration" title="Link to this definition">¶</a></dt>
+<dd><p>Saves the configuration as a JSON file. This can be done from either the main GUI or the Simulator.
+The JSON file handles the configuration using the widget object names. The JSON is formatted with 4 spaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>MainWindow</em><em> | </em><em>Simulator</em>) – The calling GUI running this function.</p></li>
+<li><p><strong>configurationObjects</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>QWidget</em><em>]</em>) – The configuration widgets referenced by widget name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.UI.GUIController">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.UI.GUIController" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.UI.html">brace.UI package</a><ul>
+      <li>Previous: <a href="brace.UI.html" title="previous chapter">brace.UI package</a></li>
+      <li>Next: <a href="brace.UI.PlotConfiguration.html" title="next chapter">brace.UI.PlotConfiguration package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.UI.GUIController.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

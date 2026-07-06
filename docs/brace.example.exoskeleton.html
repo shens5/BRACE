@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.example.exoskeleton package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.example.zaber package" href="brace.example.zaber.html" />
+    <link rel="prev" title="brace.example package" href="brace.example.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-example-exoskeleton-package">
+<h1>brace.example.exoskeleton package<a class="headerlink" href="#brace-example-exoskeleton-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.example.exoskeleton.CANInterface2">
+<span id="brace-example-exoskeleton-caninterface2-module"></span><h2>brace.example.exoskeleton.CANInterface2 module<a class="headerlink" href="#module-brace.example.exoskeleton.CANInterface2" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.CANInterface2.</span></span><span class="sig-name descname"><span class="pre">CANInterface2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canReaderQueue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kneeAngle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Synchronized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fsr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Synchronized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canEnable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><code class="xref py py-class docutils literal notranslate"><span class="pre">IInputCom</span></code></a>, <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IOutputCom" title="brace.Server.Core.ComInterface.IOutputCom"><code class="xref py py-class docutils literal notranslate"><span class="pre">IOutputCom</span></code></a></p>
+<p>The CAN input and output interface written for the Bionic Power Agilik actuators.
+This is used as both input and output, hence the multiple inheritance. This interface
+reads in the shared memory variables to get the measurements that are constantly read
+asynchronously on a separate CAN reading process for parallelization. It additionally writes
+any output CAN messages out to a queue that is read by the same CAN reading process
+to write actuator commands.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2.isComOn">
+<span class="sig-name descname"><span class="pre">isComOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2.isComOn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2.isComOn" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether this interface is enabled (active).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not the interface is on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2.printEncoder">
+<span class="sig-name descname"><span class="pre">printEncoder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2.printEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2.printEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the knee angle value at this point in time, locking as necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sampled knee angle value</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2.printFSR">
+<span class="sig-name descname"><span class="pre">printFSR</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2.printFSR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2.printFSR" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the FSR value at this point in time, locking as necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sampled FSR value</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2.sendOutput">
+<span class="sig-name descname"><span class="pre">sendOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputMsgData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2.sendOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2.sendOutput" title="Link to this definition">¶</a></dt>
+<dd><p>Writes the output messages to the CAN processing queue for
+output actuation. Only written if the interface is active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputMsgData</strong> (<em>bytes</em>) – The CAN message to write to the actuator.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.CANInterface2.CANInterface2.turnOnOffComm">
+<span class="sig-name descname"><span class="pre">turnOnOffComm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/CANInterface2.html#CANInterface2.turnOnOffComm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.CANInterface2.CANInterface2.turnOnOffComm" title="Link to this definition">¶</a></dt>
+<dd><p>Turns the communications interface as necessary for the communications.
+The flags for the process are also set and reset such that the CAN process does not
+asynchronously run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> (<em>bool</em>) – Whether the communications should be enabled or disabled.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True (supposed to be successful or not)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.ControlLogicLookup">
+<span id="brace-example-exoskeleton-controllogiclookup-module"></span><h2>brace.example.exoskeleton.ControlLogicLookup module<a class="headerlink" href="#module-brace.example.exoskeleton.ControlLogicLookup" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ControlLogicLookup.</span></span><span class="sig-name descname"><span class="pre">ControlLogicEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/ControlLogicLookup.html#ControlLogicEnum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>This IntEnum handles indexing for the control logic. Clients
+should reference these enums when sending RPC commands.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.FSM5">
+<span class="sig-name descname"><span class="pre">FSM5</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.FSM5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.PROPORTIONAL">
+<span class="sig-name descname"><span class="pre">PROPORTIONAL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.PROPORTIONAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.STANDING">
+<span class="sig-name descname"><span class="pre">STANDING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#brace.example.exoskeleton.ControlLogicLookup.ControlLogicEnum.STANDING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.ExoController">
+<span id="brace-example-exoskeleton-exocontroller-module"></span><h2>brace.example.exoskeleton.ExoController module<a class="headerlink" href="#module-brace.example.exoskeleton.ExoController" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoController.ExoController">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ExoController.</span></span><span class="sig-name descname"><span class="pre">ExoController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">initialControlLogicType:</span> <span class="pre">~enum.IntEnum,</span> <span class="pre">numRobots:</span> <span class="pre">int,</span> <span class="pre">controlLogic:</span> <span class="pre">dict[~enum.IntEnum,</span> <span class="pre">~typing.Callable[[int],</span> <span class="pre">~brace.Server.Core.ControlLogic.IControlLogic]],</span> <span class="pre">UPDATE_RATE_PER_SECOND:</span> <span class="pre">int,</span> <span class="pre">startTime:</span> <span class="pre">~multiprocessing.sharedctypes.Synchronized</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">robotImplementation:</span> <span class="pre">~brace.Server.Core.RobotABC.RobotABC</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'brace.Server.Core.RobotABC.RobotABC'&gt;,</span> <span class="pre">simulated:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">dataTopicName:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">remoteHostTopicTemplate:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoController.html#ExoController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoController.ExoController" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC" title="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RobotAssemblyABC</span></code></a></p>
+<p>This class is a subclass of the stock defined RobotAssemblyABC. Custom RPC functions
+can be written to execute changes during runtime.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoController.ExoController.setControllerLegExtensionPositive">
+<span class="sig-name descname"><span class="pre">setControllerLegExtensionPositive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isExtensionPositive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoController.html#ExoController.setControllerLegExtensionPositive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoController.ExoController.setControllerLegExtensionPositive" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>int</em>) – The index of the robot in the ExoController that should be changed.</p></li>
+<li><p><strong>isExtensionPositive</strong> (<em>bool</em>) – Whether extension should be considered positive, else flexion is positive.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.ExoLeg">
+<span id="brace-example-exoskeleton-exoleg-module"></span><h2>brace.example.exoskeleton.ExoLeg module<a class="headerlink" href="#module-brace.example.exoskeleton.ExoLeg" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoLeg.ExoLeg">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ExoLeg.</span></span><span class="sig-name descname"><span class="pre">ExoLeg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">IntEnum</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ControlLogic.IControlLogic" title="brace.Server.Core.ControlLogic.IControlLogic"><span class="pre">IControlLogic</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debugMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialControlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoLeg.html#ExoLeg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoLeg.ExoLeg" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC" title="brace.Server.Core.RobotABC.RobotABC"><code class="xref py py-class docutils literal notranslate"><span class="pre">RobotABC</span></code></a></p>
+<p>This class is a subclass of the stock defined RobotABC. Custom RPC functions
+should be designed to forward function calls that may be received from the RobotAssemblyABC
+subclass.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoLeg.ExoLeg.setExtActuationConvention">
+<span class="sig-name descname"><span class="pre">setExtActuationConvention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extTorquePositive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoLeg.html#ExoLeg.setExtActuationConvention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoLeg.ExoLeg.setExtActuationConvention" title="Link to this definition">¶</a></dt>
+<dd><p>RPC function that sets the torque convention of the actuator in the ISafetyControl layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extTorquePositive</strong> (<em>bool</em>) – Whether extension should defined as positive torque.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.ExoMeasurementList">
+<span id="brace-example-exoskeleton-exomeasurementlist-module"></span><h2>brace.example.exoskeleton.ExoMeasurementList module<a class="headerlink" href="#module-brace.example.exoskeleton.ExoMeasurementList" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ExoMeasurementList.</span></span><span class="sig-name descname"><span class="pre">MeasurementLists</span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMeasurementLists</span></code></a></p>
+<p>MeasurementLists for the exoskeleton.
+There are lists for knee angle, force, desired torque, corrected torque,
+the angular velocity, the window angular velocity. Data is recorded
+in these lists.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.MAX_LEN">
+<span class="sig-name descname"><span class="pre">MAX_LEN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15000</span></span><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.MAX_LEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.calculateWindowedAngularVelocity">
+<span class="sig-name descname"><span class="pre">calculateWindowedAngularVelocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.calculateWindowedAngularVelocity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.calculateWindowedAngularVelocity" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the windowed angular velocity. Only runs if the input communication is available.
+Otherwise it is measured as 0 in the lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputComs</strong> – List of input communications interfaces for gathering sensor information.</p></li>
+<li><p><strong>deltaTime</strong> (<em>float</em>) – The amount of time between control iterations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>inputComs: list[<a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom">IInputCom</a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tuple containing the angular and window angular velocity.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.copyMeasurements">
+<span class="sig-name descname"><span class="pre">copyMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurementDataFrameToCopy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.copyMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.copyMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Copies the measurements from the pandas DataFrame to this MeasurementList
+This is particularly used in simulation, by simply placing the input values.</p>
+<dl class="simple">
+<dt>Consider the cases:</dt><dd><ul class="simple">
+<li><p>Normal data (non-NaN) -&gt; means active exo leg replaying.</p></li>
+<li><p>None object -&gt; means data is not available, the exo leg was never on during the entire session.</p></li>
+<li><dl class="simple">
+<dt>NaN data -&gt; means either exo leg was off at this time or we use this to denote that it switched controllers.</dt><dd><ul>
+<li><p>Currently you can’t switch exo legs on/off during a session (may change in the future).</p></li>
+<li><p>Thus exo leg data being off would be represented by None object. NaN represents only switched controllers then.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<em>int</em>) – The iteration number that should be placed into the MeasurementList</p></li>
+<li><p><strong>measurementDataFrameToCopy</strong> (<em>pandas.DataFrame</em>) – The pandas DataFrame where data should be copied from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngleMeasurements">
+<span class="sig-name descname"><span class="pre">getAngleMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getAngleMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngleMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the deque of knee angle measurements.
+:return: Knee angle measurements
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngularVelocityMeasurements">
+<span class="sig-name descname"><span class="pre">getAngularVelocityMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getAngularVelocityMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngularVelocityMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the deque of angular velocity measurements.
+:return: Angular velocity measurements
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getForceMeasurements">
+<span class="sig-name descname"><span class="pre">getForceMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getForceMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getForceMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the deque of FSR measurements.
+:return: FSR measurements
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueDesiredMeasurements">
+<span class="sig-name descname"><span class="pre">getTorqueDesiredMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getTorqueDesiredMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueDesiredMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the deque of torque (pre-safety check) outputs.
+:return: Torque outputs (pre-safety check)
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueInMeasurements">
+<span class="sig-name descname"><span class="pre">getTorqueInMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getTorqueInMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueInMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the deque of torque (post-safety check) outputs.
+:return: Torque outputs (post-safety check)
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getWindowedAngularVelocityMeasurements">
+<span class="sig-name descname"><span class="pre">getWindowedAngularVelocityMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.getWindowedAngularVelocityMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getWindowedAngularVelocityMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the windowed angular velocity measurements.
+:return: Windowed angular velocity measurements
+:rtype: deque[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.recordOutputValues">
+<span class="sig-name descname"><span class="pre">recordOutputValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputDes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.recordOutputValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.recordOutputValues" title="Link to this definition">¶</a></dt>
+<dd><p>Records the output values before and after safety checks to the MeasurementLists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputDes</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The list of outputs before safety checks.</p></li>
+<li><p><strong>outputIn</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The list of outputs after safety checks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.runMeasurements">
+<span class="sig-name descname"><span class="pre">runMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.runMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.runMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>This evaluates the measurements from the angle encoder and FSR and copies it to the MeasurementList. 
+Returns these values back so that they can be used in the other leg’s checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deltaTimeAll</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – The list of times in between control loop iterations.</p></li>
+<li><p><strong>inputComs</strong> (<em>list</em><em>[</em><em>IInputComs</em><em>]</em>) – The list of input communications interfaces.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setCalibrationOffset">
+<span class="sig-name descname"><span class="pre">setCalibrationOffset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.setCalibrationOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setCalibrationOffset" title="Link to this definition">¶</a></dt>
+<dd><p>Samples the calibration offset from the angle measurement.
+Future measurements are subtracted from this calibration offset.
+Calibration could also be sampled from previous n samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputComs</strong> – The list of input communications interfaces that should be used</p>
+</dd>
+</dl>
+<p>for gathering sensor information.
+:type inputComs: list[IInputCom]
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setupMeasurements">
+<span class="sig-name descname"><span class="pre">setupMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.setupMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setupMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>The initial setup for the measurements which creates the first set of
+measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputComs</strong> – The list of input communications interfaces that should be used</p>
+</dd>
+</dl>
+<p>for gathering sensor information.
+:type inputComs: list[IInputCom]
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.simulateSetupMeasurements">
+<span class="sig-name descname"><span class="pre">simulateSetupMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#MeasurementLists.simulateSetupMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.simulateSetupMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Separate function that initializes the measurements for the first set of measurements.
+These are just set to 0 to prevent off-by-one-errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.calculateVelocity">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ExoMeasurementList.</span></span><span class="sig-name descname"><span class="pre">calculateVelocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angleMesAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deque</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#calculateVelocity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.calculateVelocity" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the velocity for the knee angle measurements. Both angular velocity
+and the windowed angular velocity are determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angleMesAll</strong> (<em>deque</em><em>[</em><em>float</em><em>]</em>) – The deque containing the knee angle measurements.</p></li>
+<li><p><strong>deltaTime</strong> (<em>float</em>) – The amount of time between the control iterations.</p></li>
+<li><p><strong>deque</strong> (<em>deque</em><em>[</em><em>float</em><em>]</em>) – The deque containing the previous knee angle measurements in a window.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The tuple containing the angular velocity and the windowed angular velocity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ExoMeasurementList.windowedMovingAverage">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ExoMeasurementList.</span></span><span class="sig-name descname"><span class="pre">windowedMovingAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deque</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angularVelocity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/ExoMeasurementList.html#windowedMovingAverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ExoMeasurementList.windowedMovingAverage" title="Link to this definition">¶</a></dt>
+<dd><p>”
+Calculates the angular velocity from the values of a deque. The values are cycled
+out automatically. This creates a low pass filter for the angular velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deque</strong> (<em>deque</em><em>[</em><em>float</em><em>]</em>) – A window that contains a few previous values.</p></li>
+<li><p><strong>angularVelocity</strong> (<em>float</em>) – The angular velocity for the current iteration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The windowed angular velocity for this current iteration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.ServerSide">
+<span id="brace-example-exoskeleton-serverside-module"></span><h2>brace.example.exoskeleton.ServerSide module<a class="headerlink" href="#module-brace.example.exoskeleton.ServerSide" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ServerSide.handleException">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ServerSide.</span></span><span class="sig-name descname"><span class="pre">handleException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">excType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excTraceback</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/ServerSide.html#handleException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ServerSide.handleException" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.ServerSide.main">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.ServerSide.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/ServerSide.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.ServerSide.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.SlewSafetyChecks">
+<span id="brace-example-exoskeleton-slewsafetychecks-module"></span><h2>brace.example.exoskeleton.SlewSafetyChecks module<a class="headerlink" href="#module-brace.example.exoskeleton.SlewSafetyChecks" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.SlewSafetyChecks.</span></span><span class="sig-name descname"><span class="pre">SlewSafetyChecks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extTorquePositive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_SLEW_RATE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_FLEX_TORQUE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MAX_EXT_TORQUE</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#SlewSafetyChecks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.Server.Core.html#brace.Server.Core.SafetyControl.ISafetyControl" title="brace.Server.Core.SafetyControl.ISafetyControl"><code class="xref py py-class docutils literal notranslate"><span class="pre">ISafetyControl</span></code></a></p>
+<p>This layer handles safety control for the actuator by introducing a maximum
+slew rate to the torque, current deadzone, and capping of maximum torque.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.runOutputConversion">
+<span class="sig-name descname"><span class="pre">runOutputConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#SlewSafetyChecks.runOutputConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.runOutputConversion" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the output values into a list of bytes that are to be written to the actuator.
+Practical conversions should be done in this case such as the convention sign change,
+forcing the dead zone current, and converting to a CAN message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputIn</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – List of outputs to be converted to CAN messages.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of CAN messages that should be sent to the actuators.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[byte]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.runSafetyControl">
+<span class="sig-name descname"><span class="pre">runSafetyControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists" title="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists"><span class="pre">MeasurementLists</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">deque</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputDes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#SlewSafetyChecks.runSafetyControl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.runSafetyControl" title="Link to this definition">¶</a></dt>
+<dd><p>Runs safety control on the actuators (creating a slew rate and clipping the torque to maximum values) for each
+of the torque outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>measurementLists</strong> (<a class="reference internal" href="#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists" title="brace.example.exoskeleton.ExoMeasurementList.MeasurementLists"><em>MeasurementLists</em></a>) – The measurementLists containing old data.</p></li>
+<li><p><strong>deltaTimeAll</strong> (<em>deque</em><em>[</em><em>float</em><em>]</em>) – A list of the times between the control iterations.</p></li>
+<li><p><strong>outputDes</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – A list of outputs for the actuators to be checked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of corrected outputs for the actuators.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.setExtActuationConvention">
+<span class="sig-name descname"><span class="pre">setExtActuationConvention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extTorquePositive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#SlewSafetyChecks.setExtActuationConvention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.SlewSafetyChecks.setExtActuationConvention" title="Link to this definition">¶</a></dt>
+<dd><p>Used to flip the torque such that extension is positive or negative torque. May be ignored if extension is always negative torque (flexion positive).
+This is a fairly specific problem to the actuators that we have. This is not enforced as a method in the interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extTorquePositive</strong> (<em>bool</em>) – Flag to set to reverse the direction of actuation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.capTorque">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.SlewSafetyChecks.</span></span><span class="sig-name descname"><span class="pre">capTorque</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">torqueIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torqueMinValue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torqueMaxValue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#capTorque"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.capTorque" title="Link to this definition">¶</a></dt>
+<dd><p>Retains the torque within a specific minimum and maximum value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>torqueIn</strong> (<em>float</em>) – The desired amount of torque.</p></li>
+<li><p><strong>torqueMinValue</strong> (<em>float</em>) – The most negative torque value possible by the actuator (maximum torque in one direction).</p></li>
+<li><p><strong>torqueMaxValue</strong> – The most positive torque value possible by the actuator (maximum torque in other direction).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The capped torque within these values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.convertTorqueConventionSign">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.SlewSafetyChecks.</span></span><span class="sig-name descname"><span class="pre">convertTorqueConventionSign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extTorquePositive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torqueIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#convertTorqueConventionSign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.convertTorqueConventionSign" title="Link to this definition">¶</a></dt>
+<dd><p>Changes the sign of the torque convention (flexion positive vs extension positive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extTorquePositive</strong> (<em>bool</em>) – Whether extension is considered positive, otherwise flexion is considered positive.</p></li>
+<li><p><strong>torqueIn</strong> (<em>float</em>) – The torque that should have its sign potentially changed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corrected torque value according to the actuator.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.forceCurrentDeadZone">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.SlewSafetyChecks.</span></span><span class="sig-name descname"><span class="pre">forceCurrentDeadZone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commandCurrent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#forceCurrentDeadZone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.forceCurrentDeadZone" title="Link to this definition">¶</a></dt>
+<dd><p>Forces the current to 0 if less than 0.020 mA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>commandCurrent</strong> (<em>float</em>) – The current in mA to be sent to the actuator.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current after checks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.SlewSafetyChecks.torqueToCurrent">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.SlewSafetyChecks.</span></span><span class="sig-name descname"><span class="pre">torqueToCurrent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desTorque</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/example/exoskeleton/SlewSafetyChecks.html#torqueToCurrent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.SlewSafetyChecks.torqueToCurrent" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the desired torque (Nm) into a current value (mA) determined by
+Bionic Power’s characteristic curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>desTorque</strong> (<em>float</em>) – The amount of torque that should be sent to the actuator.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The amount of converted current to be used by the actuator.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton.mainGUI">
+<span id="brace-example-exoskeleton-maingui-module"></span><h2>brace.example.exoskeleton.mainGUI module<a class="headerlink" href="#module-brace.example.exoskeleton.mainGUI" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.mainGUI.handleException">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.mainGUI.</span></span><span class="sig-name descname"><span class="pre">handleException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">excType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excTraceback</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/mainGUI.html#handleException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.mainGUI.handleException" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.example.exoskeleton.mainGUI.main">
+<span class="sig-prename descclassname"><span class="pre">brace.example.exoskeleton.mainGUI.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/example/exoskeleton/mainGUI.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.example.exoskeleton.mainGUI.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-brace.example.exoskeleton">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.example.exoskeleton" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.example.html">brace.example package</a><ul>
+      <li>Previous: <a href="brace.example.html" title="previous chapter">brace.example package</a></li>
+      <li>Next: <a href="brace.example.zaber.html" title="next chapter">brace.example.zaber package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.example.exoskeleton.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
