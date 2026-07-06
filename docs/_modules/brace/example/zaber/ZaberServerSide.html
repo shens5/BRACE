@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.zaber.ZaberServerSide &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.zaber.ZaberServerSide</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Process</span><span class="p">,</span> <span class="n">RLock</span><span class="p">,</span> <span class="n">freeze_support</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ExoLeg</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExoLeg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ExoController</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExoController</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">)))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.RemoteProcedureCallHandler</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteProcedureCallHandler</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brace.example.zaber.ZaberControlLogic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">Zaber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.zaber.ZaberInterface</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZaberInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.zaber.ZaberMeasurementList</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZaberMeasurementLists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.zaber.ZaberTransform</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZaberTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.zaber.ArduinoADCInterface</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoadCellInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">serial.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_ports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bidict</span><span class="w"> </span><span class="kn">import</span> <span class="n">bidict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ControlLogic</span><span class="w"> </span><span class="kn">import</span> <span class="n">IControlLogic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.GPIOSynch.PushButton</span><span class="w"> </span><span class="kn">import</span> <span class="n">ButtonPress</span>
+
+<span class="c1"># To log uncaught exceptions.</span>
+<div class="viewcode-block" id="handleException">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberServerSide.handleException">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handleException</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">__excepthook__</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Uncaught exception&quot;</span><span class="p">,</span> <span class="n">exc_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">))</span></div>
+
+        
+<span class="c1"># This should be a factory method that builds out default parameter logic controllers.</span>
+<div class="viewcode-block" id="createControlLogics">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberServerSide.createControlLogics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createControlLogics</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Zaber</span><span class="o">.</span><span class="n">ControlLogic</span><span class="p">,</span> <span class="n">IControlLogic</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Factory method for the control logic, creating a lambda that takes in the index</span>
+<span class="sd">        for the single control law defined for this case.</span>
+
+<span class="sd">        :return: A dictionary containing the enum and the control logic defined.</span>
+<span class="sd">        :rtype: dict[Zaber.ControlLogic, IControlLogic]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zaberControlLogic</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">index</span><span class="p">:</span> <span class="n">Zaber</span><span class="o">.</span><span class="n">ZaberControlLogic</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="n">Zaber</span><span class="o">.</span><span class="n">ControlLogic</span><span class="o">.</span><span class="n">ZaberController</span><span class="p">:</span> <span class="n">zaberControlLogic</span> <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="query_com">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberServerSide.query_com">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_com</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">bidict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates dictionary of available serial ports and their description</span>
+
+<span class="sd">        :return: Dictionary of available serial ports and descriptions</span>
+<span class="sd">        :rtype: dict[str, str]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">port_info</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">bidict</span><span class="p">({</span><span class="n">port</span><span class="p">:</span> <span class="n">desc</span> <span class="k">for</span> <span class="n">port</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">port_info</span><span class="p">})</span></div>
+
+    
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberServerSide.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting Server...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Logger debug has to be set to the &quot;lowest&quot; level</span>
+
+    <span class="n">fileFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">, [</span><span class="si">%(pathname)s</span><span class="s2">, </span><span class="si">%(filename)s</span><span class="s2">, </span><span class="si">%(module)s</span><span class="s2">, </span><span class="si">%(funcName)s</span><span class="s2">, </span><span class="si">%(lineno)d</span><span class="s2">]: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> 
+                                  <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+    <span class="n">dirPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>   
+    <span class="n">logsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirPath</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">logFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S_Controller.log&quot;</span><span class="p">))</span>
+    <span class="n">fileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">logFileName</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">fileFormatter</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fileHandler</span><span class="p">)</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">excepthook</span> <span class="o">=</span> <span class="n">handleException</span>
+
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session ended at </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+
+    <span class="n">multiprocessingQueue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">remoteProcedureHandler</span> <span class="o">=</span> <span class="n">RemoteProcedureCallHandler</span><span class="p">()</span>
+
+    <span class="n">timeSynchronizationLock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+    <span class="n">timeSynchronizationCondition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">timeSynchronizationLock</span><span class="p">)</span>
+
+    <span class="n">comInfo</span> <span class="o">=</span> <span class="n">query_com</span><span class="p">()</span>
+    <span class="n">xMCCCom</span> <span class="o">=</span> <span class="n">comInfo</span><span class="o">.</span><span class="n">inv</span><span class="p">[</span><span class="s2">&quot;X-MCC2&quot;</span><span class="p">]</span>
+    <span class="n">unoR4Minima</span> <span class="o">=</span> <span class="n">comInfo</span><span class="o">.</span><span class="n">inv</span><span class="p">[</span><span class="s2">&quot;UNO R4 Minima - CDC Port&quot;</span><span class="p">]</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting ExoController process.&quot;</span><span class="p">)</span>
+    <span class="n">leftInputCom</span> <span class="o">=</span> <span class="p">[</span><span class="n">ZaberInterface</span><span class="p">(</span><span class="n">xMCCCom</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">LoadCellInterface</span><span class="p">(</span><span class="n">unoR4Minima</span><span class="p">)]</span>
+
+    <span class="n">leftOutputCom</span> <span class="o">=</span> <span class="n">leftInputCom</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">leftMeasurementList</span> <span class="o">=</span> <span class="n">ZaberMeasurementLists</span><span class="p">()</span>
+
+    <span class="n">leftSafetyCheck</span> <span class="o">=</span> <span class="n">ZaberTransform</span><span class="p">(</span><span class="n">invert</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1">#nm</span>
+
+    <span class="n">controllerProducer</span> <span class="o">=</span> <span class="n">ExoController</span><span class="p">(</span><span class="n">initialControlLogicType</span> <span class="o">=</span> <span class="n">Zaber</span><span class="o">.</span><span class="n">ControlLogic</span><span class="o">.</span><span class="n">ZaberController</span><span class="p">,</span>
+                                       <span class="n">numRobots</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                       <span class="n">controlLogic</span> <span class="o">=</span> <span class="n">createControlLogics</span><span class="p">(),</span> 
+                                       <span class="n">UPDATE_RATE_PER_SECOND</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+                                       <span class="n">robotImplementation</span> <span class="o">=</span> <span class="n">ExoLeg</span><span class="p">)</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setInputComInterface</span><span class="p">([</span><span class="n">leftInputCom</span><span class="p">])</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setOutputComInterface</span><span class="p">([</span><span class="n">leftOutputCom</span><span class="p">])</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setMeasurementLists</span><span class="p">([</span><span class="n">leftMeasurementList</span><span class="p">])</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setSafetyControl</span><span class="p">([</span><span class="n">leftSafetyCheck</span><span class="p">])</span>
+
+    <span class="n">rpcHandlerProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">remoteProcedureHandler</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">multiprocessingQueue</span><span class="p">,),</span> <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">hasButton</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">hasButton</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Trigger process.&quot;</span><span class="p">)</span>
+        <span class="n">buttonProducer</span> <span class="o">=</span> <span class="n">ButtonPress</span><span class="p">(</span><span class="n">buttonPin</span> <span class="o">=</span> <span class="mi">24</span><span class="p">,</span> <span class="n">UPDATE_RATE_PER_SECOND</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">controllerProducer</span><span class="o">.</span><span class="n">getSharedStartTime</span><span class="p">())</span>
+        <span class="n">buttonProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">buttonProducer</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">timeSynchronizationCondition</span><span class="p">,),</span> <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">controllerProducer</span><span class="o">.</span><span class="n">addSendDataEvent</span><span class="p">(</span><span class="n">buttonProducer</span><span class="o">.</span><span class="n">sendData</span><span class="p">)</span> <span class="c1"># The controller handles when button sends data (previous attempts at a manager to handle both in a separate process) yielded slow GUI.</span>
+        <span class="n">buttonProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">buttonProducer</span><span class="o">.</span><span class="n">stopProcess</span><span class="p">)</span>
+
+    <span class="n">rpcHandlerProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">multiprocessingQueue</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">controllerProducer</span><span class="o">.</span><span class="n">stopProcess</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done... Ready to serve!&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Running Zaber&#39;s libraries on a different process causes weird deadlocks.</span>
+    <span class="c1"># Thus, we are forced to use the main process to run the control loop. </span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">timeSynchronizationCondition</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sendQueue&#39;</span><span class="p">:</span> <span class="n">multiprocessingQueue</span><span class="p">})</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">freeze_support</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

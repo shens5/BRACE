@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.zaber.ZaberControlLogic &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.zaber.ZaberControlLogic</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">override</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.zaber.ZaberMeasurementList</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZaberMeasurementLists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ControlLogic</span><span class="w"> </span><span class="kn">import</span> <span class="n">IControlLogic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="ZaberData">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZaberData</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">loadcell</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="c1">#time vector</span></div>
+
+
+<div class="viewcode-block" id="ControlLogic">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ControlLogic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ControlLogic</span><span class="p">:</span>
+    <span class="n">ZaberController</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="ZaberControlLogic">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZaberControlLogic</span><span class="p">(</span><span class="n">IControlLogic</span><span class="p">):</span>
+    <span class="n">DataClass</span> <span class="o">=</span> <span class="n">ZaberData</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :param index: The count of the respective robot that is running.</span>
+<span class="sd">            :type index: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positionMin</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positionMax</span> <span class="o">=</span> <span class="mi">30</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMin</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># in g</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMax</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># in g</span>
+
+<div class="viewcode-block" id="ZaberControlLogic.setup">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic.setup">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initializes anything prior to running.</span>
+<span class="sd">            :param kwargs: Keyword arguments</span>
+<span class="sd">            :type kwargs: dict[str, All]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ZaberControlLogic.setParameters">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic.setParameters">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets the parameters that are in the dictionary to</span>
+<span class="sd">            the instance variables of this object.</span>
+
+<span class="sd">            :param parameters: The dictionary of configuration values from a remote procedure call.</span>
+<span class="sd">            :type parameters: dict[str, float]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: Nones</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># To enable changing of the parameters.</span>
+        <span class="k">for</span> <span class="n">parameterName</span><span class="p">,</span> <span class="n">parameterValues</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">parameterName</span><span class="p">,</span> <span class="n">parameterValues</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ZaberControlLogic.getConfigurationParameters">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic.getConfigurationParameters">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getConfigurationParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatForConfiguration</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the current configuration parameters that were defined for this controller.</span>
+
+<span class="sd">            :param formatForConfiguration: Whether or not this should be formatted for file saving.</span>
+<span class="sd">            :type formatForConfiguration: bool</span>
+<span class="sd">            :return: Dictionary of parameters in this object.</span>
+<span class="sd">            :rtype: dict[str, float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">controllerParameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;positionMin&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMin</span><span class="p">,</span> <span class="c1"># mm</span>
+            <span class="s2">&quot;positionMax&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMax</span><span class="p">,</span> <span class="c1"># mm</span>
+            <span class="s2">&quot;loadcellMin&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMin</span><span class="p">,</span> <span class="c1"># g</span>
+            <span class="s2">&quot;loadcellMax&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMax</span>  <span class="c1"># g</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">controllerParameters</span></div>
+
+
+<div class="viewcode-block" id="ZaberControlLogic.getDesiredOutputValues">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic.getDesiredOutputValues">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getDesiredOutputValues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">timeData</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">deltaTime</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">currentCycleMeasurementLists</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ZaberMeasurementLists</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Transforms the output values through a proportional response. Increased load cell</span>
+<span class="sd">            response leads to increased actuation.</span>
+
+<span class="sd">            :param enable: Whether or not device is active and running.</span>
+<span class="sd">            :type enable: bool</span>
+<span class="sd">            :param timeData: The time data for the the last set of cycles (the time values in s).</span>
+<span class="sd">            :type timeData: deque[float]</span>
+<span class="sd">            :param deltaTime: The amount of time between this iteration and the last iteration.</span>
+<span class="sd">            :type deltaTime: float</span>
+<span class="sd">            :param currentCycleMeasurementLists: The set of ZaberMeasurementList that can be accessed to determine the output response.</span>
+<span class="sd">            :type currentCycleMeasurementLists: list[ZaberMeasurementLists]</span>
+<span class="sd">            :return: The list of output responses that should be run against the actuators.</span>
+<span class="sd">            :rtype: list[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">posDes</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">enable</span><span class="p">:</span>
+            <span class="n">measurementLists</span><span class="p">:</span> <span class="n">ZaberMeasurementLists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRespectiveMeasurementList</span><span class="p">(</span><span class="n">currentCycleMeasurementLists</span><span class="p">)</span>
+            <span class="n">loadcellG</span> <span class="o">=</span> <span class="n">measurementLists</span><span class="o">.</span><span class="n">getLoadCellMeasurements</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">loadcellG</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMin</span><span class="p">:</span>
+                <span class="n">posDes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMin</span>
+            <span class="k">elif</span> <span class="n">loadcellG</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMax</span><span class="p">:</span>
+                <span class="n">posDes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMax</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Calculate the proportional torque within the bounds</span>
+                <span class="n">posDes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMin</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">positionMax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">positionMin</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">loadcellG</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loadcellMax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadcellMin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">posDes</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="ZaberControlLogic.exportMeasurementData">
+<a class="viewcode-back" href="../../../../brace.example.zaber.html#brace.example.zaber.ZaberControlLogic.ZaberControlLogic.exportMeasurementData">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exportMeasurementData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measurementLists</span><span class="p">:</span> <span class="n">ZaberMeasurementLists</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">isActive</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Exports the MeasurementData for this cycle.</span>
+
+<span class="sd">            :param measurementLists: The measurement lists for this robot whose data should be exported.</span>
+<span class="sd">            :type measurementLists: ZaberMeasurementLists</span>
+<span class="sd">            :param index: The current index of this robot.</span>
+<span class="sd">            :type index: int</span>
+<span class="sd">            :param isActive: Whether or not this robot is active (or enabled). If disabled, should return NaN maps.</span>
+<span class="sd">            :type isActive: bool</span>
+<span class="sd">            :return: A mapping of the attributes and the values for this current iteration.</span>
+<span class="sd">            :rtype: dict[str, float | int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fieldMapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">measurementLists</span><span class="o">.</span><span class="n">getPosMeasurements</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">isActive</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s1">&#39;loadcell&#39;</span><span class="p">:</span> <span class="n">measurementLists</span><span class="o">.</span><span class="n">getLoadCellMeasurements</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">isActive</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">toReturn</span> <span class="o">=</span> <span class="n">fieldMapping</span>
+        <span class="k">return</span> <span class="n">toReturn</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

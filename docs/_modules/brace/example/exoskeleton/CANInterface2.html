@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.exoskeleton.CANInterface2 &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.exoskeleton.CANInterface2</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Synchronized</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ComInterface</span><span class="w"> </span><span class="kn">import</span> <span class="n">IInputCom</span><span class="p">,</span> <span class="n">IOutputCom</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CANInterface2">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CANInterface2</span><span class="p">(</span><span class="n">IInputCom</span><span class="p">,</span> <span class="n">IOutputCom</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The CAN input and output interface written for the Bionic Power Agilik actuators.</span>
+<span class="sd">        This is used as both input and output, hence the multiple inheritance. This interface</span>
+<span class="sd">        reads in the shared memory variables to get the measurements that are constantly read</span>
+<span class="sd">        asynchronously on a separate CAN reading process for parallelization. It additionally writes</span>
+<span class="sd">        any output CAN messages out to a queue that is read by the same CAN reading process</span>
+<span class="sd">        to write actuator commands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">canReaderQueue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">kneeAngle</span><span class="p">:</span> <span class="n">Synchronized</span><span class="p">,</span> <span class="n">fsr</span><span class="p">:</span> <span class="n">Synchronized</span><span class="p">,</span> <span class="n">canEnable</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :param channel: The channel designated for this CAN bus line (left is 1, right is 0).</span>
+<span class="sd">            :type channel: int</span>
+<span class="sd">            :param canReaderQueue: The queue that funnels CAN messages to the process.</span>
+<span class="sd">            :type canReaderQueue: multiprocessing.Queue</span>
+<span class="sd">            :param kneeAngle: Floating point shared memory for reading knee angle values.</span>
+<span class="sd">            :type kneeAngle: multiprocessing.Value</span>
+<span class="sd">            :param fsr: Floating point shared memory for reading FSR values.</span>
+<span class="sd">            :type fsr: multiprocessing.Value</span>
+<span class="sd">            :param canEnable: Event that starts up CAN processing reading and writing.</span>
+<span class="sd">            :type canEnable: multiprocessing.Event</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canReaderQueue</span> <span class="o">=</span> <span class="n">canReaderQueue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kneeAngle</span> <span class="o">=</span> <span class="n">kneeAngle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fsr</span> <span class="o">=</span> <span class="n">fsr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canEnable</span> <span class="o">=</span> <span class="n">canEnable</span>
+
+<div class="viewcode-block" id="CANInterface2.isComOn">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2.isComOn">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isComOn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns whether this interface is enabled (active).</span>
+<span class="sd">            </span>
+<span class="sd">            :return: Whether or not the interface is on.</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span></div>
+
+
+    <span class="c1"># multiprocessing.Value types come with their own write locks to prevent data races.</span>
+<div class="viewcode-block" id="CANInterface2.printEncoder">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2.printEncoder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">printEncoder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the knee angle value at this point in time, locking as necessary.</span>
+<span class="sd">            </span>
+<span class="sd">            :return: Sampled knee angle value</span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kneeAngle</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CANInterface2.printFSR">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2.printFSR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">printFSR</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the FSR value at this point in time, locking as necessary.</span>
+<span class="sd">            </span>
+<span class="sd">            :return: Sampled FSR value</span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fsr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="CANInterface2.turnOnOffComm">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2.turnOnOffComm">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">turnOnOffComm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Turns the communications interface as necessary for the communications.</span>
+<span class="sd">            The flags for the process are also set and reset such that the CAN process does not</span>
+<span class="sd">            asynchronously run.</span>
+
+<span class="sd">            :param enable: Whether the communications should be enabled or disabled.</span>
+<span class="sd">            :type enable: bool</span>
+<span class="sd">            :return: True (supposed to be successful or not)</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span> <span class="ow">and</span> <span class="n">enable</span><span class="p">:</span> <span class="c1"># Only change when there is a difference in enabled state.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span> <span class="o">=</span> <span class="n">enable</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canEnable</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CAN Interfacing with Process (on): CAN</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">enable</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canEnable</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CAN Interfacing with Process (off): CAN</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Probably was successful.</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="CANInterface2.sendOutput">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.CANInterface2.CANInterface2.sendOutput">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sendOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputMsgData</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Writes the output messages to the CAN processing queue for</span>
+<span class="sd">            output actuation. Only written if the interface is active.</span>
+
+<span class="sd">            :param outputMsgData: The CAN message to write to the actuator.</span>
+<span class="sd">            :type outputMsgData: bytes</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">canOn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canReaderQueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">outputMsgData</span><span class="p">,</span> <span class="n">block</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

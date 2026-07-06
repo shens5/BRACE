@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.UI.PlotConfiguration.ConfigurePlotHelpers &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.UI.PlotConfiguration.ConfigurePlotHelpers</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.legend</span><span class="w"> </span><span class="kn">import</span> <span class="n">Legend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphicsLayoutWidget</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">mkPen</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">LegendItem</span><span class="p">,</span> <span class="n">mkBrush</span><span class="p">,</span> <span class="n">mkColor</span><span class="p">,</span> <span class="n">GridItem</span><span class="p">,</span> <span class="n">ItemSample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QSizePolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph.widgets.MatplotlibWidget</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatplotlibWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bidict</span><span class="w"> </span><span class="kn">import</span> <span class="n">bidict</span>
+
+<span class="c1"># import pyqtgraph as pg</span>
+<span class="c1"># pg.setConfigOptions(antialias = True) # Enable to remove aliasing (jagged lines)</span>
+
+<span class="n">LEFT_COLOR</span> <span class="o">=</span> <span class="s2">&quot;#FFAE00&quot;</span>
+<span class="n">RIGHT_COLOR</span> <span class="o">=</span> <span class="s2">&quot;#1900FE&quot;</span>
+<span class="n">SIM_LINE_WIDTH</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">LINE_WIDTH</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">LEFT_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;-L&#39;</span>
+<span class="n">RIGHT_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;-R&#39;</span>
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HideableElementsGraphicsLayoutWidget</span><span class="p">(</span><span class="n">GraphicsLayoutWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A GraphicsLayoutWidget subclass that allows for legend</span>
+<span class="sd">        elements to be hidden with L and R for the legs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizePolicy</span><span class="p">()</span><span class="o">.</span><span class="n">setRetainSizeWhenHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftLegToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightLegToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLegToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simRightLegToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">legendsToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LegendItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simRightLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">sigMouseClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggleAllFromLegend</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_updateLegends</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; For some reason, legends do not update when you hide using the setVisible on the lines automatically.</span>
+<span class="sd">            A workaround to this is to just reset the visibility twice to force the update. Note that it has to do it twice,</span>
+<span class="sd">            setting the visibility to its current visible state does not update the legend. &quot;&quot;&quot;</span>
+        <span class="n">legend</span><span class="p">:</span> <span class="n">LegendItem</span>
+        <span class="k">for</span> <span class="n">legend</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendsToHide</span><span class="p">:</span>
+            <span class="n">updateLegend</span><span class="p">(</span><span class="n">legend</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleAllFromLegend">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleAllFromLegend">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleAllFromLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Toggles all of the lines from the legend. All of the respective lines</span>
+<span class="sd">            will be toggled when the legend point is clicked.</span>
+
+<span class="sd">            :param event: The event containing a leg element where all leg elements should be toggled together.</span>
+<span class="sd">            :type event: QtGui.QMouseEvent</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">scenePos</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ItemSample</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftLineFromLegend</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeftLegs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">rightLineFromLegend</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">toggleRightLegs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLineFromLegend</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">toggleSimLeftLegs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">simRightLineFromLegend</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">toggleSimRightLegs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.setLegendEntries">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setLegendEntries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setLegendEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">legendsToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LegendItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the legend items to hide when the &quot;H&quot; hotkey is pressed</span>
+<span class="sd">            </span>
+<span class="sd">            :param legendsToHide: The legend items that should be hidden.</span>
+<span class="sd">            :type legendsToHide: list[LegendItem]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legendsToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">legendsToHide</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.setLeftLineEntries">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setLeftLineEntries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setLeftLineEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">leftLineEntries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">],</span> <span class="n">leftLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the left line entries that should be hidden when &quot;L&quot; is pressed or the legend item is toggled.</span>
+<span class="sd">            </span>
+<span class="sd">            :param leftLineEntries: List of lines that should be toggled together.</span>
+<span class="sd">            :type leftLineEntries: list[PlotDataItem]</span>
+<span class="sd">            :param leftLineFromLegend: The line (from a legend) that dictates how the linked lines are toggled together.</span>
+<span class="sd">            :type leftLineFromLegend: PlotDataItem</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftLegToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">leftLineEntries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftLineFromLegend</span> <span class="o">=</span> <span class="n">leftLineFromLegend</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.setRightLineEntries">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setRightLineEntries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setRightLineEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rightLineEntries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">],</span> <span class="n">rightLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the right line entries that should be hidden when &quot;R&quot; is pressed or the legend item is toggled.</span>
+<span class="sd">            </span>
+<span class="sd">            :param rightLineEntries: List of lines that should be toggled together.</span>
+<span class="sd">            :type rightLineEntries: list[PlotDataItem]</span>
+<span class="sd">            :param rightLineFromLegend: The line (from a legend) that dictates how the linked lines are toggled together.</span>
+<span class="sd">            :type rightLineFromLegend: PlotDataItem</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightLegToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rightLineEntries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightLineFromLegend</span> <span class="o">=</span> <span class="n">rightLineFromLegend</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.setSimLeftLineEntries">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setSimLeftLineEntries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setSimLeftLineEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simLeftLineEntries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">],</span> <span class="n">simLeftLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the left line simulator entries, which are a subset of lines that are hidden together, but should</span>
+<span class="sd">            be hidden together.</span>
+
+<span class="sd">            :param simLeftLineEntries: List of left simulator lines.</span>
+<span class="sd">            :type simLeftLineEntries: list[PlotDataItem]</span>
+<span class="sd">            :param simLeftLineFromLegend: The line from the legend that should toggle visibility of the simulator lines.</span>
+<span class="sd">            :type simLeftLineFromLegend: PlotDataItem</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLegToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">simLeftLineEntries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLineFromLegend</span> <span class="o">=</span> <span class="n">simLeftLineFromLegend</span></div>
+
+    
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.setSimRightLineEntries">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.setSimRightLineEntries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setSimRightLineEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simRightLineEntries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">],</span> <span class="n">simRightLineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the right line simulator entries, which are a subset of lines that are hidden together, but should</span>
+<span class="sd">            be hidden together.</span>
+
+<span class="sd">            :param simRightLineEntries: List of left simulator lines.</span>
+<span class="sd">            :type simRightLineEntries: list[PlotDataItem]</span>
+<span class="sd">            :param simRightLineFromLegend: The line from the legend that should toggle visibility of the simulator lines.</span>
+<span class="sd">            :type simRightLineFromLegend: PlotDataItem</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simRightLegToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">simRightLineEntries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simRightLineFromLegend</span> <span class="o">=</span> <span class="n">simRightLineFromLegend</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleLeg">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleLeg">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleLeg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineFromLegend</span><span class="p">:</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">legToHide</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">],</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Helper function that toggles the lines visibility based on the first element.</span>
+
+<span class="sd">            :param lineFromLegend: The line from the legend whose line visibility serves as the basis for the rest of the lines.</span>
+<span class="sd">            :type lineFromLegend: PlotDataItem</span>
+<span class="sd">            :param legToHide: The list of lines whose line visibility should be toggled.</span>
+<span class="sd">            :type legToHide: list[PlotDataItem]</span>
+<span class="sd">            :param visible: Whether or not the line should be visible. None indicates true toggling based on previous state.</span>
+<span class="sd">            :type visible: bool</span>
+
+<span class="sd">            :return: Whether or not the leg was set to visible or hidden.</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">legToHide</span><span class="p">:</span>
+            <span class="n">visible</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">lineFromLegend</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="k">if</span> <span class="n">visible</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">visible</span> <span class="c1"># Base the visibility on the first element.</span>
+            <span class="k">for</span> <span class="n">legLines</span> <span class="ow">in</span> <span class="n">legToHide</span><span class="p">:</span>
+                <span class="n">legLines</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_updateLegends</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">visible</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleLeftLegs">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleLeftLegs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleLeftLegs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leftLineFromLegend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftLegToHide</span><span class="p">,</span> <span class="n">visible</span> <span class="o">=</span> <span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleRightLegs">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleRightLegs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleRightLegs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rightLineFromLegend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rightLegToHide</span><span class="p">,</span> <span class="n">visible</span> <span class="o">=</span> <span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleSimLeftLegs">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleSimLeftLegs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleSimLeftLegs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simLeftLineFromLegend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">simLeftLegToHide</span><span class="p">,</span> <span class="n">visible</span> <span class="o">=</span> <span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.toggleSimRightLegs">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.toggleSimRightLegs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleSimRightLegs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simRightLineFromLegend</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">simRightLegToHide</span><span class="p">,</span> <span class="n">visible</span> <span class="o">=</span> <span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HideableElementsGraphicsLayoutWidget.keyPressEvent">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.HideableElementsGraphicsLayoutWidget.keyPressEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QKeyEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Toggles the visibility of the legend if H is pressed, Left legs</span>
+<span class="sd">            when L is pressed, and Right legs when R is pressed. Simulator legs are</span>
+<span class="sd">            also included when available.</span>
+
+<span class="sd">            :param ev: The event for the GraphicsLayoutWidget</span>
+<span class="sd">            :type ev: QtGui.QKeyEvent</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_H</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;legendsToHide&quot;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">legend</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legendsToHide</span><span class="p">:</span>
+                    <span class="n">legend</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="ow">not</span> <span class="n">legend</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_L</span><span class="p">:</span>
+            <span class="c1"># Hide the left lines and update the legends.</span>
+            <span class="n">leftLegVisibility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleLeftLegs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggleSimLeftLegs</span><span class="p">(</span><span class="n">leftLegVisibility</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ev</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">Key_R</span><span class="p">:</span>
+            <span class="c1"># Hide the right lines and update the legends.</span>
+            <span class="n">rightLegVisibility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toggleRightLegs</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggleSimRightLegs</span><span class="p">(</span><span class="n">rightLegVisibility</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span> <span class="c1"># Call the base class implementation for default handling</span></div>
+</div>
+
+
+<div class="viewcode-block" id="PyQTBasePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PyQTBasePlot</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graphicsLayoutWidget</span><span class="p">:</span> <span class="n">HideableElementsGraphicsLayoutWidget</span><span class="p">,</span> <span class="n">simulator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            A subsuming object that contains the HideableElementsGraphicsLayoutWidget that contains</span>
+<span class="sd">            some related information. Plot objects should subclass this object and define</span>
+<span class="sd">            factory methods that define the GraphContext for each controller.</span>
+<span class="sd">        </span>
+<span class="sd">            :param graphicsLayoutWidget: The widget in the plot where the plots should be created.</span>
+<span class="sd">            :type graphicsLayoutWidget: HideableElementsGraphicsLayoutWidget</span>
+<span class="sd">            :param simulator: A boolean determining whether or not this is a graph being used by the simulator.</span>
+<span class="sd">            :type simulator: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">graphicsLayoutWidget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulator</span> <span class="o">=</span> <span class="n">simulator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simAxisMaps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">setGraphLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PyQTBasePlot.setThresholdLinesHelper">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.setThresholdLinesHelper">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setThresholdLinesHelper</span><span class="p">(</span><span class="n">plot</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">thresholdLineReplacement</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">infiniteLine</span> <span class="ow">in</span> <span class="n">plot</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;_name&quot;</span> <span class="ow">in</span> <span class="n">infiniteLine</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span> <span class="c1"># Looking for PlotDataItems</span>
+                <span class="n">thresholdValue</span> <span class="o">=</span> <span class="n">thresholdLineReplacement</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">infiniteLine</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">thresholdValue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">infiniteLine</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">thresholdValue</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PyQTBasePlot.getFigureAxesAxesMapTriple">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.getFigureAxesAxesMapTriple">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getFigureAxesAxesMapTriple</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">HideableElementsGraphicsLayoutWidget</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the triple containing the widget, the plots, and map of maps with the lines.</span>
+<span class="sd">            Namely the axisMaps is referenced by type, then by attribute name for each line.</span>
+
+<span class="sd">            :return: Tuple containing the figure widget, the plots, and the lines for the relevant attributes for the NamedTuple datatype.</span>
+<span class="sd">            :rtype: tuple[HideableElementsGraphicsLayoutWidget, list[PlotItem], dict[type, dict[str, PlotDataItem]]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisMaps</span></div>
+
+    
+<div class="viewcode-block" id="PyQTBasePlot.toggleLeftLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.toggleLeftLines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleLeftLines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Toggles the left lines based on the desired visibility. Contains the simulator lines.</span>
+
+<span class="sd">            :param visible: Whether or not the left lines should be visible.</span>
+<span class="sd">            :type visible: bool</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">toggleLeftLegs</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PyQTBasePlot.toggleRightLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.toggleRightLines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toggleRightLines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Toggles the right lines based on the desired visibility. Contains the simulator lines.</span>
+
+<span class="sd">            :param visible: Whether or not the right lines should be visible.</span>
+<span class="sd">            :type visible: bool</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">toggleRightLegs</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="PyQTBasePlot.getSimulatorAxisMaps">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.PyQTBasePlot.getSimulatorAxisMaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getSimulatorAxisMaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets specifically the simulator lines addressed first by type then by NamedTuple attributes.</span>
+
+<span class="sd">            :return: The dictionary of types, which contains a dictionary of lines referenced by attribute names.</span>
+<span class="sd">            :rtype: dict[type, dict[str, PlotDataItem]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">simAxisMaps</span></div>
+</div>
+
+
+<div class="viewcode-block" id="MplBasePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MplBasePlot</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapping object for the Matplotlib-based plots for opening the files in the file viewer.</span>
+<span class="sd">        Objects should similarly subclass this object for added functionality over the</span>
+<span class="sd">        MatplotlibWidget (provided by pyqtgraph).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matplotlibwidget</span><span class="p">:</span> <span class="n">MatplotlibWidget</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            For a given MatplotlibWidget, transparency picking can be enabled for legends</span>
+<span class="sd">            and hiding legends, left, and right with the &quot;H&quot;, &quot;L&quot;, and &quot;R&quot; hotkeys respectively.</span>
+
+<span class="sd">            :param matplotlibwidget: The MatplotlibWidget for the given reading datatype.</span>
+<span class="sd">            :type matplotlibwidget: MatplotlibWidget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">matplotlibwidget</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">figure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span> <span class="o">=</span> <span class="n">bidict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hideableLegends</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftToHide</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightToHide</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;pick_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_pick</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;key_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_press</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MplBasePlot.addKneeAnglePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addKneeAnglePlot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addKneeAnglePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kneeAngleAxes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Line2D</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds an easy set of knee angle plots for the graph, returning a tuple of the lines for left and right.</span>
+<span class="sd">        </span>
+<span class="sd">            :param kneeAngleAxes: The plots that should have the leg lines added.</span>
+<span class="sd">            :type kneeAngleAxes: Axes</span>
+<span class="sd">            :return: Tuple of lines for the left and right legs.</span>
+<span class="sd">            :rtype: tuple[Line2D, Line2D]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lineKneeAngleL</span><span class="p">,</span> <span class="o">=</span> <span class="n">kneeAngleAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">lineKneeAngleR</span><span class="p">,</span> <span class="o">=</span> <span class="n">kneeAngleAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">kneeAngleAxes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">theta$ (deg)&quot;</span><span class="p">)</span>
+        <span class="n">kneeAngleAxes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lineKneeAngleL</span><span class="p">,</span> <span class="n">lineKneeAngleR</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.addWindowedAngularVelocityPlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addWindowedAngularVelocityPlot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addWindowedAngularVelocityPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowedAngularVelocityAxes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Line2D</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds an easy set of windowed angular velocity plots for the graph, returning a tuple of the lines for left and right.</span>
+<span class="sd">        </span>
+<span class="sd">            :param windowedAngularVelocityAxes: The plots that should have the leg lines added.</span>
+<span class="sd">            :type windowedAngularVelocityAxes: Axes</span>
+<span class="sd">            :return: Tuple of lines for the left and right legs.</span>
+<span class="sd">            :rtype: tuple[Line2D, Line2D]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lineWindowedAngularVelocityL</span><span class="p">,</span> <span class="o">=</span> <span class="n">windowedAngularVelocityAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">lineWindowedAngularVelocityR</span><span class="p">,</span> <span class="o">=</span> <span class="n">windowedAngularVelocityAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">windowedAngularVelocityAxes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">dot{</span><span class="se">\\</span><span class="s2">theta}$ (deg/s)&quot;</span><span class="p">)</span>
+        <span class="n">windowedAngularVelocityAxes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lineWindowedAngularVelocityL</span><span class="p">,</span> <span class="n">lineWindowedAngularVelocityR</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.addFsrPlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addFsrPlot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addFsrPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fsrAxes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Line2D</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds an easy set of FSR plots for the graph, returning a tuple of the lines for left and right.</span>
+<span class="sd">        </span>
+<span class="sd">            :param fsrAxes: The plots that should have the leg lines added.</span>
+<span class="sd">            :type fsrAxes: Axes</span>
+<span class="sd">            :return: Tuple of lines for the left and right legs.</span>
+<span class="sd">            :rtype: tuple[Line2D, Line2D]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lineFsrL</span><span class="p">,</span> <span class="o">=</span> <span class="n">fsrAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Left&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">lineFsrR</span><span class="p">,</span> <span class="o">=</span> <span class="n">fsrAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Right&quot;</span><span class="p">,</span>  <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">fsrAxes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;FSR (mV)&quot;</span><span class="p">)</span>
+        <span class="n">fsrAxes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lineFsrL</span><span class="p">,</span> <span class="n">lineFsrR</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.addTorquePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addTorquePlot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addTorquePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">torqueAxes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Line2D</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds an easy set of torque plots for the graph, returning a tuple of the lines for left and right.</span>
+<span class="sd">        </span>
+<span class="sd">            :param torqueAxes: The plots that should have the leg lines added.</span>
+<span class="sd">            :type torqueAxes: Axes</span>
+<span class="sd">            :return: Tuple of lines for the left and right legs.</span>
+<span class="sd">            :rtype: tuple[Line2D, Line2D]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lineDesiredRestrictionsL</span><span class="p">,</span> <span class="o">=</span> <span class="n">torqueAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Desired with Restrictions Left&quot;</span><span class="p">,</span> <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">lineDesiredRestrictionsR</span><span class="p">,</span> <span class="o">=</span> <span class="n">torqueAxes</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Desired with Restrictions Right&quot;</span><span class="p">,</span> <span class="n">animated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">torqueAxes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">tau$ (Nm)&quot;</span><span class="p">)</span>
+        <span class="n">torqueAxes</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lineDesiredRestrictionsL</span><span class="p">,</span> <span class="n">lineDesiredRestrictionsR</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.getFigure">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getFigure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getFigure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the Matplotlib figure of the graph.</span>
+
+<span class="sd">            :return: The Figure of the plots.</span>
+<span class="sd">            :rtype: matplotlib.Figure </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.getAxes">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getAxes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getAxes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Axes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the Matplotlib axes of the graph.</span>
+
+<span class="sd">            :return: The Axes of the plots.</span>
+<span class="sd">            :rtype: matplotlib.Axes </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.getAxesMaps">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getAxesMaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getAxesMaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the hierarchical structure of the graph lines by NamedTuple type, then by attribute name.</span>
+
+<span class="sd">            :return: Line2D oriented by NamedTuple type attributes</span>
+<span class="sd">            :rtype: dict[type, dict[str, Line2D]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisMaps</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.getFigureAxesAxesMapTriple">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.getFigureAxesAxesMapTriple">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getFigureAxesAxesMapTriple</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Axes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the triple of the three components of Figure, Axes, and mapping of Line2Ds.</span>
+
+<span class="sd">            :return: The triple of components.</span>
+<span class="sd">            :rtype: tuple[Figure, Axes, dict[type, dict[str, Line2D]]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axisMaps</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.addOnPickEvent">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addOnPickEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addOnPickEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">legend</span><span class="p">:</span> <span class="n">Legend</span><span class="p">,</span> <span class="n">linesByLabel</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds in the event for each of the lines by the label, setting in how </span>
+<span class="sd">            far to click before it is selected.</span>
+
+<span class="sd">            :param legend: The legend item that references the line object.</span>
+<span class="sd">            :type legend: Legend</span>
+<span class="sd">            :param linesByLabel: A dictionary of labels and the lines that connects the line to legend.</span>
+<span class="sd">            :type linesByLabel: dict[str, Line2D]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pickradius</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># How close the click needs to be to trigger an event.</span>
+
+        <span class="k">if</span> <span class="n">legend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">legendLine</span><span class="p">,</span> <span class="n">axLine</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">legend</span><span class="o">.</span><span class="n">get_lines</span><span class="p">(),</span> <span class="n">linesByLabel</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="n">legendLine</span><span class="o">.</span><span class="n">set_picker</span><span class="p">(</span><span class="n">pickradius</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="p">[</span><span class="n">legendLine</span><span class="p">]</span> <span class="o">=</span> <span class="n">axLine</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.setHideableLegends">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.setHideableLegends">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setHideableLegends</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">legends</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Legend</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the legends that are hideable with &quot;H&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">            :param legends: List of legends that should be hideable with &quot;H&quot;.</span>
+<span class="sd">            :type legends: list[Legend]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hideableLegends</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">legends</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.setHideableLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.setHideableLines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setHideableLines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">leftLines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Line2D</span><span class="p">],</span> <span class="n">rightLines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Line2D</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets in the lines for left and right that are hideable with &quot;L&quot; and &quot;R&quot; respectively.</span>
+
+<span class="sd">            :param leftLines: Left lines to be hidden with &quot;L&quot;.</span>
+<span class="sd">            :type leftLines: list[Line2D]</span>
+<span class="sd">            :param rightLines: Right lines to be hidden with &quot;R&quot;.</span>
+<span class="sd">            :type rightLines: list[Line2D]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">leftLines</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rightToHide</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rightLines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.addPickableLegend">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addPickableLegend">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addPickableLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Line2D</span><span class="p">],</span> <span class="n">numCols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fontsize</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;medium&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Legend</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds a legend where the lines are pickable given a set of lines.</span>
+
+<span class="sd">            :param axes: The Axes objects where the legend should be.</span>
+<span class="sd">            :type axes: Axes</span>
+<span class="sd">            :param lines: The list of lines that should be on the legend.</span>
+<span class="sd">            :type lines: list[Line2D]</span>
+<span class="sd">            :param numCols: The number of columns in the legend.</span>
+<span class="sd">            :type numCols: int</span>
+<span class="sd">            :param fontsize: The size of the font in the legend.</span>
+<span class="sd">            :type fontsize: str</span>
+
+<span class="sd">            :return: A tuple of the Legend and lines labeled by name.</span>
+<span class="sd">            :rtype: tuple[Legend, dict[str, Line2D]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">numCols</span> <span class="k">if</span> <span class="n">numCols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">legend</span><span class="p">,</span> <span class="n">linesByLabel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">linesByLabel</span> <span class="o">=</span> <span class="p">{</span><span class="n">l</span><span class="o">.</span><span class="n">get_label</span><span class="p">():</span> <span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">}</span> <span class="c1"># get_label() just returns a string</span>
+            <span class="n">legend</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">linesByLabel</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">linesByLabel</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>   
+                        <span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize</span><span class="p">)</span>
+            <span class="n">legend</span><span class="o">.</span><span class="n">set_draggable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">legend</span><span class="p">,</span> <span class="n">linesByLabel</span></div>
+
+    
+<div class="viewcode-block" id="MplBasePlot.addThresholdLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.addThresholdLines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addThresholdLines</span><span class="p">(</span><span class="n">axes</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">thresholdNames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">isLeft</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Line2D</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Add threshold lines to the plot. Left is considered dash line, while right is considered solid line.</span>
+<span class="sd">            </span>
+<span class="sd">            :param axes: The axes (plot) to add the lines.</span>
+<span class="sd">            :type axes: Axes</span>
+<span class="sd">            :param colors: list of colors that are zipped with the threshold names.</span>
+<span class="sd">            :type colors: list[str]</span>
+<span class="sd">            :param labels: list of string labels that are zipped with the threshold names.</span>
+<span class="sd">            :type labels: list[str]</span>
+<span class="sd">            :param thresholdNames: list of threshold names to be used (left and right are automatically appended)</span>
+<span class="sd">            :type thresholdNames: list[str]</span>
+<span class="sd">            :param isLeft: Whether or not the threshold line is left or right.</span>
+<span class="sd">            :type isLeft: bool</span>
+
+<span class="sd">            :return: List of threshold line objects that were added.</span>
+<span class="sd">            :rtype: list[Line2D]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">updatedLabels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">updatedLabels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> (L)&quot;</span> <span class="k">if</span> <span class="n">isLeft</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> (R)&quot;</span><span class="p">)</span>
+        <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;dashed&#39;</span> <span class="k">if</span> <span class="n">isLeft</span> <span class="k">else</span> <span class="s1">&#39;solid&#39;</span>
+
+        <span class="n">horizontalLines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">thresholdName</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">updatedLabel</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">thresholdNames</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">updatedLabels</span><span class="p">):</span>
+            <span class="n">thresholdValue</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">thresholdName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">thresholdValue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">horizontalLine</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">thresholdValue</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">updatedLabel</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">thresholdValue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">horizontalLines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">horizontalLine</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">horizontalLines</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.on_press">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.on_press">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_press</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Callback function to handle hotkey changes. Namely &quot;H&quot; toggles legend visibility,</span>
+<span class="sd">            &quot;L&quot; toggles left, and &quot;R&quot; toggles right leg visibilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">legend</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hideableLegends</span><span class="p">:</span>
+                <span class="n">legend</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="ow">not</span> <span class="n">legend</span><span class="o">.</span><span class="n">get_visible</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
+            <span class="n">legToHide</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftToHide</span> <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">rightToHide</span>
+            <span class="k">if</span> <span class="n">legToHide</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">legToHide</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="o">.</span><span class="n">inv</span><span class="p">:</span> <span class="c1"># Guarantees that we find a non-legend element.</span>
+                        <span class="k">break</span>
+
+                <span class="n">visible</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">legLines</span> <span class="ow">in</span> <span class="n">legToHide</span><span class="p">:</span>
+                    <span class="n">legLines</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+                    
+                    <span class="c1"># Update any of the legends for visibility</span>
+                    <span class="k">if</span> <span class="n">legLines</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="o">.</span><span class="n">inv</span><span class="p">:</span>
+                        <span class="n">legendLine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="o">.</span><span class="n">inv</span><span class="p">[</span><span class="n">legLines</span><span class="p">]</span>
+                        <span class="n">legendLine</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">visible</span> <span class="k">else</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+    <span class="c1"># Legend picking from https://matplotlib.org/stable/gallery/event_handling/legend_picking.html</span>
+<div class="viewcode-block" id="MplBasePlot.on_pick">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.on_pick">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_pick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Callback function to handle legend picking. Handles toggling visibility of the lines</span>
+<span class="sd">            if selected from the legend. More fine-grained than the hotkeys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># When using this, mapLegendToAx must be set.</span>
+
+        <span class="c1"># On the pick event, find the original line corresponding to the legend</span>
+        <span class="c1"># proxy line, and toggle its visibility.</span>
+        <span class="n">legendLine</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">artist</span>
+
+        <span class="c1"># Do nothing if the source of the event is not a legend line.</span>
+        <span class="k">if</span> <span class="n">legendLine</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">axLine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapLegendToAx</span><span class="p">[</span><span class="n">legendLine</span><span class="p">]</span>
+        <span class="n">visible</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">axLine</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="n">axLine</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="c1"># Change the alpha on the line in the legend, so we can see what lines</span>
+        <span class="c1"># have been toggled.</span>
+        <span class="n">legendLine</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">visible</span> <span class="k">else</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.removeTickNumbers">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.removeTickNumbers">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">removeTickNumbers</span><span class="p">(</span><span class="n">axes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Removes all of the tick numbers on all of the axes except for the last one.</span>
+
+<span class="sd">            :param axes: Axes containing the plots.</span>
+<span class="sd">            :type axes: Axes</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># Everything except the last row, remove the tick numbers.</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">which</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># All the last rows, add the label.</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MplBasePlot.updateFinalPlotMatplotlib">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.MplBasePlot.updateFinalPlotMatplotlib">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateFinalPlotMatplotlib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Method that can be used to update the plots at the final moment</span>
+<span class="sd">            after autoscaling for fitting the plots has been used. May be used</span>
+<span class="sd">            to override any changes.</span>
+
+<span class="sd">            :params kwargs: Keyword arguments that may be used in final fitting of plots.</span>
+<span class="sd">            :types dict[str, Any]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+<span class="c1">#    The rest of these functions are specific for pyqtgraph layouts and graphing.</span>
+<div class="viewcode-block" id="setGraphLayout">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.setGraphLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setGraphLayout</span><span class="p">(</span><span class="n">graphicsLayoutWidget</span><span class="p">:</span> <span class="n">GraphicsLayoutWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the GraphicLayoutWidget to minimal margins and little spacing.</span>
+
+<span class="sd">        :params graphicsLayoutWidget: The GraphicsLayoutWidget to change.</span>
+<span class="sd">        :type graphicsLayoutWidget: GraphicsLayoutWidget</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graphicsLayoutWidget</span><span class="o">.</span><span class="n">centralWidget</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">graphicsLayoutWidget</span><span class="o">.</span><span class="n">centralWidget</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setPlotLayout">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.setPlotLayout">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setPlotLayout</span><span class="p">(</span><span class="n">plots</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the graphs to be equally sized with each other.</span>
+
+<span class="sd">        :params plots: Set of PlotItems that should have their size set.</span>
+<span class="sd">        :type plots: numpy.ndarray[PlotItems]</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graphSizePolicy</span> <span class="o">=</span> <span class="n">QSizePolicy</span><span class="p">(</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Preferred</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Ignored</span><span class="p">)</span>
+    <span class="n">graphSizePolicy</span><span class="o">.</span><span class="n">setHorizontalStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">graphSizePolicy</span><span class="o">.</span><span class="n">setVerticalStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Set so that graphs are equally sized.</span>
+    <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plots</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">graphSizePolicy</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getLeftLabelFontFormat">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.getLeftLabelFontFormat">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getLeftLabelFontFormat</span><span class="p">(</span><span class="n">ptSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the font format for the left axis of each graph.</span>
+
+<span class="sd">        :param ptSize: The size of the font.</span>
+<span class="sd">        :type ptSize: int</span>
+<span class="sd">        :return: The font to use in the graphs.</span>
+<span class="sd">        :rtype: QtGui.QFont</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">axisLabelFont</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+    <span class="n">axisLabelFont</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="n">ptSize</span><span class="p">)</span>
+    <span class="n">axisLabelFont</span><span class="o">.</span><span class="n">setStyleStrategy</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="o">.</span><span class="n">StyleStrategy</span><span class="o">.</span><span class="n">PreferAntialias</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">axisLabelFont</span></div>
+
+
+<div class="viewcode-block" id="addThresholdLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addThresholdLines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addThresholdLines</span><span class="p">(</span><span class="n">plot</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">defaultThresholdValues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> 
+                      <span class="n">leftThresholdNames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">rightThresholdNames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">LINE_WIDTH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds threshold lines for the plots in pyqtgraph.</span>
+
+<span class="sd">        :param plot: the plot to add the threshold lines into.</span>
+<span class="sd">        :type plot: PlotItem</span>
+<span class="sd">        :param defaultThresholdValues: The default threshold values that should be initially set.</span>
+<span class="sd">        :type defaultThresholdValues: list[float]</span>
+<span class="sd">        :param colors: The colors that should be used for the lines.</span>
+<span class="sd">        :type colors: list[str]</span>
+<span class="sd">        :param leftThresholdNames: List of names to be used on the left side.</span>
+<span class="sd">        :type leftThresholdNames: list[str]</span>
+<span class="sd">        :param rightThresholdNames:  List of names to be used on the right side.</span>
+<span class="sd">        :type rightThresholdNames: list[str]</span>
+<span class="sd">        :param lineFontSize: The side of the threshold line.</span>
+<span class="sd">        :type lineFontSize: int</span>
+
+<span class="sd">        :return: list of threshold lines that were added.</span>
+<span class="sd">        :rtype: list[PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">thresholdLines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">thresholdName</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">defaultThresholdValues</span><span class="p">,</span> <span class="n">colors</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">leftThresholdNames</span> <span class="o">+</span> <span class="n">rightThresholdNames</span><span class="p">):</span>
+        <span class="n">style</span> <span class="o">=</span>  <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span> <span class="k">if</span> <span class="n">thresholdName</span> <span class="ow">in</span> <span class="n">leftThresholdNames</span> <span class="k">else</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">SolidLine</span> 
+        <span class="n">thresholdLines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plot</span><span class="o">.</span><span class="n">addLine</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="p">),</span>
+                                            <span class="n">name</span> <span class="o">=</span> <span class="n">thresholdName</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">thresholdLines</span></div>
+
+
+<div class="viewcode-block" id="addThresholdLegend">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addThresholdLegend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addThresholdLegend</span><span class="p">(</span><span class="n">plot</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">thresholdLines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LegendItem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a legend to the plot using the threshold lines as items.</span>
+
+<span class="sd">        :param plot: the plot to add the threshold lines into.</span>
+<span class="sd">        :type plot: PlotItem</span>
+<span class="sd">        :param thresholdLines: List of threshold lines.</span>
+<span class="sd">        :type thresholdLines: list[PlotDataItem]</span>
+<span class="sd">        :return: Legend that contains the threshold lines</span>
+<span class="sd">        :rtype: LegendItem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">legend</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">addLegend</span><span class="p">(</span><span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">brush</span> <span class="o">=</span> <span class="n">mkBrush</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">mkColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">32</span><span class="p">)),</span> <span class="n">colCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresholdLines</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">thresholdLine</span> <span class="ow">in</span> <span class="n">thresholdLines</span><span class="p">:</span>
+        <span class="n">thresholdLine</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pen&quot;</span><span class="p">:</span> <span class="n">thresholdLine</span><span class="o">.</span><span class="n">pen</span><span class="p">}</span> <span class="c1"># Workaround for infinite line not having opts dictionary.</span>
+        <span class="n">legend</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">thresholdLine</span><span class="p">,</span> <span class="n">thresholdLine</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="c1"># Add to legend.</span>
+    <span class="k">return</span> <span class="n">legend</span></div>
+
+
+<div class="viewcode-block" id="addLegLegend">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addLegLegend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addLegLegend</span><span class="p">(</span><span class="n">plot</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">leftLeg</span><span class="p">:</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">rightLeg</span><span class="p">:</span> <span class="n">PlotDataItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LegendItem</span><span class="p">:</span> <span class="c1"># Legend for blue/orange to distinguish which leg is which.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the legend that contains the left and right legs as items.</span>
+
+<span class="sd">        :param plot: The plot to add the threshold lines into.</span>
+<span class="sd">        :type plot: PlotItem</span>
+<span class="sd">        :param leftLeg: The line that corresponds to the left leg (often the knee angle line).</span>
+<span class="sd">        :type leftLeg: PlotDataItem</span>
+<span class="sd">        :param rightLeg: The line that corresponds to the right leg (often the knee angle line).</span>
+<span class="sd">        :type rightLeg: PlotDataItem</span>
+<span class="sd">        :return: The legend containing the left and right legs.</span>
+<span class="sd">        :rtype: LegendItem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">legend</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">addLegend</span><span class="p">(</span><span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">brush</span> <span class="o">=</span> <span class="n">mkBrush</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">mkColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">32</span><span class="p">)),</span> <span class="n">colCount</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">legend</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">leftLeg</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">)</span>
+    <span class="n">legend</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">rightLeg</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">legend</span></div>
+
+
+<span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    The four plots below are stock standard plots used for the sensor (and derived) data. Assumption made for these plots:</span>
+<span class="sd">    - Knee Angle plot is available and thus will scroll with that plot.</span>
+<span class="sd">    - Legends for thresholding are handled outside of these plots.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="addKneeAnglePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addKneeAnglePlot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addKneeAnglePlot</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">xGraphLim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">axisLabelFont</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a basic knee angle plot onto the plots. Plots are arranged in a single column, but placement</span>
+<span class="sd">        of the plot can be changed with the row parameter.</span>
+
+<span class="sd">        :param fig: The plot that should have the knee angle plot added.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param row: The row that this plot should be added onto.</span>
+<span class="sd">        :type row: int</span>
+<span class="sd">        :param xGraphLim: The maximum limits at which x-axis should be initially set for this plot.</span>
+<span class="sd">        :type xGraphLim: int</span>
+<span class="sd">        :param axisLabelFont: The font that should be used on the left side of the plot.</span>
+<span class="sd">        :type axisLabelFont: QtGui.QFont</span>
+<span class="sd">        :param lineFontSize: The size of the line for this plot. Default: 2.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of the plots, line for the left leg, and line for the right leg.</span>
+<span class="sd">        :rtype: tuple[PlotItem, PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Basic Knee Angle Plot - for consistency, it&#39;s mostly assumed that it is the first plot (hence, (0,0) indexing).</span>
+    <span class="n">kneeAnglePlot</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Knee Angle Plot&quot;</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="s2">&quot;θ (deg)&quot;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="s2">&quot;t (s)&quot;</span> <span class="p">})</span>
+    <span class="n">lineKneeAngleL</span> <span class="o">=</span> <span class="n">kneeAnglePlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;kneeAngleLeft&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                        <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineKneeAngleR</span> <span class="o">=</span> <span class="n">kneeAnglePlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;kneeAngleRight&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                        <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">kneeAngleGrid</span> <span class="o">=</span> <span class="n">GridItem</span><span class="p">()</span>
+    <span class="n">kneeAngleGrid</span><span class="o">.</span><span class="n">setTickSpacing</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span> <span class="c1"># Adding a negative value seems to remove the text labels.</span>
+    <span class="n">kneeAnglePlot</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">kneeAngleGrid</span><span class="p">)</span>
+    <span class="n">kneeAnglePlot</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">xRange</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">xGraphLim</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">yRange</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span> <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">kneeAnglePlot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">axisLabelFont</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kneeAnglePlot</span><span class="p">,</span> <span class="n">lineKneeAngleL</span><span class="p">,</span> <span class="n">lineKneeAngleR</span></div>
+
+
+<div class="viewcode-block" id="addSimKneeAngleLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimKneeAngleLines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addSimKneeAngleLines</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the simulator lines for the plot into the knee angle. These are not really used (inputs are not duplicated), </span>
+<span class="sd">        but are a reference point for setting lines together.</span>
+
+<span class="sd">        :param fig: The plot where the knee angle lines are to be added.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param lineFontSize: Size of the line font. Default: 0.</span>
+<span class="sd">        :type lineFontSize: int.</span>
+<span class="sd">        :return: Tuple of the simulator lines.</span>
+<span class="sd">        :rtype: tuple[PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lineSimKneeAngleL</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;L-SIM&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                        <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineSimKneeAngleR</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;R-SIM&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                        <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lineSimKneeAngleL</span><span class="p">,</span> <span class="n">lineSimKneeAngleR</span></div>
+
+
+<div class="viewcode-block" id="addWindowedAngularVelocityPlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addWindowedAngularVelocityPlot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addWindowedAngularVelocityPlot</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">axisLabelFont</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a basic windowed angular velocity plot onto the plots. Plots are arranged in a single column, but placement</span>
+<span class="sd">        of the plot can be changed with the row parameter.</span>
+
+<span class="sd">        :param fig: The plot that should have the windowed angular velocity plot added.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param row: The row that this plot should be added onto.</span>
+<span class="sd">        :type row: int</span>
+<span class="sd">        :param xGraphLim: The maximum limits at which x-axis should be initially set for this plot.</span>
+<span class="sd">        :type xGraphLim: int</span>
+<span class="sd">        :param axisLabelFont: The font that should be used on the left side of the plot.</span>
+<span class="sd">        :type axisLabelFont: QtGui.QFont</span>
+<span class="sd">        :param lineFontSize: The size of the line for this plot. Default: 2.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of the plots, line for the left leg, and line for the right leg.</span>
+<span class="sd">        :rtype: tuple[PlotItem, PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">windowedAngularVelocityPlot</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Windowed Angular Velocity Plot&quot;</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="s2">&quot;θ&#39; (deg/s)&quot;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="s2">&quot;t (s)&quot;</span> <span class="p">})</span>
+    <span class="n">lineWindowedAngularVelocityL</span> <span class="o">=</span> <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> 
+                                                                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;windowedAngularVelocityLeft&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                                                    <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineWindowedAngularVelocityR</span> <span class="o">=</span> <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> 
+                                                                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;windowedAngularVelocityRight&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                                                    <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">yRange</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.00</span><span class="p">)</span>
+    <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">setXLink</span><span class="p">(</span><span class="s2">&quot;Knee Angle Plot&quot;</span><span class="p">)</span> <span class="c1"># Moving the X scale also moves the Knee Angle Plot scale and whatever also is linked to it.</span>
+    <span class="n">windowedAngularVelocityGrid</span> <span class="o">=</span> <span class="n">GridItem</span><span class="p">()</span>
+    <span class="n">windowedAngularVelocityGrid</span><span class="o">.</span><span class="n">setTickSpacing</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">])</span>
+    <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">windowedAngularVelocityGrid</span><span class="p">)</span>
+    <span class="n">windowedAngularVelocityPlot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">axisLabelFont</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">windowedAngularVelocityPlot</span><span class="p">,</span> <span class="n">lineWindowedAngularVelocityL</span><span class="p">,</span> <span class="n">lineWindowedAngularVelocityR</span></div>
+
+
+<div class="viewcode-block" id="addFsrPlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addFsrPlot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addFsrPlot</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">axisLabelFont</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a basic FSR plot onto the plots. Plots are arranged in a single column, but placement</span>
+<span class="sd">        of the plot can be changed with the row parameter.</span>
+
+<span class="sd">        :param fig: The plot that should have the FSR plot added.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param row: The row that this plot should be added onto.</span>
+<span class="sd">        :type row: int</span>
+<span class="sd">        :param xGraphLim: The maximum limits at which x-axis should be initially set for this plot.</span>
+<span class="sd">        :type xGraphLim: int</span>
+<span class="sd">        :param axisLabelFont: The font that should be used on the left side of the plot.</span>
+<span class="sd">        :type axisLabelFont: QtGui.QFont</span>
+<span class="sd">        :param lineFontSize: The size of the line for this plot. Default: 2.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of the plots, line for the left leg, and line for the right leg.</span>
+<span class="sd">        :rtype: tuple[PlotItem, PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fsrPlot</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;FSR Plot&quot;</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="s2">&quot;FSR (mV)&quot;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="s2">&quot;t (s)&quot;</span><span class="p">})</span>
+    <span class="n">lineFsrL</span> <span class="o">=</span> <span class="n">fsrPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fsrLeft&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                            <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineFsrR</span> <span class="o">=</span> <span class="n">fsrPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fsrRight&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                            <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Grid spacing of 200 mV</span>
+    <span class="n">fsrGrid</span> <span class="o">=</span> <span class="n">GridItem</span><span class="p">()</span>
+    <span class="n">fsrGrid</span><span class="o">.</span><span class="n">setTickSpacing</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">])</span>
+    <span class="n">fsrPlot</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">fsrGrid</span><span class="p">)</span>
+    <span class="n">fsrPlot</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">yRange</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9500</span><span class="p">),</span> <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.00</span><span class="p">)</span>
+    <span class="n">fsrPlot</span><span class="o">.</span><span class="n">setXLink</span><span class="p">(</span><span class="s2">&quot;Knee Angle Plot&quot;</span><span class="p">)</span>
+    <span class="n">fsrPlot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">axisLabelFont</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fsrPlot</span><span class="p">,</span> <span class="n">lineFsrL</span><span class="p">,</span> <span class="n">lineFsrR</span></div>
+
+
+<div class="viewcode-block" id="addTorquePlot">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addTorquePlot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addTorquePlot</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">axisLabelFont</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a basic torque plot onto the plots. Plots are arranged in a single column, but placement</span>
+<span class="sd">        of the plot can be changed with the row parameter.</span>
+
+<span class="sd">        :param fig: The plot that should have the torque plot added.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param row: The row that this plot should be added onto.</span>
+<span class="sd">        :type row: int</span>
+<span class="sd">        :param xGraphLim: The maximum limits at which x-axis should be initially set for this plot.</span>
+<span class="sd">        :type xGraphLim: int</span>
+<span class="sd">        :param axisLabelFont: The font that should be used on the left side of the plot.</span>
+<span class="sd">        :type axisLabelFont: QtGui.QFont</span>
+<span class="sd">        :param lineFontSize: The size of the line for this plot. Default: 2.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of the plots, line for the left leg, and line for the right leg.</span>
+<span class="sd">        :rtype: tuple[PlotItem, PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">torquePlot</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Torque Plot&quot;</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="s2">&quot;τ (Nm)&quot;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="s2">&quot;t (s)&quot;</span> <span class="p">})</span>
+    <span class="n">lineDesiredRestrictionsL</span> <span class="o">=</span> <span class="n">torquePlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Desired with Restrictions Left&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineDesiredRestrictionsR</span> <span class="o">=</span> <span class="n">torquePlot</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Desired with Restrictions Right&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">torqueGrid</span> <span class="o">=</span> <span class="n">GridItem</span><span class="p">()</span>
+    <span class="n">torqueGrid</span><span class="o">.</span><span class="n">setTickSpacing</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">])</span>
+    <span class="n">torquePlot</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">torqueGrid</span><span class="p">)</span>
+    <span class="n">torquePlot</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">yRange</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">torquePlot</span><span class="o">.</span><span class="n">setXLink</span><span class="p">(</span><span class="s2">&quot;Knee Angle Plot&quot;</span><span class="p">)</span> <span class="c1"># Moving the X scale also moves the Knee Angle Plot scale and whatever also is linked to it</span>
+    <span class="n">torquePlot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">axisLabelFont</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torquePlot</span><span class="p">,</span> <span class="n">lineDesiredRestrictionsL</span><span class="p">,</span> <span class="n">lineDesiredRestrictionsR</span></div>
+
+
+<div class="viewcode-block" id="addSimTorqueLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimTorqueLines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addSimTorqueLines</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the simulator torque lines for the torque plots. The simulator will use Dotted lines</span>
+<span class="sd">        over the normal solid lines.</span>
+
+<span class="sd">        :param fig: The plot that should have the simulator lines attached.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param lineFontSize: The font size that should be used in the lines. Default: 1.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of two lines representing the left and right simulator lines.</span>
+<span class="sd">        :rtype: tuple[PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lineSimDesiredRestrictionsL</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Sim Desired with Restrictions Left&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineSimDesiredRestrictionsR</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Sim Desired with Restrictions Right&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lineSimDesiredRestrictionsL</span><span class="p">,</span> <span class="n">lineSimDesiredRestrictionsR</span></div>
+
+
+<span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    For custom gap sizes use Qt.PenStyle.CustomDashLine</span>
+<span class="sd">    then use setDashPattern(dot, gap)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="addSimStateLines">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.addSimStateLines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addSimStateLines</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">lineFontSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlotDataItem</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the simulator state lines for the state plots. The simulator will use Dotted lines</span>
+<span class="sd">        over the normal solid lines.</span>
+
+<span class="sd">        :param fig: The plot that should have the simulator lines attached.</span>
+<span class="sd">        :type fig: PlotItem</span>
+<span class="sd">        :param lineFontSize: The font size that should be used in the lines. Default: 1.</span>
+<span class="sd">        :type lineFontSize: int</span>
+<span class="sd">        :return: Tuple of two lines representing the left and right simulator lines.</span>
+<span class="sd">        :rtype: tuple[PlotDataItem, PlotDataItem]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lineSimStateL</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">LEFT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;simStateLeft&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">lineSimStateR</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">pen</span> <span class="o">=</span> <span class="n">mkPen</span><span class="p">(</span><span class="n">RIGHT_COLOR</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">lineFontSize</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">PenStyle</span><span class="o">.</span><span class="n">DotLine</span><span class="p">),</span> 
+                                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;simStateRight&quot;</span><span class="p">,</span> <span class="n">autodownsample</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">downsampleMethod</span> <span class="o">=</span> <span class="s1">&#39;subsample&#39;</span><span class="p">,</span> 
+                                            <span class="n">clipToView</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">skipFiniteCheck</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lineSimStateL</span><span class="p">,</span> <span class="n">lineSimStateR</span></div>
+
+
+<div class="viewcode-block" id="updateLegend">
+<a class="viewcode-back" href="../../../../brace.UI.PlotConfiguration.html#brace.UI.PlotConfiguration.ConfigurePlotHelpers.updateLegend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">updateLegend</span><span class="p">(</span><span class="n">legend</span><span class="p">:</span> <span class="n">LegendItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Toggles the visibility of the legend. Used when pressing the &quot;H&quot; hotkey</span>
+<span class="sd">        </span>
+<span class="sd">        :params legend: The legend to change visibility.</span>
+<span class="sd">        :type legend: LegendItem</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">legend</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="ow">not</span> <span class="n">legend</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span>
+    <span class="n">legend</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="ow">not</span> <span class="n">legend</span><span class="o">.</span><span class="n">isVisible</span><span class="p">())</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.UI.GUIController.PlotHelpers &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.UI.GUIController.PlotHelpers</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Slot</span><span class="p">,</span> <span class="n">Qt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QPalette</span><span class="p">,</span> <span class="n">QActionGroup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphicsLayoutWidget</span><span class="p">,</span> <span class="n">mkBrush</span><span class="p">,</span> <span class="n">mkColor</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">mkPen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QMainWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.GraphContext</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphContext</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.example.MainWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">MainWindow</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="changePlotBackground">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.changePlotBackground">[docs]</a>
+<span class="nd">@Slot</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">)</span> <span class="c1"># But also a regular function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">changePlotBackground</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">MainWindow</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Goes through the GraphContexts of the MainWindow</span>
+<span class="sd">        changing all the plots to have a dark background color if dark mode</span>
+<span class="sd">        is used, and white background is light mode is used.</span>
+
+<span class="sd">        :param parent: The MainWindow containing the GraphContexts.</span>
+<span class="sd">        :type parent: MainWindow</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># A quick and dirty way to check for light/dark independent of OS platform to work around Linux. </span>
+    <span class="c1"># Note that the last value (alpha) is always 255.</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">QPalette</span><span class="o">.</span><span class="n">ColorRole</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span><span class="o">.</span><span class="n">getRgb</span><span class="p">()</span>
+    <span class="n">isLight</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">rgbValue</span> <span class="o">&gt;=</span> <span class="mi">128</span> <span class="k">for</span> <span class="n">rgbValue</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">graphContext</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">graphContexts</span><span class="p">:</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">graphContext</span><span class="o">.</span><span class="n">fig</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">graphContext</span><span class="o">.</span><span class="n">axes</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">GraphicsLayoutWidget</span><span class="p">):</span>
+            <span class="c1"># Default is dark.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">actionSystemDefault</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">and</span> <span class="n">isLight</span><span class="p">)</span> <span class="ow">or</span> <span class="n">parent</span><span class="o">.</span><span class="n">actionLightMode</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">backgroundColor</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+                <span class="n">foregroundColor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">backgroundColor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span>
+                <span class="n">foregroundColor</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+
+            <span class="n">widget</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">mkBrush</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">mkColor</span><span class="p">(</span><span class="n">backgroundColor</span><span class="p">)))</span>
+            <span class="n">ax</span><span class="p">:</span> <span class="n">PlotItem</span>
+            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">axisDirection</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">]:</span>
+                    <span class="n">axis</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="n">axisDirection</span><span class="p">)</span>
+                    <span class="n">axis</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">mkPen</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">mkColor</span><span class="p">(</span><span class="n">foregroundColor</span><span class="p">)))</span>
+                    <span class="n">axis</span><span class="o">.</span><span class="n">setTextPen</span><span class="p">(</span><span class="n">mkPen</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="n">mkColor</span><span class="p">(</span><span class="n">foregroundColor</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="createHidingBoxes">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.createHidingBoxes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createHidingBoxes</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">MainWindow</span><span class="p">,</span> <span class="n">graphContexts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GraphContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate the checkboxes that hide the plots when not needed. This is done</span>
+<span class="sd">        across all of the GraphContexts.</span>
+
+<span class="sd">        :param parent: The parent object calling this method, containing the GraphContexts</span>
+<span class="sd">        that should have their plots with hiding checkboxes.</span>
+<span class="sd">        :type parent: MainWindow</span>
+<span class="sd">        :param graphContext: GraphContexts containing the plots with that should have their plots with hideable checkboxes.</span>
+<span class="sd">        :type graphContext: list[GraphContext]</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Two scenarios exist where this crashes rather dramatically.</span>
+    <span class="c1"># 1) Toggling visibility during drawing. More notably, when show() is done. hide() is usually okay. </span>
+    <span class="c1">#       - One way to deal with this is prevent toggling visibility while drawing.</span>
+    <span class="c1">#       - This issue actually is a result from the Grid lines when they aren&#39;t supposed to be drawn. And someone beat me to the chase by 1 day.</span>
+    <span class="c1">#           - Relevant pull request: https://github.com/pyqtgraph/pyqtgraph/pull/3284. So it&#39;ll probably be fixed by next release.</span>
+    <span class="c1"># 2) If you decide to remove all of the plots, and then try to toggle them back up, all of the plots start drawing on the same place. Then it crashes.</span>
+    <span class="c1">#       - One way to deal with this is to stop the user from being able to remove all of the plots in the first place (i.e. at least one plot has to be drawn). </span>
+    <span class="c1">#       - Another way of dealing with this is to hide the graph widget instead of the plots, and repopulate the needed plots on re-entry.</span>
+    <span class="c1">#       - The crashing is a result from the 1).</span>
+    <span class="k">for</span> <span class="n">graphContext</span> <span class="ow">in</span> <span class="n">graphContexts</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">graphContext</span><span class="o">.</span><span class="n">axes</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">])):</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">getViewBox</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="c1"># Kind of dangerous way to handle getting the name of each plot (as this doesn&#39;t have any related API call to it)</span>
+                <span class="n">checkbox</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                <span class="n">checkbox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">checkbox</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">setPlotVisibility</span><span class="p">,</span> <span class="n">graphContext</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)))</span>
+                <span class="n">graphContext</span><span class="o">.</span><span class="n">toggleHBoxLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">checkbox</span><span class="p">)</span>
+        <span class="n">showBottomRowLabel</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setPlotVisibility">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.setPlotVisibility">[docs]</a>
+<span class="nd">@Slot</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setPlotVisibility</span><span class="p">(</span><span class="n">graphContext</span><span class="p">:</span> <span class="n">GraphContext</span><span class="p">,</span> <span class="n">plotIndexesToHide</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">shouldBeVisible</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the visibility of the plots should the checkbox be unchecked, hiding them as necessary.</span>
+
+<span class="sd">        :param graphContext: The graphContext containing the plot that should be hidden or shown.</span>
+<span class="sd">        :type graphContext: GraphContext</span>
+<span class="sd">        :param plotIndexesToHide: The tuple indicies of the plot that should be hidden.</span>
+<span class="sd">        :type plotIndexesToHide: tuple[int, int]</span>
+<span class="sd">        :param shouldBeVisible: Whether or not the plots should be hidden or shown.</span>
+<span class="sd">        :type shouldBeVisible: bool</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">graphContext</span><span class="o">.</span><span class="n">axes</span>
+    <span class="n">plotToSetVisibility</span><span class="p">:</span> <span class="n">PlotItem</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">plotIndexesToHide</span><span class="p">]</span>
+    <span class="n">plotName</span> <span class="o">=</span> <span class="n">plotToSetVisibility</span><span class="o">.</span><span class="n">getViewBox</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="c1"># This works around issue in Pyqtgraph where if all graphs are hidden, then the viewing bounding box becomes corrupted</span>
+    <span class="c1"># when graphs are reshown.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graphContext</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="ow">and</span> <span class="n">shouldBeVisible</span><span class="p">:</span>
+        <span class="c1"># When the widget comes out of hiding, plots need to be hidden except the one on the menu. Then the widget can be reshown.</span>
+        <span class="n">plotToSetVisibility</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">plotToSetVisibility</span><span class="p">:</span>
+                <span class="n">plot</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="n">showBottomRowLabel</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+        <span class="n">graphContext</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">shouldBeVisible</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">canHide</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">plotIndexesToHide</span><span class="p">):</span> 
+        <span class="c1"># Hide the widget instead of the plot so that corruption doesn&#39;t happen, but nothing is displayed.</span>
+        <span class="n">graphContext</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plotToSetVisibility</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">shouldBeVisible</span><span class="p">)</span>
+        <span class="n">showBottomRowLabel</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plotName</span><span class="si">}</span><span class="s2"> is set to </span><span class="si">{</span><span class="s2">&quot;visible&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">shouldBeVisible</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;hidden&quot;</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="showBottomRowLabel">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.showBottomRowLabel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">showBottomRowLabel</span><span class="p">(</span><span class="n">axes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjusts the plots so that only the last plot shows the axis bottoms (since all the plots)</span>
+<span class="sd">        have linked X-axes. This changes when plots are hidden and shown.</span>
+
+<span class="sd">        :param axes: The set of plots containing the last plot to show axis bottoms.</span>
+<span class="sd">        :type axes: numpy.ndarray[PlotItem]</span>
+<span class="sd">        </span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># There is a slight pause when showing the time label axis, but it&#39;s probably okay.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">showBottomAxisLabels</span><span class="p">(</span><span class="n">plot</span><span class="p">:</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">showValues</span> <span class="o">=</span> <span class="n">show</span><span class="p">)</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">getAxis</span><span class="p">(</span><span class="s1">&#39;bottom&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">showLabel</span><span class="p">(</span><span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">)</span>
+
+    <span class="c1"># Look through each column for the last visible plot.</span>
+    <span class="n">transposedAxes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">plotCols</span> <span class="ow">in</span> <span class="n">transposedAxes</span><span class="p">:</span>
+        <span class="n">bottomReached</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">plotCols</span><span class="p">):</span> 
+            <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">bottomReached</span><span class="p">:</span>
+                    <span class="n">showBottomAxisLabels</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">bottomReached</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">showBottomAxisLabels</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="canHide">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.canHide">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">canHide</span><span class="p">(</span><span class="n">axes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">],</span> <span class="n">plotIndexToCheck</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper function to determine whether it is the last plot (and thus shouldn&#39;t be hidden)</span>
+<span class="sd">        to workaround issue with corrupted graphs on hiding.</span>
+<span class="sd">        </span>
+<span class="sd">        :param axes: The set of plots containing hideable plots.</span>
+<span class="sd">        :type axes: numpy.ndarray[PlotItem]</span>
+<span class="sd">        :param plotIndexToCheck: A tuple containing the indicies of the plot to check.</span>
+<span class="sd">        :type plotIndexToCheck: tuple[int, int]</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Look through each column for the last visible plot.</span>
+    <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="ow">and</span> <span class="n">axes</span><span class="p">[</span><span class="n">plotIndexToCheck</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="setColorActionGroups">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.setColorActionGroups">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setColorActionGroups</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">MainWindow</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QActionGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up the ActionGroup in the menu panel to trigger changing the style</span>
+<span class="sd">        when light/dark mode is changed.</span>
+
+<span class="sd">        :param parent: The main GUI that is running this command.</span>
+<span class="sd">        :type parent: MainWindow | Simulator</span>
+
+<span class="sd">        :return: The QActionGroup that handles the style changes.</span>
+<span class="sd">        :rtype: QActionGroup</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># QT Designer does not have a great way to set ActionGroups</span>
+    <span class="c1"># Sets up toggle between light and dark mode</span>
+    <span class="n">colorActionGroup</span> <span class="o">=</span> <span class="n">QActionGroup</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+    <span class="n">colorActionGroup</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">actionLightMode</span><span class="p">)</span>
+    <span class="n">colorActionGroup</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">actionDarkMode</span><span class="p">)</span>
+    <span class="n">colorActionGroup</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">actionSystemDefault</span><span class="p">)</span>
+    <span class="n">colorActionGroup</span><span class="o">.</span><span class="n">setExclusive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">colorActionGroup</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">changeStyle</span><span class="p">(</span><span class="n">parent</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">colorActionGroup</span></div>
+
+
+<div class="viewcode-block" id="changeStyle">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.PlotHelpers.changeStyle">[docs]</a>
+<span class="nd">@Slot</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">changeStyle</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">MainWindow</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the style by applying the stylehint color scheme for the Qt window.</span>
+
+<span class="sd">        :param parent: The main GUI that is running this command.</span>
+<span class="sd">        :type parent: MainWindow</span>
+<span class="sd">    </span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">actionSystemDefault</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+        <span class="n">colorMode</span> <span class="o">=</span> <span class="s2">&quot;System Default&quot;</span>
+        <span class="n">colorToSet</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ColorScheme</span><span class="o">.</span><span class="n">Unknown</span>
+    <span class="k">elif</span> <span class="n">parent</span><span class="o">.</span><span class="n">actionLightMode</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+        <span class="n">colorMode</span> <span class="o">=</span> <span class="s2">&quot;Light Mode&quot;</span>
+        <span class="n">colorToSet</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ColorScheme</span><span class="o">.</span><span class="n">Light</span>
+    <span class="k">elif</span> <span class="n">parent</span><span class="o">.</span><span class="n">actionDarkMode</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+        <span class="n">colorMode</span> <span class="o">=</span> <span class="s2">&quot;Dark Mode&quot;</span>
+        <span class="n">colorToSet</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ColorScheme</span><span class="o">.</span><span class="n">Dark</span>
+    
+    <span class="n">parent</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">styleHints</span><span class="p">()</span><span class="o">.</span><span class="n">setColorScheme</span><span class="p">(</span><span class="n">colorToSet</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Changed to </span><span class="si">{</span><span class="n">colorMode</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.UI.PlotView.PlotViewer &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.UI.PlotView.PlotViewer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QFileDialog</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">h5py</span><span class="w"> </span><span class="kn">import</span> <span class="n">Group</span><span class="p">,</span> <span class="n">File</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph.widgets.MatplotlibWidget</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatplotlibWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.RealTimeGraphing.Graphing.DataStream</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataStream</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brace.UI.example.GUIController.PrefixNames</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">PrefixNames</span> <span class="c1"># DO NOT DELETE THIS IMPORT. This resolves the circular dependency.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.view.ui.Ui_PlotWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_PlotWindow</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brace.UI.example.PlotView.PlotDataTypeHandler</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">PlotDataTypeHandler</span>
+
+<div class="viewcode-block" id="DatatypeImporter">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatatypeImporter</span><span class="p">():</span>
+
+<div class="viewcode-block" id="DatatypeImporter.fromParquet">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromParquet">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fromParquet</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the values name of the fields and values from the parquet file (better supported). </span>
+<span class="sd">            The time related fields are stripped out because these values are already extracted.</span>
+<span class="sd">        </span>
+<span class="sd">            :param dataset: Series data from the data file. </span>
+<span class="sd">            :type dataset: pandas.Series</span>
+
+<span class="sd">            :return: Generator containing a tuple of the name and the list of values.</span>
+<span class="sd">            :rtype: Generator[tuple[str, list[float | int]]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;uptime&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span></div>
+
+
+<div class="viewcode-block" id="DatatypeImporter.fromHDF5">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.DatatypeImporter.fromHDF5">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fromHDF5</span><span class="p">(</span><span class="n">datagroup</span><span class="p">:</span> <span class="n">Group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the values name of the fields and values from the HDF5 file (less supported). </span>
+<span class="sd">            The time related fields are stripped out.</span>
+
+<span class="sd">            :param datagroup: The Group from the data file. </span>
+<span class="sd">            :type datagroup: h5py.Group</span>
+
+<span class="sd">            :return: Generator containing a tuple of the name and the list of values.</span>
+<span class="sd">            :rtype: Generator[tuple[str, list[float | int]]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">datagroup</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span></div>
+</div>
+
+        
+<div class="viewcode-block" id="PlotWindow">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlotWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_PlotWindow</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="n">PlotWindow</span> <span class="o">=</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Store these so that they don&#39;t get garbage collected.</span>
+
+<div class="viewcode-block" id="PlotWindow.addNewTab">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.addNewTab">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addNewTab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MatplotlibWidget</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Adds a new tab containing containing a Matplotlib widget.</span>
+
+<span class="sd">            :param datatype: The datatype to create a new tab to.</span>
+<span class="sd">            :type datatype: type</span>
+
+<span class="sd">            :return: The newly created widget containing the Matplotlib plot.</span>
+<span class="sd">            :rtype: MatplotlibWidget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plotWidget</span> <span class="o">=</span> <span class="n">MatplotlibWidget</span><span class="p">()</span>
+        <span class="n">plotWidget</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ClickFocus</span><span class="p">)</span> <span class="c1"># Required for being able to allow key events.</span>
+        <span class="n">plotWidget</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotTabWidget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">plotWidget</span><span class="p">,</span> <span class="n">datatype</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plotWidget</span></div>
+
+
+<div class="viewcode-block" id="PlotWindow.getAssociatedAxes">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.getAssociatedAxes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getAssociatedAxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="n">Axes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets all of the axes where at least one line is related in the datalines.</span>
+
+<span class="sd">            :param dataType: The datatype to be checked for axes in the map.</span>
+<span class="sd">            :type dataType: type</span>
+<span class="sd">            :param axisMaps: The dictionary that organizes the lines hierarchically from type then by attribute.</span>
+<span class="sd">            :type axisMaps: dict[type, dict[str, Line2D]]</span>
+
+<span class="sd">            :return: Set of Axes that have at least one line connected to the set of dataTypes.</span>
+<span class="sd">            :rtype: set[Axes]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associatedAxes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># Set of subplots who have at least one line in the Datastream</span>
+        <span class="n">datalines</span><span class="p">:</span> <span class="n">Line2D</span>
+        <span class="k">for</span> <span class="n">datalines</span> <span class="ow">in</span> <span class="n">axisMaps</span><span class="p">[</span><span class="n">dataType</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">datalines</span><span class="p">:</span>
+                <span class="n">associatedAxes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">datalines</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">associatedAxes</span></div>
+
+    
+<div class="viewcode-block" id="PlotWindow.parseParquet">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parseParquet</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">addSuffix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Reads in the data from the parquet file format, separating the time data and the other leg data.</span>
+
+<span class="sd">            :param ds: The DataFrame containing all of the data (mixed with other datatypes)</span>
+<span class="sd">            :type ds: pandas.DataFrame</span>
+<span class="sd">            :param dataType: The data type to check within the DataFrame.</span>
+<span class="sd">            :type dataType: type</span>
+<span class="sd">            :param index: The string index that hierarchically within the datatype (e.g. &quot;L&quot; and &quot;R&quot; in left and right). </span>
+<span class="sd">            Default: None (indicating flat).</span>
+<span class="sd">            :type index: str</span>
+<span class="sd">            :param addSuffix: Appends the index as a suffix on the name of the attribute in the DataFrame (e.g. kneeAngle -&gt; kneeAngleL). </span>
+<span class="sd">            Default: True </span>
+<span class="sd">            :type addSuffix: bool</span>
+
+<span class="sd">            :return: Tuple containing the time series (Unix-epoch time and uptime) and a DataFrame containing the rest of the data.</span>
+<span class="sd">            :rtype: tuple[pandas.Series, pandas.Series, pandas.DataFrame]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">legDf</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+
+        <span class="n">upTime</span> <span class="o">=</span> <span class="n">legDf</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;uptime&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">addSuffix</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">legDf</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">upTime</span><span class="p">,</span> <span class="n">legDf</span></div>
+
+    
+<div class="viewcode-block" id="PlotWindow.parseParquet2">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquet2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parseParquet2</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Parses the parquet, returning all of the data without removing time or adding suffixes. Used mostly by simulation.</span>
+
+<span class="sd">            :param ds: The DataFrame containing all of the data (mixed with other datatypes)</span>
+<span class="sd">            :type ds: pandas.DataFrame</span>
+<span class="sd">            :param dataType: The data type to check within the DataFrame.</span>
+<span class="sd">            :type dataType: type</span>
+<span class="sd">            :param index: The string index that hierarchically within the datatype (e.g. &quot;L&quot; and &quot;R&quot; in left and right). </span>
+<span class="sd">            Default: None (indicating flat).</span>
+<span class="sd">            :type index: str</span>
+
+<span class="sd">            :return: Pandas DataFrame containing the data, unaltered.</span>
+<span class="sd">            :rtype: pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">legDf</span> </div>
+
+    
+<div class="viewcode-block" id="PlotWindow.parseParquetString">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.parseParquetString">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parseParquetString</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Parses the parquet file, using specifically the string instead of providing the type. Remains unaltered.</span>
+
+<span class="sd">            :param ds: The DataFrame containing all of the data (mixed with other datatypes)</span>
+<span class="sd">            :type ds: pandas.DataFrame</span>
+<span class="sd">            :param name: The name of the data type to check within the DataFrame.</span>
+<span class="sd">            :type dataType: str</span>
+<span class="sd">            :param index: The string index that hierarchically within the datatype (e.g. &quot;L&quot; and &quot;R&quot; in left and right). </span>
+<span class="sd">            Default: None (indicating flat).</span>
+<span class="sd">            :type index: str</span>
+
+<span class="sd">            :return: Pandas DataFrame containing the data, unaltered.</span>
+<span class="sd">            :rtype: pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legDf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">legDf</span> </div>
+
+
+<div class="viewcode-block" id="PlotWindow.checkParquetIndex">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.checkParquetIndex">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkParquetIndex</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Checks whether or not the index is found in the parquet file.</span>
+
+<span class="sd">            :param ds: The DataFrame containing all of the data (mixed with other datatypes)</span>
+<span class="sd">            :type ds: pandas.DataFrame</span>
+<span class="sd">            :param name: The name of the data type to check within the DataFrame.</span>
+<span class="sd">            :type dataType: str</span>
+<span class="sd">            :param index: The string index that hierarchically within the datatype (e.g. &quot;L&quot; and &quot;R&quot; in left and right). </span>
+<span class="sd">            Default: None (indicating flat).</span>
+<span class="sd">            :type index: str</span>
+
+<span class="sd">            :return: Whether or not the index is in the DataFrame.</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">ds</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+        
+<div class="viewcode-block" id="PlotWindow.graphLegDataParquet">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataParquet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">graphLegDataParquet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]],</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Graphs the data from the parquet file by updating the datastreams to include the datapoints.</span>
+
+<span class="sd">            :param fig: The Figure containing all the axes.</span>
+<span class="sd">            :type fig: matplotlib.Figure</span>
+<span class="sd">            :param axisMaps: The dictionary that organizes the lines hierarchically from type then by attribute.</span>
+<span class="sd">            :type axisMaps: dict[type, dict[str, Line2D]]</span>
+<span class="sd">            :param dataType: The data type that should be graphed on the axes.</span>
+<span class="sd">            :type dataType: type</span>
+<span class="sd">            :param ds: The DataFrame containing all of the data.</span>
+<span class="sd">            :type ds: pandas.DataFrame</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associatedAxes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAssociatedAxes</span><span class="p">(</span><span class="n">dataType</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">))</span>
+        <span class="n">datastream</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">associatedAxes</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">[</span><span class="n">dataType</span><span class="p">],</span> <span class="n">dataType</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">checkParquetIndex</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">):</span>
+            <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">leftLeg</span> <span class="o">=</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">parseParquet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+        
+        <span class="k">if</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">checkParquetIndex</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">):</span>
+            <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rightLeg</span> <span class="o">=</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">parseParquet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+
+        <span class="c1"># This handles the Trigger, but would work against data that does not have any L and R associated to it.</span>
+        <span class="k">if</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">checkParquetIndex</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">):</span>
+            <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">singleData</span> <span class="o">=</span> <span class="n">PlotWindow</span><span class="o">.</span><span class="n">parseParquet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">dataType</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">singleData</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">updateTime</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">drawFinal</span><span class="p">(</span><span class="n">padding</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlotWindow.graphLegDataHdf5">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.graphLegDataHdf5">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">graphLegDataHdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]],</span> <span class="n">dataType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">hdfS</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Graphs the data from the HDF5 file by updating the datastreams to include the datapoints.</span>
+
+<span class="sd">            :param fig: The Figure containing all the axes.</span>
+<span class="sd">            :type fig: matplotlib.Figure</span>
+<span class="sd">            :param axisMaps: The dictionary that organizes the lines hierarchically from type then by attribute.</span>
+<span class="sd">            :type axisMaps: dict[type, dict[str, Line2D]]</span>
+<span class="sd">            :param dataType: The data type that should be graphed on the axes.</span>
+<span class="sd">            :type dataType: type</span>
+<span class="sd">            :param ds: The HDFStore containing all of the data.</span>
+<span class="sd">            :type ds: pandas.HDFStore</span>
+<span class="sd">            </span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associatedAxes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAssociatedAxes</span><span class="p">(</span><span class="n">dataType</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">))</span>
+        <span class="n">datastream</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">associatedAxes</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">[</span><span class="n">dataType</span><span class="p">],</span> <span class="n">dataType</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">/L&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">hdfS</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="p">(</span><span class="n">leftLeg</span> <span class="o">:=</span> <span class="n">hdfS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">/L&#39;</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;uptime&#39;</span><span class="p">)</span>
+            <span class="n">leftLeg</span> <span class="o">=</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">leftLeg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+        
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">/R&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">hdfS</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="p">(</span><span class="n">rightLeg</span> <span class="o">:=</span> <span class="n">hdfS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">/R&#39;</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;uptime&#39;</span><span class="p">)</span>
+            <span class="n">rightLeg</span> <span class="o">=</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">rightLeg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+
+        <span class="c1"># This handles the Trigger, but would work against data that does not have any L and R associated to it.</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">hdfS</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hdfS</span><span class="p">[</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">singleData</span> <span class="o">=</span> <span class="n">hdfS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">singleData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">singleData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;uptime&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">singleData</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="c1"># Some lines are not drawn, but are included in the dataset.</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">updateTime</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">drawFinal</span><span class="p">(</span><span class="n">padding</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="PlotWindow.openDataset">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.PlotWindow.openDataset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">openDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Main function that opens a file dialog to input a file. </span>
+<span class="sd">            Then opens the dataset and graphs the data. Currently &quot;.parquet&quot; and &quot;.h5&quot; are supported,</span>
+<span class="sd">            with parquet files being supported the best.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">Option</span><span class="p">()</span> <span class="c1"># Must use DontUseNativeDialog for other options to work.</span>
+        <span class="n">openDatasetFileDialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">fileName</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">openDatasetFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Load Dataset File&quot;</span><span class="p">,</span> 
+                                                           <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Parquet Files (*.parquet);;HDF5 Files (*.h5)&quot;</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">windowTitle</span><span class="p">()</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">fileName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">fileNameSuffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+
+        <span class="c1"># Parse dataset and graph.        </span>
+        <span class="k">if</span> <span class="n">fileNameSuffix</span> <span class="o">==</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">:</span>
+            <span class="n">ds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">listOfDatatypes</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+                <span class="n">configDictionary</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="s1">&#39;Configuration&#39;</span> <span class="ow">in</span> <span class="n">listOfDatatypes</span><span class="p">:</span>
+                    <span class="n">listOfDatatypes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Configuration&#39;</span><span class="p">)</span>
+                    <span class="n">configDictionary</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;Configuration&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                
+                <span class="k">if</span> <span class="s1">&#39;APIEvents&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span><span class="p">:</span>
+                    <span class="n">listOfDatatypes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;APIEvents&#39;</span><span class="p">)</span> <span class="c1"># API Events for simulation, remove these for viewing.</span>
+                
+                <span class="k">for</span> <span class="n">datatypeName</span> <span class="ow">in</span> <span class="n">listOfDatatypes</span><span class="p">:</span>
+                    <span class="c1"># Get relevant configuration values that may be present.</span>
+                    <span class="c1"># Set up the figures, axis, and axis maps on new tab.</span>
+                    <span class="c1"># Update all the values in the axis (only need 1 set of time values though).</span>
+                    <span class="n">dataTypeHandler</span> <span class="o">=</span> <span class="n">PlotDataTypeHandler</span><span class="o">.</span><span class="n">getDataTypeHandler</span><span class="p">(</span><span class="n">datatypeName</span><span class="p">)</span>                   
+                    <span class="k">if</span> <span class="n">dataTypeHandler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">plotWidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addNewTab</span><span class="p">(</span><span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+                        <span class="n">configurationToDisplay</span> <span class="o">=</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">getConfigurableValues</span><span class="p">(</span><span class="n">configDictionary</span><span class="p">)</span>
+                        <span class="n">configurePlotObject</span> <span class="o">=</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">configurePlots</span><span class="p">(</span><span class="n">plotWidget</span><span class="p">,</span> <span class="n">configurationToDisplay</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configurePlotObject</span><span class="p">)</span>
+                        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">axisMaps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getFigureAxesAxesMapTriple</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">graphLegDataParquet</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">,</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">DataType</span><span class="p">,</span> <span class="n">ds</span><span class="p">)</span>
+                        <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">updateFinalPlot</span><span class="p">(</span><span class="n">configurePlotObject</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">fileNameSuffix</span> <span class="o">==</span> <span class="s2">&quot;.h5&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">listOfDatatypes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({</span><span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">)})</span>
+                <span class="n">configDictionary</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="s1">&#39;Configuration&#39;</span> <span class="ow">in</span> <span class="n">listOfDatatypes</span><span class="p">:</span>
+                    <span class="n">listOfDatatypes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Configuration&#39;</span><span class="p">)</span>
+                    <span class="n">configDictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;Configuration&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="s1">&#39;APIEvents&#39;</span> <span class="ow">in</span> <span class="n">listOfDatatypes</span><span class="p">:</span>
+                    <span class="n">listOfDatatypes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;APIEvents&#39;</span><span class="p">)</span> <span class="c1"># API Events for simulation, remove these for viewing.</span>
+
+                <span class="k">for</span> <span class="n">datatypeName</span> <span class="ow">in</span> <span class="n">listOfDatatypes</span><span class="p">:</span>
+                    <span class="c1"># Get relevant configuration values that may be present.</span>
+                    <span class="c1"># Set up the figures, axis, and axis maps on new tab.</span>
+                    <span class="c1"># Update all the values in the axis (only need 1 set of time values though).</span>
+                    <span class="n">dataTypeHandler</span> <span class="o">=</span> <span class="n">PlotDataTypeHandler</span><span class="o">.</span><span class="n">getDataTypeHandler</span><span class="p">(</span><span class="n">datatypeName</span><span class="p">)</span>                   
+                    <span class="k">if</span> <span class="n">dataTypeHandler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">plotWidget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addNewTab</span><span class="p">(</span><span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+                        <span class="n">configurationToDisplay</span> <span class="o">=</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">getConfigurableValues</span><span class="p">(</span><span class="n">configDictionary</span><span class="p">)</span>
+                        <span class="n">configurePlotObject</span> <span class="o">=</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">configurePlots</span><span class="p">(</span><span class="n">plotWidget</span><span class="p">,</span> <span class="n">configurationToDisplay</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configurePlotObject</span><span class="p">)</span>
+                        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">axisMaps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listOfDataHandlers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getFigureAxesAxesMapTriple</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">graphLegDataHdf5</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">axisMaps</span><span class="p">,</span> <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">DataType</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                        <span class="n">dataTypeHandler</span><span class="o">.</span><span class="n">updateFinalPlot</span><span class="p">(</span><span class="n">configurePlotObject</span><span class="p">)</span></div>
+</div>
+
+                        
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../brace.UI.PlotView.html#brace.UI.PlotView.PlotViewer.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Logger debug has to be set to the &quot;lowest&quot; level</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> 
+                                  <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+    
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mainWindow</span> <span class="o">=</span> <span class="n">PlotWindow</span><span class="p">()</span>
+    <span class="n">mainWindow</span><span class="o">.</span><span class="n">openDataset</span><span class="p">()</span>
+    <span class="n">mainWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span></div>
+
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

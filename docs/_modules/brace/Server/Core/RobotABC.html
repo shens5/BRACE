@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.Server.Core.RobotABC &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.Server.Core.RobotABC</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NamedTuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ComInterface</span><span class="w"> </span><span class="kn">import</span> <span class="n">IComInterface</span><span class="p">,</span> <span class="n">IInputCom</span><span class="p">,</span> <span class="n">IOutputCom</span><span class="p">,</span> <span class="n">UnexpectedInitializationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.SafetyControl</span><span class="w"> </span><span class="kn">import</span> <span class="n">ISafetyControl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.MeasurementLists</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMeasurementLists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ControlLogic</span><span class="w"> </span><span class="kn">import</span> <span class="n">IControlLogic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RobotABC">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RobotABC</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        A functional robotic set of input and output communications interfaces and safety control layers that</span>
+<span class="sd">        behave under a set of control logic classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controlLogic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">IntEnum</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="n">IControlLogic</span><span class="p">]],</span>
+                 <span class="n">debugMode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">initialControlLogicType</span><span class="p">:</span> <span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            :params controlLogic: A dictionary of IntEnums as the keys and a generator that creates control logic classes</span>
+<span class="sd">                as a value, taking the index as a parameter.</span>
+<span class="sd">            :type controlLogic: dict[IntEnum, Callable[[int], IControlLogic]]</span>
+<span class="sd">            :params debugMode: A boolean that refers to whether or not actuation should be started at the beginning.</span>
+<span class="sd">            :type debugMode: bool</span>
+<span class="sd">            :params index: Index of the RobotABC with respect to its position in RobotAssemblyABC.</span>
+<span class="sd">            :type index: int</span>
+<span class="sd">            :params initialControlLogicType: The initialized control logic type at the beginning of creation. This should be an IntEnum</span>
+<span class="sd">                based on what is available in the controlLogic dictionary.</span>
+<span class="sd">            :type initialControlLogicType: IntEnum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="p">:</span> <span class="n">IMeasurementLists</span> <span class="o">=</span> <span class="kc">None</span> 
+
+        <span class="c1">#if true, sends zero torque to exo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debugMode</span> <span class="o">=</span> <span class="n">debugMode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span> <span class="o">=</span> <span class="p">{</span><span class="n">controlLogic</span><span class="p">:</span> <span class="n">controlLogicFunc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">controlLogic</span><span class="p">,</span> <span class="n">controlLogicFunc</span> <span class="ow">in</span> <span class="n">controlLogic</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentControlLogic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="p">[</span><span class="n">initialControlLogicType</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputComs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IOutputCom</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">safetyControl</span><span class="p">:</span> <span class="n">ISafetyControl</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="RobotABC.addInputComs">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.addInputComs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addInputComs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputComs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Add the input communications adapters. The ordering should be preserved, and thus should be used to distinguish interfaces. </span>
+
+<span class="sd">            :params inputComs: A list of IInputCom objects that will be used in reading in sensor information.</span>
+<span class="sd">            :type inputComs: Iterable[IInputCom]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span> <span class="o">=</span> <span class="n">inputComs</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.addOutputComs">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.addOutputComs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addOutputComs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputComs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IOutputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Add the output communications adapters. The ordering is preserved, and thus should be used to </span>
+<span class="sd">            enumerate with the data bytes for actuation.</span>
+
+<span class="sd">            :params outputComs: A list of IOutputCom objects that will be used in actuation.</span>
+<span class="sd">            :type outputComs: Iterable[IOutputComs]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputComs</span> <span class="o">=</span> <span class="n">outputComs</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.addMeasurementList">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.addMeasurementList">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addMeasurementList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measurementList</span><span class="p">:</span> <span class="n">IMeasurementLists</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Add the measurement list as way of storing the data to be used in the logic controllers.</span>
+
+<span class="sd">            :params measurementList: The IMeasurementList object that should be used to store this RobotABCs data.</span>
+<span class="sd">            :type measurementList: IMeasurementLists</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span> <span class="o">=</span> <span class="n">measurementList</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.addSafetyControls">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.addSafetyControls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addSafetyControls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">safetyControls</span><span class="p">:</span> <span class="n">ISafetyControl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add safety control object to the RobotABC instance.</span>
+
+<span class="sd">            :params safetyControls: The ISafetyControl object to be used on this RobotABC to constrain outputs and convert.</span>
+<span class="sd">            :type safetyControls: ISafetyControls</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">safetyControl</span> <span class="o">=</span> <span class="n">safetyControls</span></div>
+
+
+    <span class="c1"># Things that should be initialized after constructor. </span>
+<div class="viewcode-block" id="RobotABC.setup">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.setup">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Executes to initialize after the constructor, but just before the control iteration starts (transient state). </span>
+<span class="sd">            Initializes the IMeasurementList.</span>
+<span class="sd">            </span>
+<span class="sd">            :params kwargs: Keyword arguments passed to controlLogic.</span>
+<span class="sd">            :type kwargs: dict[str, Any]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">controlLogic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">controlLogic</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">setupMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Things that should be initialized after constructor. This runs the transient state.</span>
+<div class="viewcode-block" id="RobotABC.simulatedSetup">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.simulatedSetup">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulatedSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Executes to initialize after the constructor, but just before the control iteration starts (transient state). </span>
+<span class="sd">            Initializes the IMeasurementList. Specifically running the simulated setups of each.</span>
+<span class="sd">            </span>
+<span class="sd">            :params kwargs: Keyword arguments passed to controlLogic simulated setup.</span>
+<span class="sd">            :type kwargs: dict[str, Any]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">controlLogic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">controlLogic</span><span class="o">.</span><span class="n">simulatedSetup</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">simulateSetupMeasurements</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="RobotABC.changeControlLogic">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.changeControlLogic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">changeControlLogic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controlLogicType</span><span class="p">:</span> <span class="n">IntEnum</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Changes the current control logic object based on the corresponding IntEnum from the controlLogicType.</span>
+
+<span class="sd">            :params controlLogicType: The IntEnum in controlLogic dictionary that should be changed to.</span>
+<span class="sd">            :type controlLogicType: IntEnum</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentControlLogic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="p">[</span><span class="n">controlLogicType</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.changeControlLogicParameters">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.changeControlLogicParameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">changeControlLogicParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controlLogicType</span><span class="p">:</span> <span class="n">IntEnum</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Calls the control logic object to change the parameters.</span>
+
+<span class="sd">            :params controlLogicType: The IntEnum of the control logic class that should have their parameters changed.</span>
+<span class="sd">            :type controlLogicType: IntEnum</span>
+<span class="sd">            :params parameters: Dictionary of keywords and values to change the control logic parameters.</span>
+<span class="sd">            :type parameters: dict[str, float | dict[str, float]]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="p">[</span><span class="n">controlLogicType</span><span class="p">]</span><span class="o">.</span><span class="n">setParameters</span><span class="p">(</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.enableActuation">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.enableActuation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enableActuation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Enables the actuation based on a boolean flag. Actuation values will still be calculated, but not performed.</span>
+
+<span class="sd">            :params enable: Whether or not actuation should be enabled.</span>
+<span class="sd">            :type enable: bool</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debugMode</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">enable</span> <span class="c1"># Enabled torque == not debug mode.</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.setCalibrationOffset">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.setCalibrationOffset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setCalibrationOffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Calls the IMeasurementLists to zero calibration offset values.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">setCalibrationOffset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RobotABC.getConfigurationParameters">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.getConfigurationParameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getConfigurationParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">controlLogicType</span><span class="p">:</span> <span class="n">IntEnum</span><span class="p">,</span> <span class="n">formatForConfiguration</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the configuration parameters for a given control logic object. May format it for configuration file needs as necessary.</span>
+
+<span class="sd">            :params controlLogicType: The IntEnum for the control logic object that should be received.</span>
+<span class="sd">            :type controlLogicType: IntEnum</span>
+<span class="sd">            :params formatForConfiguration: A boolean that indicates whether or not the return configuration should be </span>
+<span class="sd">                formatted for the data file configuration (e.g. dictionary with strings as keys instead of Enums, to preserve names).</span>
+<span class="sd">                Should be true if for file (such as exported data trial configuration), false for regular GUI management.</span>
+<span class="sd">            :type formatForConfiguration: bool</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">configurationParameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controlLogic</span><span class="p">[</span><span class="n">controlLogicType</span><span class="p">]</span><span class="o">.</span><span class="n">getConfigurationParameters</span><span class="p">(</span><span class="n">formatForConfiguration</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">configurationParameters</span></div>
+
+        
+<div class="viewcode-block" id="RobotABC.turnOnOffRobot">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.turnOnOffRobot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">turnOnOffRobot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Enables the RobotABC. The input and output interfaces are turned off. A failure to turn on the RobotABC</span>
+<span class="sd">            disables the RobotABC.</span>
+
+<span class="sd">            :params enable: Whether or not this RobotABC should be turned on or off.</span>
+<span class="sd">            :type enable: bool</span>
+
+<span class="sd">            :return: Whether or not enabling or disabling this RbbotABC was successful.</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Disable both input and output coms. In a set prevents duplicates in case of both input and output.</span>
+        <span class="n">coms</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">IComInterface</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">outputComs</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">com</span> <span class="ow">in</span> <span class="n">coms</span><span class="p">:</span>
+                <span class="n">com</span><span class="o">.</span><span class="n">turnOnOffComm</span><span class="p">(</span><span class="n">enable</span> <span class="o">=</span> <span class="n">enable</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable</span> <span class="o">=</span> <span class="n">enable</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">UnexpectedInitializationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed on turnOnOffRobot: </span><span class="si">{</span><span class="n">enable</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">coms</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Attempt to close off all other coms.</span>
+            <span class="k">for</span> <span class="n">com</span> <span class="ow">in</span> <span class="n">coms</span><span class="p">:</span>
+                <span class="n">com</span><span class="o">.</span><span class="n">turnOnOffComm</span><span class="p">(</span><span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="RobotABC.runMeasurements">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.runMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deltaTimeAll</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IMeasurementLists</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Runs the measurement collection for this cycle.</span>
+
+<span class="sd">            :params deltaTimeAll: A list of floats that refers to the amount of time between control iterations.</span>
+<span class="sd">            :type deltaTimeAll: Iterable[float]</span>
+<span class="sd">            </span>
+<span class="sd">            :return: The IMeasurementList that was updated.</span>
+<span class="sd">            :rtype: IMeasurementLists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Run the measurements on input coms.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">runMeasurements</span><span class="p">(</span><span class="n">deltaTimeAll</span> <span class="o">=</span> <span class="n">deltaTimeAll</span><span class="p">,</span> <span class="n">inputComs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputComs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span></div>
+
+    
+<div class="viewcode-block" id="RobotABC.copyMeasurements">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.copyMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copyMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">measurementDataFrameToCopy</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IMeasurementLists</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Copies the measurement data (used in simulation) to this RobotABC&#39;s IMeasurementLists.</span>
+
+<span class="sd">            :params i: The index of this current control iteration.</span>
+<span class="sd">            :type i: int</span>
+<span class="sd">            :params measurementDataFrameToCopy: The pandas Dataframe containing the relevant input data.</span>
+<span class="sd">            :type measurementDataFrameToCopy: pandas.DataFrame</span>
+<span class="sd">            </span>
+<span class="sd">            :return: The IMeasurementLists that was updated.</span>
+<span class="sd">            :rtype: IMeasurementLists</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">copyMeasurements</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">measurementDataFrameToCopy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span></div>
+
+    
+<div class="viewcode-block" id="RobotABC.runCycle">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.runCycle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runCycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeAll</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">deltaTimeAll</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
+                 <span class="n">currentCycleMeasurementLists</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">IMeasurementLists</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Runs the iteration cycle using the current IMeasurementLists and time data.</span>
+<span class="sd">        </span>
+<span class="sd">            :params timeAll: A list of times for the beginning of each iteration cycle.</span>
+<span class="sd">            :type timeAll: Iterable[float]</span>
+<span class="sd">            :params deltaTimeAll: A list of containing the amount of time in between each iteration cycle.</span>
+<span class="sd">            :type deltaTimeAll: Iterable[float]</span>
+<span class="sd">            :params currentCycleMeasurementLists: A list of IMeasurementLists (for each RobotABC for cross RobotABC dependencies)</span>
+<span class="sd">            that can be used for control.</span>
+<span class="sd">            :type currentCycleMeasurementLists: Iterable[IMeasurementLists]</span>
+
+<span class="sd">            :returns: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outputDes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentControlLogic</span><span class="o">.</span><span class="n">getDesiredOutputValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="p">,</span> <span class="n">timeAll</span><span class="p">,</span> <span class="n">deltaTimeAll</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">currentCycleMeasurementLists</span><span class="p">)</span>
+        <span class="n">outputInList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">safetyControl</span><span class="o">.</span><span class="n">runSafetyControl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="p">,</span> <span class="n">deltaTimeAll</span><span class="p">,</span> <span class="n">outputDes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="o">.</span><span class="n">recordOutputValues</span><span class="p">(</span><span class="n">outputDes</span><span class="p">,</span> <span class="n">outputInList</span><span class="p">)</span>
+        <span class="n">outputMsgData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">safetyControl</span><span class="o">.</span><span class="n">runOutputConversion</span><span class="p">(</span><span class="n">outputInList</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debugMode</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">outputCom</span><span class="p">,</span> <span class="n">outputMsgData</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputComs</span><span class="p">,</span> <span class="n">outputMsgData</span><span class="p">):</span>
+                <span class="n">outputCom</span><span class="o">.</span><span class="n">sendOutput</span><span class="p">(</span><span class="n">outputMsgData</span> <span class="o">=</span> <span class="n">outputMsgData</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="RobotABC.exportRobotData">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotABC.RobotABC.exportRobotData">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exportRobotData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NamedTuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Exports the data for the current control iteration, getting the assigned DataClass \</span>
+<span class="sd">                and the dictionary of data given by the control logic for the given control logic object.</span>
+
+<span class="sd">            :returns: Tuple of the DataClass (NamedTuple type) and dictionary of relevant information.</span>
+<span class="sd">            :rtype: tuple[NamedTuple, dict[str, float | int]]        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">controlLogicDataType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentControlLogic</span><span class="o">.</span><span class="n">DataClass</span>
+        <span class="n">robotData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentControlLogic</span><span class="o">.</span><span class="n">exportMeasurementData</span><span class="p">(</span><span class="n">measurementLists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurementLists</span><span class="p">,</span> 
+                                                                 <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">isActive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">controlLogicDataType</span><span class="p">,</span> <span class="n">robotData</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

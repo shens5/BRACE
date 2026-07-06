@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.UI.GUIController.InitializationFunctions &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.UI.GUIController.InitializationFunctions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">PySide6</span><span class="w"> </span><span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brace.UI.example.GUIController.PrefixNames</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">PrefixNames</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="setConfigurationDictionaries">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.setConfigurationDictionaries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setConfigurationDictionaries</span><span class="p">(</span><span class="n">referenceConfigurationNames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">internalDictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a dictionary of the relevant configuration elements referenced by the name for easy access.</span>
+<span class="sd">        The names are given as prefixes and the relevant widget has the L and R appended.</span>
+
+<span class="sd">        :param referenceConfigurationNames: list of configuration name prefixes</span>
+<span class="sd">        :type referenceConfigurationNames: list[str]</span>
+<span class="sd">        :param internalDictionary: Dictionary from the configuration box containing the attribute name and the widgets.</span>
+<span class="sd">        :type internalDictionary: dict[str, QtWidgets.QWidget]</span>
+<span class="sd">        :return: A consolidated dictionary of left and right widgets containing relevant parameter fields.</span>
+<span class="sd">        :rtype: dict[str, QtWidgets.QWidget]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">configurationLookup</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">referenceConfigurationNames</span><span class="p">:</span>
+        <span class="n">leftConfigurationWidgetName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">rightConfigurationWidgetName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">leftConfigurationWidgetName</span> <span class="ow">in</span> <span class="n">internalDictionary</span><span class="p">:</span>
+            <span class="n">configurationLookup</span><span class="p">[</span><span class="n">leftConfigurationWidgetName</span><span class="p">]</span> <span class="o">=</span> <span class="n">internalDictionary</span><span class="p">[</span><span class="n">leftConfigurationWidgetName</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rightConfigurationWidgetName</span> <span class="ow">in</span> <span class="n">internalDictionary</span><span class="p">:</span>
+            <span class="n">configurationLookup</span><span class="p">[</span><span class="n">rightConfigurationWidgetName</span><span class="p">]</span> <span class="o">=</span> <span class="n">internalDictionary</span><span class="p">[</span><span class="n">rightConfigurationWidgetName</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">configurationLookup</span></div>
+
+
+<div class="viewcode-block" id="setSingleConfigurationDictionaries">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.setSingleConfigurationDictionaries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setSingleConfigurationDictionaries</span><span class="p">(</span><span class="n">referenceConfigurationNames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">internalDictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Gets the configuration for any single fields that are assigned for both left and right </span>
+<span class="sd">        (and thus do not fit in the use of setConfigurationDictionaries).</span>
+
+<span class="sd">        :param referenceConfigurationNames: list of configuration name prefixes</span>
+<span class="sd">        :type referenceConfigurationNames: list[str]</span>
+<span class="sd">        :param internalDictionary: Dictionary from the configuration box containing the attribute name and the widgets.</span>
+<span class="sd">        :type internalDictionary: dict[str, QtWidgets.QWidget]</span>
+<span class="sd">        :return: A dictionary consisting of relevant single type parameter fields.</span>
+<span class="sd">        :rtype: dict[str, QtWidgets.QWidget]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">configurationLookup</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">referenceConfigurationNames</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">internalDictionary</span><span class="p">:</span>
+            <span class="n">configurationLookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">internalDictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">configurationLookup</span></div>
+
+
+<span class="c1"># This initializes limits, only for the spinboxes and double-spinboxes.</span>
+<div class="viewcode-block" id="initializeLimits">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeLimits">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initializeLimits</span><span class="p">(</span><span class="n">limitInformation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">configurationObjects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the limits for configuration objects using the information set up in the .ini</span>
+<span class="sd">        file for the minimum, maximum, and stepSize of the configuration object.</span>
+
+<span class="sd">        :param limitInformation: The minimum, maximum, and stepSize limits information for the configuration object.</span>
+<span class="sd">        :type limitInformation: dict[str, dict[str, int | float]]</span>
+<span class="sd">        :param configurationObjects: The configuration widgets dictionary that references widgets by name.</span>
+<span class="sd">        :type configurationObjects: dict[str, QtWidgets.QWidget]</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">configurationName</span><span class="p">,</span> <span class="n">configurationDict</span> <span class="ow">in</span> <span class="n">limitInformation</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">leftName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">configurationName</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">rightName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">configurationName</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">configurationObjectsToLimit</span> <span class="o">=</span> <span class="p">[</span><span class="n">configurationObjects</span><span class="p">[</span><span class="n">leftName</span><span class="p">],</span> <span class="n">configurationObjects</span><span class="p">[</span><span class="n">rightName</span><span class="p">]]</span>
+        <span class="n">minimumLimit</span> <span class="o">=</span> <span class="n">configurationDict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;minimum&quot;</span><span class="p">,</span> <span class="n">configurationObjects</span><span class="p">[</span><span class="n">leftName</span><span class="p">]</span><span class="o">.</span><span class="n">minimum</span><span class="p">())</span>
+        <span class="n">maximumLimit</span> <span class="o">=</span> <span class="n">configurationDict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;maximum&quot;</span><span class="p">,</span> <span class="n">configurationObjects</span><span class="p">[</span><span class="n">leftName</span><span class="p">]</span><span class="o">.</span><span class="n">maximum</span><span class="p">())</span>
+        <span class="n">stepSize</span> <span class="o">=</span> <span class="n">configurationDict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stepSize&quot;</span><span class="p">,</span> <span class="n">configurationObjects</span><span class="p">[</span><span class="n">leftName</span><span class="p">]</span><span class="o">.</span><span class="n">singleStep</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">configurationObject</span> <span class="ow">in</span> <span class="n">configurationObjectsToLimit</span><span class="p">:</span>
+            <span class="n">configurationObject</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="n">minimumLimit</span><span class="p">,</span> <span class="n">maximumLimit</span><span class="p">)</span>
+            <span class="n">configurationObject</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="n">stepSize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="initializeDefaultParameters">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeDefaultParameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initializeDefaultParameters</span><span class="p">(</span><span class="n">defaultParameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">configurationObjects</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the default values for the parameters that are listed in the .ini file. Currently</span>
+<span class="sd">        only QComboBox, QSpinBox, and QDoubleSpinBox are supported.</span>
+
+<span class="sd">        :param defaultParameters: The default values for the parameters in the configuration widget.</span>
+<span class="sd">        :type defaultParameters: dict[str, float]</span>
+<span class="sd">        :param configurationObjects: The configuration widgets dictionary that references widgets by name.</span>
+<span class="sd">        :type configurationObjects: dict[str, QtWidgets.QWidget]</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">defaultParameter</span><span class="p">,</span> <span class="n">defaultValue</span> <span class="ow">in</span> <span class="n">defaultParameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">leftName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">defaultParameter</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">rightName</span> <span class="o">=</span> <span class="n">PrefixNames</span><span class="o">.</span><span class="n">formatConfigurationWidgetLeg</span><span class="p">(</span><span class="n">defaultParameter</span><span class="p">,</span> <span class="n">isLeft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        
+        <span class="n">configurationObjectsToDefault</span> <span class="o">=</span> <span class="p">[</span><span class="n">configurationObjects</span><span class="p">[</span><span class="n">leftName</span><span class="p">],</span> <span class="n">configurationObjects</span><span class="p">[</span><span class="n">rightName</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">configurationObject</span> <span class="ow">in</span> <span class="n">configurationObjectsToDefault</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configurationObject</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
+                <span class="n">configurationObject</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">defaultValue</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configurationObject</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSpinBox</span><span class="p">):</span>
+                <span class="n">configurationObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">defaultValue</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configurationObject</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDoubleSpinBox</span><span class="p">):</span>
+                <span class="n">configurationObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">defaultValue</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="initializeLegEntries">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.initializeLegEntries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initializeLegEntries</span><span class="p">(</span><span class="n">legInformation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">legComboBoxLeft</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">,</span> <span class="n">legComboBoxRight</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populates the entries in the .ini file with the relevant</span>
+<span class="sd">        leg entries of the combobox.</span>
+
+<span class="sd">        :param legInformation: Dictionary containing the string and other relevant information of the leg serial.</span>
+<span class="sd">        :type legInformation: dict[str, dict]</span>
+<span class="sd">        :param legComboBoxLeft: The left combobox leg for the leg to be populated with entries.</span>
+<span class="sd">        :type legComboBoxLeft: QtWidgets.QComboBox</span>
+<span class="sd">        :param legComboBoxRight: The right combobox leg for the leg to be populated with entries.</span>
+<span class="sd">        :type legComboBoxRight: QtWidgets.QComboBox</span>
+<span class="sd">    </span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">leftLegs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rightLegs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">legName</span><span class="p">,</span> <span class="n">legParameters</span> <span class="ow">in</span> <span class="n">legInformation</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">legSide</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">legParameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;legSide&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">legSide</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+            <span class="n">leftLegs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">legName</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">legSide</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+            <span class="n">rightLegs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">legName</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in ExoskeletonControl.ini. Entry: [</span><span class="si">{</span><span class="n">legName</span><span class="si">}</span><span class="s2">]. &quot;</span> <span class="o">+</span>
+                            <span class="s2">&quot;Configuration parameter &#39;legSide&#39; must be &#39;left&#39; or &#39;right&#39;.&quot;</span><span class="p">)</span>
+    <span class="n">legComboBoxLeft</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">leftLegs</span><span class="p">)</span>
+    <span class="n">legComboBoxRight</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">rightLegs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="loadInitFile">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.loadInitFile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadInitFile</span><span class="p">(</span><span class="n">fileLocation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the .ini file, which is intended to be a toml file. It is formatted as a nested dictionary.</span>
+
+<span class="sd">        :return: A dictionary containing the information inside the .ini file.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileLocation</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">legConfigurationFile</span><span class="p">:</span>
+        <span class="n">initializationConfiguration</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">legConfigurationFile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">initializationConfiguration</span></div>
+
+
+<div class="viewcode-block" id="getDefaultsDictionary">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.getDefaultsDictionary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getDefaultsDictionary</span><span class="p">(</span><span class="n">initFileConfiguration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the subdictionary under &quot;defaults&quot;</span>
+
+<span class="sd">        :param initFileConfiguration: The default values for the configuration.</span>
+<span class="sd">        :type initFileConfiguration: dict[str, float | int]</span>
+
+<span class="sd">        :return: Subdictionary underneath the defaults header</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">initFileDefaults</span> <span class="o">=</span> <span class="n">initFileConfiguration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;defaults&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">initFileDefaults</span></div>
+
+
+<div class="viewcode-block" id="getSettingsDictionary">
+<a class="viewcode-back" href="../../../../brace.UI.GUIController.html#brace.UI.GUIController.InitializationFunctions.getSettingsDictionary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getSettingsDictionary</span><span class="p">(</span><span class="n">initFileConfiguration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the subdictionary under &quot;settings&quot;</span>
+
+<span class="sd">        :param initFileConfiguration: The default values for the configuration.</span>
+<span class="sd">        :type initFileConfiguration: dict[str, float | int]</span>
+
+<span class="sd">        :return: Subdictionary underneath the settings header</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">initFileSettings</span> <span class="o">=</span> <span class="n">initFileConfiguration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">initFileSettings</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

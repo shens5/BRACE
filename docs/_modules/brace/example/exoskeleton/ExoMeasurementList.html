@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.exoskeleton.ExoMeasurementList &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.exoskeleton.ExoMeasurementList</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.ComInterface</span><span class="w"> </span><span class="kn">import</span> <span class="n">IInputCom</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.MeasurementLists</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMeasurementLists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.CANInterface2</span><span class="w"> </span><span class="kn">import</span> <span class="n">CANInterface2</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
+
+<span class="c1">#calculates moving average for angular velocity  </span>
+<div class="viewcode-block" id="windowedMovingAverage">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.windowedMovingAverage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">windowedMovingAverage</span><span class="p">(</span><span class="n">deque</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">angularVelocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the angular velocity from the values of a deque. The values are cycled</span>
+<span class="sd">        out automatically. This creates a low pass filter for the angular velocity.</span>
+
+<span class="sd">        :param deque: A window that contains a few previous values. </span>
+<span class="sd">        :type deque: deque[float]</span>
+<span class="sd">        :param angularVelocity: The angular velocity for the current iteration.</span>
+<span class="sd">        :type angularVelocity: float</span>
+<span class="sd">        :return: The windowed angular velocity for this current iteration.</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">deque</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angularVelocity</span><span class="p">)</span>
+    <span class="n">windowedMovingAverage</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">deque</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">deque</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">windowedMovingAverage</span></div>
+
+
+<span class="c1">#calculate (windowed) angular velocity and append it to corresponding vector</span>
+<div class="viewcode-block" id="calculateVelocity">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.calculateVelocity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculateVelocity</span><span class="p">(</span><span class="n">angleMesAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">deltaTime</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">deque</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the velocity for the knee angle measurements. Both angular velocity</span>
+<span class="sd">        and the windowed angular velocity are determined.</span>
+
+<span class="sd">        :param angleMesAll: The deque containing the knee angle measurements.</span>
+<span class="sd">        :type angleMesAll: deque[float]</span>
+<span class="sd">        :param deltaTime: The amount of time between the control iterations.</span>
+<span class="sd">        :type deltaTime: float</span>
+<span class="sd">        :param deque: The deque containing the previous knee angle measurements in a window.</span>
+<span class="sd">        :type deque: deque[float]</span>
+<span class="sd">        :return: The tuple containing the angular velocity and the windowed angular velocity.</span>
+<span class="sd">        :rtype: tuple[float, float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">angularVelocity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">angleMesAll</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">angleMesAll</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">deltaTime</span>
+    <span class="n">windowedAngularVelocity</span> <span class="o">=</span> <span class="n">windowedMovingAverage</span><span class="p">(</span><span class="n">deque</span><span class="p">,</span> <span class="n">angularVelocity</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">angularVelocity</span><span class="p">,</span> <span class="n">windowedAngularVelocity</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeasurementLists</span><span class="p">(</span><span class="n">IMeasurementLists</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        MeasurementLists for the exoskeleton.</span>
+<span class="sd">        There are lists for knee angle, force, desired torque, corrected torque,</span>
+<span class="sd">        the angular velocity, the window angular velocity. Data is recorded</span>
+<span class="sd">        in these lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MAX_LEN</span> <span class="o">=</span> <span class="mi">15000</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueDesAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueInAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angularVelocityAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="o">.</span><span class="n">MAX_LEN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="p">:</span> <span class="n">deque</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MeasurementLists.setupMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setupMeasurements">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputComs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The initial setup for the measurements which creates the first set of</span>
+<span class="sd">            measurements.</span>
+
+<span class="sd">            :param inputComs: The list of input communications interfaces that should be used</span>
+<span class="sd">            for gathering sensor information.</span>
+<span class="sd">            :type inputComs: list[IInputCom]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Run first measurement</span>
+        <span class="n">angleMes</span><span class="p">,</span> <span class="n">forceMes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readMeasurements</span><span class="p">(</span><span class="n">inputComs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angleMes</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forceMes</span><span class="p">)</span>
+
+        <span class="c1"># Placeholder value for angular velocity, windowed angular velocity, and torque.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueDesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueInAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.simulateSetupMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.simulateSetupMeasurements">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulateSetupMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Separate function that initializes the measurements for the first set of measurements.</span>
+<span class="sd">            These are just set to 0 to prevent off-by-one-errors.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Run first measurement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Placeholder value for angular velocity, windowed angular velocity, and torque.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueDesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueInAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.setCalibrationOffset">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.setCalibrationOffset">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setCalibrationOffset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputComs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Samples the calibration offset from the angle measurement.</span>
+<span class="sd">            Future measurements are subtracted from this calibration offset.</span>
+<span class="sd">            Calibration could also be sampled from previous n samples.</span>
+
+<span class="sd">            :param inputComs: The list of input communications interfaces that should be used</span>
+<span class="sd">            for gathering sensor information.</span>
+<span class="sd">            :type inputComs: list[IInputCom]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">angleMeasurement</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readMeasurements</span><span class="p">(</span><span class="n">inputComs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span> <span class="o">=</span> <span class="n">angleMeasurement</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.calculateWindowedAngularVelocity">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.calculateWindowedAngularVelocity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculateWindowedAngularVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputComs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">],</span> <span class="n">deltaTime</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Calculates the windowed angular velocity. Only runs if the input communication is available.</span>
+<span class="sd">            Otherwise it is measured as 0 in the lists.</span>
+
+<span class="sd">            :param inputComs: List of input communications interfaces for gathering sensor information.</span>
+<span class="sd">            :type: inputComs: list[IInputCom]</span>
+<span class="sd">            :param deltaTime: The amount of time between control iterations.</span>
+<span class="sd">            :type deltaTime: float</span>
+<span class="sd">            :return: The tuple containing the angular and window angular velocity.</span>
+<span class="sd">            :rtype: tuple[float, float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">angularVelocity</span><span class="p">,</span> <span class="n">windowedAngularVelocity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">inputComs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isComOn</span><span class="p">():</span>
+            <span class="n">angularVelocity</span><span class="p">,</span> <span class="n">windowedAngularVelocity</span> <span class="o">=</span> <span class="n">calculateVelocity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="p">,</span>
+                                                                         <span class="n">deltaTime</span><span class="p">,</span>
+                                                                         <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">angularVelocity</span><span class="p">,</span> <span class="n">windowedAngularVelocity</span></div>
+
+
+    <span class="c1"># This probably should be part of MeasurementLists which is custom made to read in the values from </span>
+    <span class="c1"># this CAN Interface and I2C in the future. The calibrationOffset should be a part of MeasurementLists.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_readMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputComs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">angleMes</span><span class="p">,</span> <span class="n">forceMes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">canCom</span> <span class="o">=</span> <span class="n">inputComs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">canCom</span><span class="o">.</span><span class="n">isComOn</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">canCom</span><span class="p">,</span> <span class="n">CANInterface2</span><span class="p">):</span>
+            <span class="n">angleMesAll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span>
+            <span class="n">forceMesAll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span>
+
+            <span class="c1"># Add offset back to match raw encoder readout (without offset) from previous measurement.</span>
+            <span class="n">previousAngleMesAll</span> <span class="o">=</span> <span class="n">angleMesAll</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span> <span class="k">if</span> <span class="n">angleMesAll</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span>
+            <span class="n">previousForceMesAll</span> <span class="o">=</span> <span class="n">forceMesAll</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">forceMesAll</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+            <span class="n">encoderAngle</span> <span class="o">=</span> <span class="n">canCom</span><span class="o">.</span><span class="n">printEncoder</span><span class="p">()</span>
+            <span class="n">angleMes</span> <span class="o">=</span> <span class="n">encoderAngle</span> <span class="k">if</span> <span class="n">encoderAngle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">previousAngleMesAll</span>
+
+            <span class="n">fsrMes</span> <span class="o">=</span> <span class="n">canCom</span><span class="o">.</span><span class="n">printFSR</span><span class="p">()</span>
+            <span class="n">forceMes</span> <span class="o">=</span> <span class="n">fsrMes</span> <span class="k">if</span> <span class="n">fsrMes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">previousForceMesAll</span>
+
+        <span class="k">return</span> <span class="n">angleMes</span><span class="p">,</span> <span class="n">forceMes</span>
+    
+<div class="viewcode-block" id="MeasurementLists.copyMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.copyMeasurements">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copyMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">measurementDataFrameToCopy</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Copies the measurements from the pandas DataFrame to this MeasurementList</span>
+<span class="sd">            This is particularly used in simulation, by simply placing the input values.</span>
+
+<span class="sd">            Consider the cases:</span>
+<span class="sd">                - Normal data (non-NaN) -&gt; means active exo leg replaying.</span>
+<span class="sd">                - None object -&gt; means data is not available, the exo leg was never on during the entire session.</span>
+<span class="sd">                - NaN data -&gt; means either exo leg was off at this time or we use this to denote that it switched controllers.</span>
+<span class="sd">                    - Currently you can&#39;t switch exo legs on/off during a session (may change in the future).</span>
+<span class="sd">                    - Thus exo leg data being off would be represented by None object. NaN represents only switched controllers then.</span>
+
+<span class="sd">            :param i: The iteration number that should be placed into the MeasurementList</span>
+<span class="sd">            :type i: int</span>
+<span class="sd">            :param measurementDataFrameToCopy: The pandas DataFrame where data should be copied from.</span>
+<span class="sd">            :type measurementDataFrameToCopy: pandas.DataFrame</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">measurementDataFrameToCopy</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="n">measurementDataFrameToCopy</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">measurementDataFrameToCopy</span><span class="p">[</span><span class="s1">&#39;thetaDotWin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">measurementDataFrameToCopy</span><span class="p">[</span><span class="s1">&#39;fsr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># For none object (disabled the entire time) set to zeroes, a proper change is denoted with NaN, not a real datapoint.</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.runMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.runMeasurements">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deltaTimeAll</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">inputComs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">IInputCom</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            This evaluates the measurements from the angle encoder and FSR and copies it to the MeasurementList. </span>
+<span class="sd">            Returns these values back so that they can be used in the other leg&#39;s checks.</span>
+
+<span class="sd">            :param deltaTimeAll: The list of times in between control loop iterations.</span>
+<span class="sd">            :type deltaTimeAll: list[float]</span>
+<span class="sd">            :param inputComs: The list of input communications interfaces.</span>
+<span class="sd">            :type inputComs: list[IInputComs]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#read encoders (FSR and angles) and append data to vectors, if encoder output is None, use the prior reading </span>
+        <span class="n">angleMes</span><span class="p">,</span> <span class="n">forceMes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readMeasurements</span><span class="p">(</span><span class="n">inputComs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angleMes</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrationOffset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forceMes</span><span class="p">)</span>
+
+        <span class="c1">#calculate (windowed) angular velocity and append it to corresponding vector</span>
+        <span class="n">angularVelocity</span><span class="p">,</span> <span class="n">windowedAngularVelocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateWindowedAngularVelocity</span><span class="p">(</span><span class="n">inputComs</span><span class="p">,</span> <span class="n">deltaTimeAll</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angularVelocity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">windowedAngularVelocity</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.recordOutputValues">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.recordOutputValues">[docs]</a>
+    <span class="nd">@override</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recordOutputValues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputDes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">outputIn</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Records the output values before and after safety checks to the MeasurementLists.</span>
+<span class="sd">            </span>
+<span class="sd">            :param outputDes: The list of outputs before safety checks.</span>
+<span class="sd">            :type outputDes: list[float]</span>
+<span class="sd">            :param outputIn: The list of outputs after safety checks.</span>
+<span class="sd">            :type outputIn: list[float]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">[</span><span class="n">torqueValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputDes</span>
+        <span class="p">[</span><span class="n">torqueValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputIn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueDesAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torqueValue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torqueInAll</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torqueValue</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getAngleMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngleMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getAngleMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the deque of knee angle measurements.</span>
+<span class="sd">            :return: Knee angle measurements</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angleMesAll</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getForceMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getForceMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getForceMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the deque of FSR measurements.</span>
+<span class="sd">            :return: FSR measurements</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forceMesAll</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getTorqueDesiredMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueDesiredMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getTorqueDesiredMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the deque of torque (pre-safety check) outputs.</span>
+<span class="sd">            :return: Torque outputs (pre-safety check)</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">torqueDesAll</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getTorqueInMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getTorqueInMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getTorqueInMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the deque of torque (post-safety check) outputs.</span>
+<span class="sd">            :return: Torque outputs (post-safety check)</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">torqueInAll</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getAngularVelocityMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getAngularVelocityMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getAngularVelocityMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the deque of angular velocity measurements.</span>
+<span class="sd">            :return: Angular velocity measurements</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angularVelocityAll</span></div>
+
+
+<div class="viewcode-block" id="MeasurementLists.getWindowedAngularVelocityMeasurements">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ExoMeasurementList.MeasurementLists.getWindowedAngularVelocityMeasurements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getWindowedAngularVelocityMeasurements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the windowed angular velocity measurements.</span>
+<span class="sd">            :return: Windowed angular velocity measurements</span>
+<span class="sd">            :rtype: deque[float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowedAngularVelocityAll</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

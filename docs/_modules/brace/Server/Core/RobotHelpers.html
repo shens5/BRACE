@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.Server.Core.RobotHelpers &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.Server.Core.RobotHelpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; This is a separate file for helper functions that have uses in both ControlLogic level and RobotABC level which correspond to </span>
+<span class="sd">    a more specific vs global scope of parameters that would be used (e.g. RobotABC level enforces a maximum slew limit, while ControlLogic enforces a more local one</span>
+<span class="sd">    depending on state).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="checkSlewRate">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotHelpers.checkSlewRate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">checkSlewRate</span><span class="p">(</span><span class="n">torqueNow</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">torquePast</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">deltaTime</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">maxSlew</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that caps the slew rate of an output value of the current iteration</span>
+<span class="sd">        to prevent excess changes in acceleration.</span>
+
+<span class="sd">        :param torqueNow: The calculated output value before checks this iteration.</span>
+<span class="sd">        :type torqueNow: float</span>
+<span class="sd">        :param torquePast: The output value used last iteration.</span>
+<span class="sd">        :type torquePast: float</span>
+<span class="sd">        :param deltaTime: The time between the last iteration and the current one in seconds.</span>
+<span class="sd">        :type deltaTime: float</span>
+<span class="sd">        :param maxSlew: The maximum change between the two output values per second.</span>
+<span class="sd">        :type maxSlew: float</span>
+<span class="sd">        :return: The output value adjusted based on the max slew rate (capped if above limit).</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#input: Nm, Nm, sec, Nm/sec</span>
+    <span class="c1">#output: Nm</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Slew</span> <span class="o">=</span> <span class="p">(</span><span class="n">torqueNow</span> <span class="o">-</span> <span class="n">torquePast</span><span class="p">)</span> <span class="o">/</span> <span class="n">deltaTime</span>
+        <span class="k">except</span> <span class="ne">RuntimeWarning</span><span class="p">:</span> <span class="c1"># May trigger when deltatime is 0 (dividing by zero)</span>
+            <span class="n">Slew</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Just set this to 0 (may trigger at the beginning during simulation)</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Slew</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxSlew</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Slew</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">TorqueIn</span> <span class="o">=</span> <span class="n">torquePast</span> <span class="o">+</span> <span class="n">maxSlew</span><span class="o">*</span><span class="n">deltaTime</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">TorqueIn</span> <span class="o">=</span> <span class="n">torquePast</span> <span class="o">-</span> <span class="n">maxSlew</span><span class="o">*</span><span class="n">deltaTime</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">TorqueIn</span> <span class="o">=</span> <span class="n">torqueNow</span>
+    <span class="k">return</span> <span class="n">TorqueIn</span></div>
+
+
+<div class="viewcode-block" id="capTorqueFromAngle">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotHelpers.capTorqueFromAngle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">capTorqueFromAngle</span><span class="p">(</span><span class="n">torqueDes</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">currentAngle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">extAngleLimit</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">flexAngleLimit</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets torque to 0 if beyond extension and flexion angle limits.</span>
+<span class="sd">    </span>
+<span class="sd">        :params torqueDes: The torque to use for this iteration cycle</span>
+<span class="sd">        :type torqueDes: float</span>
+<span class="sd">        :params currentAngle: The current angle in this iteration cycle.</span>
+<span class="sd">        :type currentAngle: float</span>
+<span class="sd">        :params extAngleLimit: The minimum angle limit before torque is set to 0.</span>
+<span class="sd">        :type extAngleLimit: float</span>
+<span class="sd">        :params flexAngleLimit: The maximum angle limit before torque is set to 0.</span>
+<span class="sd">        :type flexAngleLimit: float</span>
+<span class="sd">        :return: The adjusted torque after comparing between these limits.</span>
+<span class="sd">        :rtype: float </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torqueDes</span> <span class="k">if</span> <span class="n">extAngleLimit</span> <span class="o">&lt;</span> <span class="n">currentAngle</span> <span class="o">&lt;</span> <span class="n">flexAngleLimit</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+
+
+<div class="viewcode-block" id="hysteresis2">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotHelpers.hysteresis2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hysteresis2</span><span class="p">(</span><span class="n">timeData</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">functionConditions</span><span class="p">:</span> <span class="n">HysteresisParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns whether or not a condition has been maintained for a desired</span>
+<span class="sd">        time before a state is changed. This is performed by looking back in time.</span>
+
+<span class="sd">        :params timeData: Time data that is stored in RobotAssemblyABC.</span>
+<span class="sd">        :type timeData: Iterable[float]</span>
+<span class="sd">        :params functionConditions: A HysteresisParameters object that defines the conditions \</span>
+<span class="sd">        collection, and amount of time the condition must be satisfied before considered True.</span>
+<span class="sd">        :type functionConditions: HysteresisParameters</span>
+<span class="sd">        :return: Whether or not the conditions have been satisifed for long enough.</span>
+<span class="sd">        :rtype: HysteresisParameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">currentTime</span> <span class="o">=</span> <span class="n">timeData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">hysteresisTime</span> <span class="o">=</span> <span class="n">functionConditions</span><span class="o">.</span><span class="n">hysteresisTime</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">while</span> <span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeData</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="ow">and</span> <span class="n">currentTime</span> <span class="o">-</span> <span class="n">timeData</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">hysteresisTime</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">measurementCollectionLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">functionConditions</span><span class="o">.</span><span class="n">measurementCollection</span><span class="p">)</span>
+    <span class="c1"># Empirically faster than numpy eq. (even despite vectorization? Takes half the time)</span>
+    <span class="n">iterationSlice</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">functionConditions</span><span class="o">.</span><span class="n">measurementCollection</span><span class="p">,</span> 
+                            <span class="n">measurementCollectionLength</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">measurementCollectionLength</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">testCondition</span> <span class="o">=</span> <span class="p">[</span><span class="n">functionConditions</span><span class="o">.</span><span class="n">lambdaCondition</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterationSlice</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">testCondition</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hysteresisMultiple">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotHelpers.hysteresisMultiple">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hysteresisMultiple</span><span class="p">(</span><span class="n">timeData</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">functionConditions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HysteresisParameters</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks multiple hysteresis conditions to verify all conditions are true.</span>
+
+<span class="sd">        :params timeData: Time data that is stored in RobotAssemblyABC</span>
+<span class="sd">        :type timeData: Iterable[float]</span>
+<span class="sd">        :params functionConditions: A list of HysteresisParameters whose conditions should be checked.</span>
+<span class="sd">        :type functionConditions: list[HysteresisParameters]</span>
+<span class="sd">        :return: Whether or not all hysteresis conditions are satisfied.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hysteresisTrue</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">hysteresisParameter</span> <span class="ow">in</span> <span class="n">functionConditions</span><span class="p">:</span>
+        <span class="n">hysteresisTrue</span> <span class="o">=</span> <span class="n">hysteresisTrue</span> <span class="ow">and</span> <span class="n">hysteresis2</span><span class="p">(</span><span class="n">timeData</span><span class="p">,</span> <span class="n">hysteresisParameter</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hysteresisTrue</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">hysteresisTrue</span></div>
+
+
+<div class="viewcode-block" id="HysteresisParameters">
+<a class="viewcode-back" href="../../../../brace.Server.Core.html#brace.Server.Core.RobotHelpers.HysteresisParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HysteresisParameters</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        HysteresisParameters are for evaluating all the values of a certain measurement (up to a certain hysteresisTime) back in time.</span>
+<span class="sd">        In order for hysteresis to be considered true, all values have to return true when evaluated by the lambdaCondition.</span>
+<span class="sd">        A successful hysteresis signals long enough stability to switch a state.</span>
+
+<span class="sd">        NamedTuple that contains</span>
+<span class="sd">            lambdaCondition - a callable that contains a float and returns a bool (for evaluating across all values in measurementCollection).</span>
+<span class="sd">            measurementCollection - an iterable of floats in the measurementList that should be measured against. Values checked are paired with time iterable.</span>
+<span class="sd">            hysteresisTime - the length of how long hysteresis should be checked for previous measurement values. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lambdaCondition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>
+    <span class="n">measurementCollection</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">hysteresisTime</span><span class="p">:</span> <span class="nb">float</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

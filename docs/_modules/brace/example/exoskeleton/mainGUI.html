@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.exoskeleton.mainGUI &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.exoskeleton.mainGUI</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QApplication</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.LoggingHelpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextBrowserHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.example.MainWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">MainWindow</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">brace.UI.GUIController.InitializationFunctions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">InitFunc</span>
+
+<span class="c1"># Handles uncaught exceptions.</span>
+<div class="viewcode-block" id="handleException">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.mainGUI.handleException">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handleException</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">__excepthook__</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Uncaught exception&quot;</span><span class="p">,</span> <span class="n">exc_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.mainGUI.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Logger debug has to be set to the &quot;lowest&quot; level</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">.</span><span class="si">%(msecs)03d</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> 
+                                  <span class="n">datefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Log handler for the text browser</span>
+    <span class="n">textBrowserHandler</span> <span class="o">=</span> <span class="n">TextBrowserHandler</span><span class="p">()</span>
+    <span class="n">textBrowserHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">textBrowserHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">textBrowserHandler</span><span class="p">)</span>
+
+    <span class="c1"># Log handler for the standard output.</span>
+    <span class="n">streamHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> 
+    <span class="n">streamHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">streamHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">streamHandler</span><span class="p">)</span>
+
+    <span class="c1"># Log handling for file GUI.</span>
+    <span class="n">fileFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">.</span><span class="si">%(msecs)03d</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1">, [</span><span class="si">%(pathname)s</span><span class="s1">, </span><span class="si">%(filename)s</span><span class="s1">, </span><span class="si">%(module)s</span><span class="s1">, </span><span class="si">%(funcName)s</span><span class="s1">, </span><span class="si">%(lineno)d</span><span class="s1">]: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> 
+                                  <span class="n">datefmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">dirPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>   
+    <span class="n">logsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirPath</span><span class="p">,</span> <span class="s1">&#39;logs&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">logFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S_GUI.log&#39;</span><span class="p">))</span>
+    <span class="n">fileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">logFileName</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">fileFormatter</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fileHandler</span><span class="p">)</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">excepthook</span> <span class="o">=</span> <span class="n">handleException</span>
+    
+    <span class="c1"># Reads the init file and then starts the main window.</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session ended at </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">scriptDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">initFileConfiguration</span> <span class="o">=</span> <span class="n">InitFunc</span><span class="o">.</span><span class="n">loadInitFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scriptDirectory</span><span class="p">,</span> <span class="s2">&quot;ExoskeletonControl.ini&quot;</span><span class="p">))</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mainWindow</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">textBrowserHandler</span><span class="p">,</span> <span class="n">initFileConfiguration</span><span class="p">)</span>
+    <span class="n">mainWindow</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
+    <span class="n">mainWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span></div>
+
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;logger&#39;</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

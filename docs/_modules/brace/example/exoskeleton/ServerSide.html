@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.example.exoskeleton.ServerSide &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.example.exoskeleton.ServerSide</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Process</span><span class="p">,</span> <span class="n">RLock</span><span class="p">,</span> <span class="n">freeze_support</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.BionicPowerActuatorProcess.CANReader</span><span class="w"> </span><span class="kn">import</span> <span class="n">createCANPrimitives</span><span class="p">,</span> <span class="n">runMultiCAN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.CANInterface2</span><span class="w"> </span><span class="kn">import</span> <span class="n">CANInterface2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ExoLeg</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExoLeg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ExoController</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExoController</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.Core.RemoteProcedureCallHandler</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteProcedureCallHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ExoMeasurementList</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeasurementLists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.SlewSafetyChecks</span><span class="w"> </span><span class="kn">import</span> <span class="n">SlewSafetyChecks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ControlLogicLookup</span><span class="w"> </span><span class="kn">import</span> <span class="n">ControlLogicEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.Server.GPIOSynch.PushButton</span><span class="w"> </span><span class="kn">import</span> <span class="n">ButtonPress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.example.exoskeleton.ControlLogic.ControlLogicDefaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">createControlLogics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brace.UI.GUIController.InitializationFunctions</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadInitFile</span><span class="p">,</span> <span class="n">getDefaultsDictionary</span><span class="p">,</span> <span class="n">getSettingsDictionary</span>
+
+<span class="c1"># To log uncaught exceptions.</span>
+<div class="viewcode-block" id="handleException">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ServerSide.handleException">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handleException</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">__excepthook__</span><span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Uncaught exception&quot;</span><span class="p">,</span> <span class="n">exc_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">excType</span><span class="p">,</span> <span class="n">excValue</span><span class="p">,</span> <span class="n">excTraceback</span><span class="p">))</span></div>
+
+        
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../brace.example.exoskeleton.html#brace.example.exoskeleton.ServerSide.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting Server...&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Logger debug has to be set to the &quot;lowest&quot; level</span>
+
+    <span class="n">fileFormatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2">.</span><span class="si">%(msecs)03d</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">, [</span><span class="si">%(pathname)s</span><span class="s2">, </span><span class="si">%(filename)s</span><span class="s2">, </span><span class="si">%(module)s</span><span class="s2">, </span><span class="si">%(funcName)s</span><span class="s2">, </span><span class="si">%(lineno)d</span><span class="s2">]: </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> 
+                                  <span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+    <span class="n">dirPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>   
+    <span class="n">logsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirPath</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">logFileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logsPath</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S_Controller.log&quot;</span><span class="p">))</span>
+    <span class="n">fileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">logFileName</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">fileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">fileFormatter</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fileHandler</span><span class="p">)</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">excepthook</span> <span class="o">=</span> <span class="n">handleException</span>
+    <span class="n">scriptDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">initFileConfiguration</span> <span class="o">=</span> <span class="n">loadInitFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scriptDirectory</span><span class="p">,</span> <span class="s2">&quot;ExoskeletonControl.ini&quot;</span><span class="p">))</span>
+    <span class="n">initDefaults</span> <span class="o">=</span> <span class="n">getDefaultsDictionary</span><span class="p">(</span><span class="n">initFileConfiguration</span><span class="p">)</span>
+    <span class="n">initSettings</span> <span class="o">=</span> <span class="n">getSettingsDictionary</span><span class="p">(</span><span class="n">initFileConfiguration</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting ExoController process.&quot;</span><span class="p">)</span>
+    <span class="n">remoteProcedureHandler</span> <span class="o">=</span> <span class="n">RemoteProcedureCallHandler</span><span class="p">(</span><span class="n">initSettings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;commandTopic&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+    <span class="c1"># Two CAN reader/writer (left and right) are run in different processes for parallelism.</span>
+    <span class="n">canReaderProcess1</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">runMultiCAN</span><span class="p">,</span>
+                                  <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">canReader1</span><span class="p">,</span> <span class="n">stopEnable1</span><span class="p">,</span> <span class="n">canQueue1</span><span class="p">,</span> <span class="n">kneeAngle1</span><span class="p">,</span> <span class="n">fsr1</span><span class="p">,</span> <span class="n">canEnable1</span><span class="p">),</span>
+                                  <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">canReaderProcess0</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">runMultiCAN</span><span class="p">,</span>
+                                  <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">canReader0</span><span class="p">,</span> <span class="n">stopEnable0</span><span class="p">,</span> <span class="n">canQueue0</span><span class="p">,</span> <span class="n">kneeAngle0</span><span class="p">,</span> <span class="n">fsr0</span><span class="p">,</span> <span class="n">canEnable0</span><span class="p">),</span>
+                                  <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">canReaderProcess1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">canReaderProcess0</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># Layers that are created for the exoskeleton. CANInterface2 is the input/output interface for the knee angle, FSR/Actuator combo.4</span>
+    <span class="c1"># Multiple interfaces should be placed in the list if there are multiple sensors to be used.</span>
+    <span class="n">leftCom</span> <span class="o">=</span> <span class="p">[</span><span class="n">CANInterface2</span><span class="p">(</span><span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">canReaderQueue</span> <span class="o">=</span> <span class="n">canQueue1</span><span class="p">,</span> <span class="n">kneeAngle</span> <span class="o">=</span> <span class="n">kneeAngle1</span><span class="p">,</span> <span class="n">fsr</span> <span class="o">=</span> <span class="n">fsr1</span><span class="p">,</span> <span class="n">canEnable</span> <span class="o">=</span> <span class="n">canEnable1</span><span class="p">)]</span>
+    <span class="n">rightCom</span> <span class="o">=</span> <span class="p">[</span><span class="n">CANInterface2</span><span class="p">(</span><span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">canReaderQueue</span> <span class="o">=</span> <span class="n">canQueue0</span><span class="p">,</span> <span class="n">kneeAngle</span> <span class="o">=</span> <span class="n">kneeAngle0</span><span class="p">,</span> <span class="n">fsr</span> <span class="o">=</span> <span class="n">fsr0</span><span class="p">,</span> <span class="n">canEnable</span> <span class="o">=</span> <span class="n">canEnable0</span><span class="p">)]</span>
+
+    <span class="c1"># Layer that handles all of the sensor data and any desired recording of output data internally for control iterations.</span>
+    <span class="n">leftMeasurementList</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="p">()</span>
+    <span class="n">rightMeasurementList</span> <span class="o">=</span> <span class="n">MeasurementLists</span><span class="p">()</span>
+
+    <span class="c1"># Layer that handles all of the safety checks for both actuators. These tend to be more hardcoded maximum parameters.</span>
+    <span class="n">leftSafetyCheck</span> <span class="o">=</span> <span class="n">SlewSafetyChecks</span><span class="p">(</span><span class="n">extTorquePositive</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                       <span class="n">MAX_SLEW_RATE</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="c1">#nm/s</span>
+                                       <span class="n">MAX_EXT_TORQUE</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="c1">#nm</span>
+                                       <span class="n">MAX_FLEX_TORQUE</span> <span class="o">=</span> <span class="o">-</span><span class="mi">13</span><span class="p">)</span> <span class="c1">#nm</span>
+    
+    <span class="n">rightSafetyCheck</span> <span class="o">=</span> <span class="n">SlewSafetyChecks</span><span class="p">(</span><span class="n">extTorquePositive</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                                       <span class="n">MAX_SLEW_RATE</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span> <span class="c1">#nm/s</span>
+                                       <span class="n">MAX_EXT_TORQUE</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="c1">#nm</span>
+                                       <span class="n">MAX_FLEX_TORQUE</span> <span class="o">=</span> <span class="o">-</span><span class="mi">13</span><span class="p">)</span> <span class="c1">#nm</span>
+
+    <span class="c1"># This is the main class that runs the execution of all of the robots, initializing with the FSM5 control logic.</span>
+    <span class="n">controllerProducer</span> <span class="o">=</span> <span class="n">ExoController</span><span class="p">(</span><span class="n">initialControlLogicType</span> <span class="o">=</span> <span class="n">ControlLogicEnum</span><span class="o">.</span><span class="n">FSM5</span><span class="p">,</span>
+                                       <span class="n">numRobots</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                                       <span class="n">controlLogic</span> <span class="o">=</span> <span class="n">createControlLogics</span><span class="p">(</span><span class="n">initDefaults</span><span class="p">),</span>
+                                       <span class="n">UPDATE_RATE_PER_SECOND</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+                                       <span class="n">robotImplementation</span> <span class="o">=</span> <span class="n">ExoLeg</span><span class="p">,</span>
+                                       <span class="n">dataTopicName</span> <span class="o">=</span> <span class="n">initSettings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dataTopicName&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                       <span class="n">remoteHostTopicTemplate</span> <span class="o">=</span> <span class="n">initSettings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;remoteHostTopic&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    
+    <span class="c1"># Set up all the layers. These are zipped to the robots that were created in ExoController. Run as a separate process.</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setInputComInterface</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">leftCom</span><span class="p">,</span> <span class="n">rightCom</span><span class="p">]))</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setOutputComInterface</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">leftCom</span><span class="p">,</span> <span class="n">rightCom</span><span class="p">]))</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setMeasurementLists</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">leftMeasurementList</span><span class="p">,</span> <span class="n">rightMeasurementList</span><span class="p">]))</span>
+    <span class="n">controllerProducer</span><span class="o">.</span><span class="n">setSafetyControl</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">leftSafetyCheck</span><span class="p">,</span> <span class="n">rightSafetyCheck</span><span class="p">]))</span>
+    <span class="n">producerProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">controllerProducer</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">timeSynchronizationCondition</span><span class="p">,),</span> <span class="n">kwargs</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sendEnd&#39;</span><span class="p">:</span> <span class="n">multiprocessingQueue</span><span class="p">},</span> <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># The button is created as a separate process that generates data to the data topic. Initialized to pin 24, at 100 Hz.</span>
+    <span class="n">hasButton</span> <span class="o">=</span> <span class="n">initSettings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;hasTrigger&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hasButton</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Trigger process.&quot;</span><span class="p">)</span>
+        <span class="n">buttonProducer</span> <span class="o">=</span> <span class="n">ButtonPress</span><span class="p">(</span><span class="n">buttonPin</span> <span class="o">=</span> <span class="mi">24</span><span class="p">,</span> <span class="n">UPDATE_RATE_PER_SECOND</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">controllerProducer</span><span class="o">.</span><span class="n">getSharedStartTime</span><span class="p">(),</span> 
+                                     <span class="n">triggerTopicName</span> <span class="o">=</span> <span class="n">initSettings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;triggerTopicName&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">buttonProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">buttonProducer</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">timeSynchronizationCondition</span><span class="p">,),</span> <span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">controllerProducer</span><span class="o">.</span><span class="n">addSendDataEvent</span><span class="p">(</span><span class="n">buttonProducer</span><span class="o">.</span><span class="n">sendData</span><span class="p">)</span> <span class="c1"># The controller handles when button sends data (previous attempts at a manager to handle both in a separate process) yielded slow GUI.</span>
+        <span class="n">buttonProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">producerProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done... Ready to serve!&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># The main process starts the remote procedure handling. This reads in the messages into the queue to be read for the ExoController.</span>
+        <span class="n">remoteProcedureHandler</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">multiprocessingQueue</span> <span class="o">=</span> <span class="n">multiprocessingQueue</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="c1"># Parent intercepted Ctrl-C: perform graceful shutdown</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;KeyboardInterrupt: shutting down child process...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;KeyboardInterrupt: shutting down child process...&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Graceful shutdown sequence</span>
+        <span class="c1"># Tell child to stop reading/writing</span>
+        <span class="n">multiprocessingQueue</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">controllerProducer</span><span class="o">.</span><span class="n">stopProcess</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">hasButton</span><span class="p">:</span>
+            <span class="n">buttonProducer</span><span class="o">.</span><span class="n">stopProcess</span><span class="p">()</span>
+ 
+        <span class="n">stopEnable1</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">canEnable1</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">stopEnable0</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">canEnable0</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">canQueue1</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;Sentinel&quot;</span><span class="p">)</span>
+        <span class="n">canQueue0</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;Sentinel&quot;</span><span class="p">)</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="c1"># Wait for the queue to clear out. Probably would be better to use a proper Condition variable.</span>
+
+        <span class="n">canQueue1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">canQueue0</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">canReaderProcess1</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">canReaderProcess1</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Child 1 did not exit in time; terminating.&quot;</span><span class="p">)</span>
+            <span class="n">canReaderProcess1</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+        <span class="n">canReaderProcess0</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">canReaderProcess0</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Child 0 did not exit in time; terminating.&quot;</span><span class="p">)</span>
+            <span class="n">canReaderProcess0</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shutdown complete. Session ended at </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">freeze_support</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create the locking primitives that are shared between the CAN processes and the interfaces.</span>
+    <span class="n">canReader1</span><span class="p">,</span> <span class="n">stopEnable1</span><span class="p">,</span> <span class="n">canEnable1</span><span class="p">,</span> <span class="n">canQueue1</span><span class="p">,</span> <span class="n">kneeAngle1</span><span class="p">,</span> <span class="n">fsr1</span> <span class="o">=</span> <span class="n">createCANPrimitives</span><span class="p">(</span><span class="n">channel</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">canReader0</span><span class="p">,</span> <span class="n">stopEnable0</span><span class="p">,</span> <span class="n">canEnable0</span><span class="p">,</span> <span class="n">canQueue0</span><span class="p">,</span> <span class="n">kneeAngle0</span><span class="p">,</span> <span class="n">fsr0</span> <span class="o">=</span> <span class="n">createCANPrimitives</span><span class="p">(</span><span class="n">channel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">multiprocessingQueue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">multiprocessingQueue</span><span class="o">.</span><span class="n">cancel_join_thread</span><span class="p">()</span>
+    <span class="n">canQueue0</span><span class="o">.</span><span class="n">cancel_join_thread</span><span class="p">()</span>
+    <span class="n">canQueue1</span><span class="o">.</span><span class="n">cancel_join_thread</span><span class="p">()</span>
+    <span class="n">timeSynchronizationLock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+    <span class="n">timeSynchronizationCondition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">timeSynchronizationLock</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

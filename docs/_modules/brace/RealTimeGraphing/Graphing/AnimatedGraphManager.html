@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>brace.RealTimeGraphing.Graphing.AnimatedGraphManager &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../../_static/documentation_options.js?v=bba0d692"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for brace.RealTimeGraphing.Graphing.AnimatedGraphManager</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dill</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.animation</span><span class="w"> </span><span class="kn">import</span> <span class="n">FuncAnimation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.artist</span><span class="w"> </span><span class="kn">import</span> <span class="n">Artist</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.DataStream</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataStream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqtgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphicsLayoutWidget</span><span class="p">,</span> <span class="n">PlotItem</span><span class="p">,</span> <span class="n">PlotDataItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">queue</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MismatchedTupleException">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.MismatchedTupleException">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchedTupleException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Raised for differences between the size of the tuple from the producer and the total number of datasets in the graph being drawn. &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="RealTimeType">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.RealTimeType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RealTimeType</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Enum for classifying two types of real time drawing. &quot;&quot;&quot;</span>
+    <span class="n">WRAPAROUND</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">SLIDING_WINDOW</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="FigureAxes">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.FigureAxes">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FigureAxes</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_default_pass</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">GraphicsLayoutWidget</span> <span class="o">|</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">GraphicsLayoutWidget</span> <span class="o">|</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">],</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span> <span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Needed only for Matplotlib&#39;s background animation in blitting.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span> <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">FigureAxes</span><span class="o">.</span><span class="n">_default_pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnimatedGraphManager</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Class that manages a set of animated plots and stores in the data internally.</span>
+<span class="sd">        This serves as a consumer of a queue that takes in a NamedTuple that </span>
+<span class="sd">        contains n number of measurements and a timestamp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TRIAL_TIME</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">FPS</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">realTimeType</span><span class="p">:</span> <span class="n">RealTimeType</span> <span class="o">=</span> <span class="n">RealTimeType</span><span class="o">.</span><span class="n">WRAPAROUND</span><span class="p">,</span>
+                 <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            :param TRIAL_TIME: Used in fixed length trial times, specifically for Matplotlib. Mostly deprecated for pyqtgraph.</span>
+<span class="sd">            :type TRIAL_TIME: float</span>
+<span class="sd">            :param FPS: The attempted frames per second that should be targeted for Matplotlib. Also mostly deprecated for pyqtgraph.</span>
+<span class="sd">            :type FPS: int</span>
+<span class="sd">            :param realTimeType: The type of real time graph that details what happens when it reaches the right side. </span>
+<span class="sd">                WRAPAROUND represents the graph reaching the end before wrapping around from the left.</span>
+<span class="sd">                SLIDING_WINDOW represents the graph reaches the end and the view of the data moves forward in time.</span>
+<span class="sd">            :type realTimeType: RealTimeType</span>
+<span class="sd">            :param backend: Either &quot;matplotlib&quot; or &quot;pyqtgraph&quot;. The types of the parameters should also correspond to which backend used.</span>
+<span class="sd">            i.e. GraphicsLayoutWidget, list[PlotItem] for &quot;pyqtgraph&quot; and Figure and np.ndarray[Axes] for &quot;matplotlib&quot;.</span>
+<span class="sd">            :type backend: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TRIAL_TIME</span> <span class="o">=</span> <span class="n">TRIAL_TIME</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DRAW_UPDATE_TIME</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">FPS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataStream</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figureAxes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FigureAxes</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FuncAnimation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">realTimeType</span> <span class="o">=</span> <span class="n">realTimeType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isStreaming</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">performanceTimer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previousTime</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AnimatedGraphManager.addNewDatastream">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.addNewDatastream">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addNewDatastream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span> <span class="o">|</span> <span class="n">GraphicsLayoutWidget</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">],</span>
+                         <span class="n">namedTupleType</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">propertyDataMapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Line2D</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PlotDataItem</span><span class="p">],</span> 
+                         <span class="n">graphDownSampleRate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">MAX_TIME_RANGE</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Axes</span><span class="p">],</span> <span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Registers a new NamedTuple type and the corresponding plots and lines to be graphed.</span>
+
+<span class="sd">            :param fig: Preconfigured figure from plt.subplots(). Or the GraphicsLayoutWidget that is in the GUI.</span>
+<span class="sd">            :type fig: matplotlib.figure.Figure | pyqtgraph.GraphicsLayoutWidget</span>
+<span class="sd">            :param ax: Axes preconfigured from plt.subplots() or handcreated for pyqtgraph. </span>
+<span class="sd">                Most likely a 2D array used to manipulate the subplots.</span>
+<span class="sd">            :type ax: numpy.ndarray[matplotlib.axes.Axes] | numpy.ndarray[PlotItem]</span>
+<span class="sd">            :param namedTupleType: A NamedTuple implementation (type) that represents a datapoint for this particular datastream.</span>
+<span class="sd">            :type namedTupleType: type</span>
+<span class="sd">            :param propertyDataMapping: A dictionary mapping between the lines and the instance variables</span>
+<span class="sd">                of the namedTupleType.</span>
+<span class="sd">            :type propertyDataMapping: dict[str, Line2D] | dict[str, PlotDataItem]</span>
+<span class="sd">            :param graphDownSampleRate: The number of samples in between a datapoint when real time graphing.</span>
+<span class="sd">            :type graphDownSampleRate: int</span>
+<span class="sd">            :param MAX_TIME_RANGE: The length of time in seconds that the graphing will sample (i.e. from the last datapoint, how far back it should start).</span>
+<span class="sd">            :type MAX_TIME_RANGE: float</span>
+<span class="sd">            :param func: Callback function that handles the final drawing of the graph after finishing the real time graph.</span>
+<span class="sd">            :type func: Callable[[Figure, np.ndarray[Axes], dict], None]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">associatedAxes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="n">PlotItem</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># Set of subplots who have at least one line in the Datastream</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">:</span>
+            <span class="n">axis</span><span class="p">:</span> <span class="n">Axes</span>
+            <span class="n">datalines</span><span class="p">:</span> <span class="n">Line2D</span>
+            <span class="k">for</span> <span class="n">datalines</span> <span class="ow">in</span> <span class="n">propertyDataMapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">datalines</span><span class="p">:</span>
+                    <span class="n">associatedAxes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">datalines</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;pyqtgraph&#39;</span><span class="p">:</span>
+            <span class="n">axis</span><span class="p">:</span> <span class="n">PlotItem</span>
+            <span class="k">for</span> <span class="n">datalines</span> <span class="ow">in</span> <span class="n">propertyDataMapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
+                    <span class="n">axisLines</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">axis</span><span class="o">.</span><span class="n">listDataItems</span><span class="p">())</span>
+
+                    <span class="k">if</span> <span class="n">datalines</span> <span class="ow">in</span> <span class="n">axisLines</span><span class="p">:</span>
+                        <span class="n">associatedAxes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+            
+        <span class="n">associatedAxes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">associatedAxes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="p">[</span><span class="n">namedTupleType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">associatedAxes</span><span class="p">,</span> <span class="n">propertyDataMapping</span><span class="p">,</span> <span class="n">namedTupleType</span><span class="p">,</span> 
+                                                      <span class="n">graphDownSampleRate</span> <span class="o">=</span> <span class="n">graphDownSampleRate</span><span class="p">,</span> <span class="n">MAX_TIME_RANGE</span> <span class="o">=</span> <span class="n">MAX_TIME_RANGE</span><span class="p">,</span> <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figureAxes</span><span class="p">[</span><span class="n">namedTupleType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">FigureAxes</span><span class="p">(</span><span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">func</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="AnimatedGraphManager.getQueue">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getQueue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Queue</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the multiprocessing queue that should be used for queuing NamedTuple messages.</span>
+<span class="sd">            </span>
+<span class="sd">            :return: Multiprocessing queue that the AnimatedGraphManager should use for</span>
+<span class="sd">            reading datapoints.</span>
+<span class="sd">            :rtype: multiprocessing.Queue</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span></div>
+
+    
+<div class="viewcode-block" id="AnimatedGraphManager.setQueue">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setQueue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Supplies a multiprocessing queue (other than the one created automatically in the AnimatedGraphManager)</span>
+<span class="sd">            that should be used for reading datapoints in this AnimatedGraphManager.</span>
+
+<span class="sd">            :param queue: The multiprocessing queue to read from.</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager.setupAnimation">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.setupAnimation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupAnimation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets up an matplotlib animation for the figure. Blitting is done to</span>
+<span class="sd">            increase performance.</span>
+
+<span class="sd">            :param fig: The matplotlib figure to be animated.</span>
+<span class="sd">            :type fig: Figure</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DRAW_UPDATE_TIME_MS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DRAW_UPDATE_TIME</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">animations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drawAnimation</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">),</span> <span class="n">interval</span> <span class="o">=</span> <span class="n">DRAW_UPDATE_TIME_MS</span><span class="p">,</span> <span class="n">cache_frame_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                        <span class="n">blit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">repeat</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span></div>
+
+    
+    
+<div class="viewcode-block" id="AnimatedGraphManager.clearQueues">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.clearQueues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clearQueues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Empties the multiprocessing queue to remove old datapoints that may be in the queue</span>
+<span class="sd">            to prevent leakages into future plots.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                    <span class="k">pass</span> <span class="c1"># Explicitly mask the queue.Empty</span>
+        <span class="k">except</span> <span class="ne">ConnectionResetError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;AnimatedGraphManager Queue was forcibly closed by remote host.&quot;</span><span class="p">)</span></div>
+
+            
+    <span class="c1"># Close the queues</span>
+<div class="viewcode-block" id="AnimatedGraphManager.close">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Closes the queue for any processing. Commands other than setting</span>
+<span class="sd">            the multiprocessing queue are not considered safe.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager.reset">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Resets the datalines in this AnimatedGraphManager for all data.</span>
+<span class="sd">            Flags for streaming are also reset. This should be performed</span>
+<span class="sd">            every stream session.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">datastream</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isStreaming</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager.getCounter">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.getCounter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getCounter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager.qtRun">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtRun">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">qtRun</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function should be run in the background (thread-level parallelism) when data streaming</span>
+<span class="sd">            is executed. This parses the datapoints, but does not draw them outright. For pyqtgraph plots.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isStreaming</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="n">nextFrameTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">225</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseDatapoints</span><span class="p">(</span><span class="n">maxPoints</span> <span class="o">=</span> <span class="mi">250</span><span class="p">)</span>
+            <span class="n">sleepTime</span> <span class="o">=</span> <span class="n">nextFrameTime</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">sleepTime</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Sleep until the next frame</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleepTime</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="AnimatedGraphManager.qtDraw">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.qtDraw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">qtDraw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">GraphicsLayoutWidget</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function should be executed periodically on a timer (QTimer works well) during data streaming.</span>
+<span class="sd">            This plots the datapoints of the figure given; not all figures are drawn as an optimization.</span>
+
+<span class="sd">            :param fig: The GraphicsLayoutWidget or Figure whose plots should be drawn using the currently available</span>
+<span class="sd">                datapoints.</span>
+<span class="sd">            :type fig: GraphicsLayoutWidget</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">performanceTimer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drawAnimation</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">:</span>
+            <span class="c1"># TODO: Still need to update these so that each figure has an empty background</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bg</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">copy_from_bbox</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">restore_region</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">draw_artist</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">flush_events</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parseDatapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxPoints</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Parses the datapoints, filtering out messages that don&#39;t have registered</span>
+        <span class="c1"># NamedTuples to them.</span>
+        <span class="n">collectedDatapoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_receiveDatapoints</span><span class="p">(</span><span class="n">queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">,</span> <span class="n">maxPoints</span> <span class="o">=</span> <span class="n">maxPoints</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">collectedDatapoints</span><span class="p">:</span>
+            <span class="n">filteredDatapoints</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="p">,</span> <span class="n">collectedDatapoints</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">namedTupleType</span><span class="p">,</span> <span class="n">nameTuplePoint</span> <span class="ow">in</span> <span class="n">filteredDatapoints</span><span class="p">:</span>
+                <span class="n">mappedMergedDatapoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergeDataPointsToDataStream</span><span class="p">(</span><span class="n">nameTuplePoint</span><span class="p">)</span>
+                <span class="n">mergedTimeData</span> <span class="o">=</span> <span class="n">mappedMergedDatapoints</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span> <span class="c1"># Remove &#39;t&#39; and merge it to the datastream</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="p">[</span><span class="n">namedTupleType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span><span class="o">.</span><span class="n">updateTime</span><span class="p">(</span><span class="n">mergedTimeData</span><span class="p">)</span>
+                <span class="k">for</span> <span class="nb">property</span><span class="p">,</span> <span class="n">mergedDatapoints</span> <span class="ow">in</span> <span class="n">mappedMergedDatapoints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="p">[</span><span class="n">namedTupleType</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span><span class="o">.</span><span class="n">updatePoints</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="n">mergedTimeData</span><span class="p">,</span> <span class="n">mergedDatapoints</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AnimatedGraphManager.noAnimation">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.noAnimation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">noAnimation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function simply parses all of the data until all the data is empty.</span>
+<span class="sd">            This is most useful in plotting static plots, such as those with the Simulator.</span>
+
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseDatapoints</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AnimatedGraphManager.mplStart">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.mplStart">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mplStart</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Main loop that reads the queue and updates the plot, within a specific time frame. </span>
+<span class="sd">            This is a legacy plotting to be used with Matplotlib.</span>
+<span class="sd">        </span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Dataset to (Figure, Axes) assumptions.</span>
+        <span class="c1"># One Figure + Axes can have multiple Datastreams.</span>
+        <span class="c1"># There can be multiple Figure + Axes (means multiple windows, or pages in GUI). Each having at least one Dataset.</span>
+        <span class="c1"># One datastream cannot be passed around multiple Figure + Axes. </span>
+        <span class="c1"># Each Figure + Axes should be only drawn once per frame. There should only be one animation per Figure (thus one animation per datastream).</span>
+        <span class="c1"># Axes is part of the figure. But there isn&#39;t a simple way to get this relationship from PyQtGraph.</span>
+        <span class="c1">#   - Each animation to its figure should only have its datastreams drawn and not any other figure&#39;s datastreams.</span>
+        <span class="c1">#       - Thus there needs to be some relationship between a single figure and its datastreams where it can reference which lines need to be updated.</span>
+        <span class="c1">#       - Action: Assigning figures and collecting the datastreams via NamedTupleType. Then passing a list of these datastreams to __drawAnimation.  </span>
+        <span class="c1"># Each Figure + Axes should be able to be attached a hook at the end of the Final Draw. But only once per Figure.</span>
+        <span class="c1">#   - NamedTuple reference to Figure + Axes might still be best way, but know that it still has access to parts of the figure that don&#39;t apply. </span>
+        <span class="c1">#       - Conflicting changes will mean that whatever is last done stays. </span>
+        <span class="c1"># Multiple AnimatedGraphManagers is off the table because we still want multiple datastreams in a single file.</span>
+        <span class="n">uniqueFigures</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Figure</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">figureAxes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">figureAxes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">uniqueFigures</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">figureAxes</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">uniqueFigures</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+        <span class="n">frameCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">drawStartTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="c1"># time.time is okay, this timing doesn&#39;t need to be very precise, save that for the actual data processes.</span>
+        <span class="n">endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">TRIAL_TIME</span>
+        <span class="n">figuresChanged</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Figure</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">endTime</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="n">nextFrameTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">DRAW_UPDATE_TIME</span>
+            <span class="n">figuresChanged</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseDatapoints</span><span class="p">(</span><span class="n">maxPoints</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="n">frameCount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">figuresChanged</span><span class="p">:</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">start_event_loop</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span> <span class="c1"># unlike plt.pause(0.0001), this doesn&#39;t force window focus.</span>
+            <span class="n">sleepTime</span> <span class="o">=</span> <span class="n">nextFrameTime</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">sleepTime</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Sleep until the next frame</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleepTime</span><span class="p">)</span>
+        <span class="c1"># print(f&quot;FPS: {frameCount/(time.time() - drawStartTime)}&quot;)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">animation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">animations</span><span class="p">:</span>
+                <span class="n">animation</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span> <span class="c1"># Stop the animation loop after ending.</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_receiveDatapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">maxPoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedTuple</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Polls the queue for namedtuples and collates them into a list, </span>
+<span class="sd">            until it reads that the queue is empty. Since the producer creates at a higher rate</span>
+<span class="sd">            than the consumer, batching these datapoints together should be practical than one-to-one appending. </span>
+<span class="sd">            </span>
+<span class="sd">            :params queue: Queue that is shared between the producer and the consumer (the AnimatedGraphManager).</span>
+<span class="sd">            :type queue: multiprocessing.Queue</span>
+<span class="sd">            :param maxPoints: The maximum number of points to read per data read.</span>
+<span class="sd">            :type maxPoints: int</span>
+<span class="sd">            :return: Dictionary of list of NamedTuples, arranged by type.</span>
+<span class="sd">            :rtype: dict[type, list[NamedTuple]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sortedDataTuples</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedTuple</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># empty() isn&#39;t necessarily reliable due to race conditions. Neither is qsize(). Mutexes though would be even less ideal.</span>
+        <span class="c1"># If the update rate is too high, a regular computer might not be able to keep up. maxPoints was created to exit early to process data in the intermediate moment.</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">binTupleIntoSortedDataTuples</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">:</span> <span class="n">NamedTuple</span><span class="p">):</span>
+            <span class="c1"># Bin the tuple into the dictionary of arrays.</span>
+            <span class="n">dataStreamPointsList</span> <span class="o">=</span> <span class="n">sortedDataTuples</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">),</span> <span class="p">[])</span>
+            <span class="n">dataStreamPointsList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">queue</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span> <span class="ow">and</span> <span class="n">points</span> <span class="o">&lt;</span> <span class="n">maxPoints</span><span class="p">:</span> 
+                <span class="k">try</span><span class="p">:</span>
+                    
+                    <span class="n">dataTuple</span><span class="p">:</span> <span class="n">NamedTuple</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedTuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span> <span class="o">=</span> <span class="mf">0.0001</span><span class="p">)</span>
+
+                    <span class="c1"># Load it if it&#39;s not pickleable (very unsafe...). Loads in the bytestream.</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dill</span><span class="o">.</span><span class="n">pickles</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">):</span>
+                        <span class="n">dataTuple</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">)</span>
+
+                    <span class="c1"># Either is a list or individualized tuples.</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">tupleInList</span> <span class="ow">in</span> <span class="n">dataTuple</span><span class="p">:</span>
+                            <span class="n">binTupleIntoSortedDataTuples</span><span class="p">(</span><span class="n">tupleInList</span><span class="p">)</span>
+                        <span class="n">points</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">binTupleIntoSortedDataTuples</span><span class="p">(</span><span class="n">dataTuple</span><span class="p">)</span>
+                        <span class="n">points</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                    <span class="k">pass</span> <span class="c1"># Explicitly silence the error.</span>
+            <span class="k">return</span> <span class="n">sortedDataTuples</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionResetError</span><span class="p">,</span> <span class="ne">ConnectionAbortedError</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;AnimatedGraphManager Queue was forcibly closed by remote host.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Must be the same NamedTuple in the list</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mergeDataPointsToDataStream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listOfTuples</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedTuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="n">datastreamPoints</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tup</span> <span class="ow">in</span> <span class="n">listOfTuples</span><span class="p">:</span>
+            <span class="n">tupleDictionary</span> <span class="o">=</span> <span class="n">tup</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span> <span class="c1"># Lop off the time parameter. </span>
+            <span class="k">for</span> <span class="nb">property</span><span class="p">,</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">tupleDictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dataStreamPointsList</span> <span class="o">=</span> <span class="n">datastreamPoints</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">property</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">dataStreamPointsList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">datastreamPoints</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_drawAnimation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">GraphicsLayoutWidget</span> <span class="o">|</span> <span class="n">Figure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Line2D</span> <span class="o">|</span> <span class="n">PlotDataItem</span><span class="p">]:</span>
+        <span class="c1"># Private function that updates the graphs.</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">datastream</span><span class="p">:</span> <span class="n">DataStream</span>
+        <span class="c1"># Figure out which configuration to draw.</span>
+        <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">datastream</span><span class="o">.</span><span class="n">fig</span> <span class="o">==</span> <span class="n">fig</span><span class="p">:</span> <span class="c1"># TODO: There&#39;s got to be a better way to filter these out.</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">realTimeType</span> <span class="o">==</span> <span class="n">RealTimeType</span><span class="o">.</span><span class="n">WRAPAROUND</span><span class="p">:</span>
+                    <span class="n">datastream</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">realTimeType</span> <span class="o">==</span> <span class="n">RealTimeType</span><span class="o">.</span><span class="n">SLIDING_WINDOW</span><span class="p">:</span>
+                    <span class="n">datastream</span><span class="o">.</span><span class="n">drawSlidingWindow</span><span class="p">()</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">getLines</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">lines</span>
+    
+<div class="viewcode-block" id="AnimatedGraphManager.drawFinalGraph">
+<a class="viewcode-back" href="../../../../brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.AnimatedGraphManager.AnimatedGraphManager.drawFinalGraph">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drawFinalGraph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Draws the final graph with all of the datapoints added and with the x-axis and y-axis limits updated to fit the dataset.</span>
+<span class="sd">        </span>
+<span class="sd">            :param kwargs: Dictionary of keywords that should be applied to the callback function.</span>
+<span class="sd">            :type kwargs: dict[str, Any]</span>
+<span class="sd">            :return: None</span>
+<span class="sd">            :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">datastream</span><span class="p">:</span> <span class="n">DataStream</span>
+        <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">datastream</span><span class="o">.</span><span class="n">drawFinal</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">figureAxes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">figureAxes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">figureAxes</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">figureAxes</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">figureAxes</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># Hook for whatever custom changes the user wants to do before showing the plot.</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+                <span class="n">figureAxes</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span> <span class="c1"># This is needed for the final draw on the GUI. The plt.show() doesn&#39;t do anything.</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># But this is needed for standalone plot drawing. The canvas is drawn, but the plt.show() keeps the figure on the screen.</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../brace.html">brace package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
