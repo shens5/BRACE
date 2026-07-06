@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.Server.Core package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.Server.GPIOSynch package" href="brace.Server.GPIOSynch.html" />
+    <link rel="prev" title="brace.Server package" href="brace.Server.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-server-core-package">
+<h1>brace.Server.Core package<a class="headerlink" href="#brace-server-core-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.Server.Core.ComInterface">
+<span id="brace-server-core-cominterface-module"></span><h2>brace.Server.Core.ComInterface module<a class="headerlink" href="#module-brace.Server.Core.ComInterface" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IComInterface">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ComInterface.</span></span><span class="sig-name descname"><span class="pre">IComInterface</span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IComInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IComInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generic interface for communications (both input and output) in relation to this framework.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IComInterface.isComOn">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">isComOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IComInterface.isComOn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IComInterface.isComOn" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a bool on whether the communication interface is active (and ready to send commands).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool representing active communication interface.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IComInterface.turnOnOffComm">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">turnOnOffComm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IComInterface.turnOnOffComm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IComInterface.turnOnOffComm" title="Link to this definition">¶</a></dt>
+<dd><p>Activates or deactivates this communication interface. Returns bool on whether or not it succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> (<em>bool</em>) – True if interface should be active. False otherwise.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bool on whether or not a successful change of “active/inactive” has been made.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IInputCom">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ComInterface.</span></span><span class="sig-name descname"><span class="pre">IInputCom</span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IInputCom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IInputCom" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.Server.Core.ComInterface.IComInterface" title="brace.Server.Core.ComInterface.IComInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">IComInterface</span></code></a></p>
+<p>Input Communications Interface. No methods are listed as it is the responsibility of the
+subclass to determine sensors (and how they relate to IMeasurementLists, which a list of these IInputComs).
+Up to the subclass to figure out what methods it needs to print out (and how it connects with the IMeasurementLists)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IOutputCom">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ComInterface.</span></span><span class="sig-name descname"><span class="pre">IOutputCom</span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IOutputCom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IOutputCom" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.Server.Core.ComInterface.IComInterface" title="brace.Server.Core.ComInterface.IComInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">IComInterface</span></code></a></p>
+<p>Output Communications interface responsible for handling how output is directed toward actuators or 
+other device.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.IOutputCom.sendOutput">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sendOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputMsgData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#IOutputCom.sendOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.IOutputCom.sendOutput" title="Link to this definition">¶</a></dt>
+<dd><p>Sends commands to the output communications interface. outputMsgData is paired against the iterable containing
+IOutputComs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputMsgData</strong> (<em>bytes</em>) – The command to send to the output communications interface. 
+Note that this is a single value sent to the output communication.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.NullCom">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ComInterface.</span></span><span class="sig-name descname"><span class="pre">NullCom</span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#NullCom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.NullCom" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><code class="xref py py-class docutils literal notranslate"><span class="pre">IInputCom</span></code></a>, <a class="reference internal" href="#brace.Server.Core.ComInterface.IOutputCom" title="brace.Server.Core.ComInterface.IOutputCom"><code class="xref py py-class docutils literal notranslate"><span class="pre">IOutputCom</span></code></a></p>
+<p>Empty class that is used in the simulation for input and output communications.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.NullCom.isComOn">
+<span class="sig-name descname"><span class="pre">isComOn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#NullCom.isComOn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.NullCom.isComOn" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a bool on whether the communication interface is active (and ready to send commands).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool representing active communication interface.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.NullCom.sendOutput">
+<span class="sig-name descname"><span class="pre">sendOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputMsgData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#NullCom.sendOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.NullCom.sendOutput" title="Link to this definition">¶</a></dt>
+<dd><p>Sends commands to the output communications interface. outputMsgData is paired against the iterable containing
+IOutputComs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputMsgData</strong> (<em>bytes</em>) – The command to send to the output communications interface. 
+Note that this is a single value sent to the output communication.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.NullCom.turnOnOffComm">
+<span class="sig-name descname"><span class="pre">turnOnOffComm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#NullCom.turnOnOffComm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.NullCom.turnOnOffComm" title="Link to this definition">¶</a></dt>
+<dd><p>Activates or deactivates this communication interface. Returns bool on whether or not it succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> (<em>bool</em>) – True if interface should be active. False otherwise.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bool on whether or not a successful change of “active/inactive” has been made.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="brace.Server.Core.ComInterface.UnexpectedInitializationError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ComInterface.</span></span><span class="sig-name descname"><span class="pre">UnexpectedInitializationError</span></span><a class="reference internal" href="_modules/brace/Server/Core/ComInterface.html#UnexpectedInitializationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ComInterface.UnexpectedInitializationError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code></p>
+<p>Raised for issues when turnOnOffComm is attempted for turn on, but does not work.</p>
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.ControlLogic">
+<span id="brace-server-core-controllogic-module"></span><h2>brace.Server.Core.ControlLogic module<a class="headerlink" href="#module-brace.Server.Core.ControlLogic" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.ControlLogic.</span></span><span class="sig-name descname"><span class="pre">IControlLogic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interface for each control logic class that defines the discrete behavior to run.
+Each IControlLogic should have a DataClass which is a NamedTuple. &lt;/br&gt;
+Notably, one of these attributes has to be t, which represents the time value for that particular datapoint.
+The other NamedTuple elements have to be positioned in the 
+same order that the dataset lines were added in initial configuration of the subplots
+(and must follow row-major order. E.g. for a figure with subplots of size 5,2, 
+starts with subplot 0,0; 0,1; 1,0; 1,1; 2,0; 2,1… 5,1).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.DataClass">
+<span class="sig-name descname"><span class="pre">DataClass</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NamedTuple</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.DataClass" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.exportMeasurementData">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exportMeasurementData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isActive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.exportMeasurementData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.exportMeasurementData" title="Link to this definition">¶</a></dt>
+<dd><p>A function to format the data of the current RobotABC and related values of the logic controller. Should return a dictionary
+using the names in the NamedTuple that is assigned to this IControlLogic for message passing. A disabled RobotABC
+should return relevant data formatted as NaN to indicate that it is disabled. Data from all RobotABCs are collated together
+into a single NamedTuple.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>measurementLists</strong> (<a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><em>IMeasurementLists</em></a>) – The measurement list that is associated with this RobotABC (and logic controller).</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – The current index of this RobotABC and logic controller (used for discerning the current RobotABC).</p></li>
+<li><p><strong>isActive</strong> (<em>bool</em>) – A flag to determine whether the RobotABC is “active”. Should return dictionaries with NaNs if inactive.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary NamedTuple names and their respective values to be used in the datapoint.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, float | int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.getConfigurationParameters">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">getConfigurationParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formatForConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.getConfigurationParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.getConfigurationParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Used for retrieving a subset of relevant parameters that may be modified in a ControlLogic. Should return a dictionary of a subset of values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>formatForConfiguration</strong> (<em>bool</em>) – A boolean that indicates whether or not the return configuration 
+should be formatted for the data file configuration (e.g. dictionary with strings as 
+keys instead of Enums, to preserve names). Should be true if for file (such as exported 
+data trial configuration), false for regular GUI management.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of relevant values that are used by the ControlLogic (that may vary for each person).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, float | dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.getDesiredOutputValues">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">getDesiredOutputValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currentCycleMeasurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.getDesiredOutputValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.getDesiredOutputValues" title="Link to this definition">¶</a></dt>
+<dd><p>Intended to run the entirety of the control logic for the particular controller type including any state change. 
+Should return a parameter indicating numerical value that represents actuator movement (such as actuator position or torque).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enable</strong> (<em>bool</em>) – A flag to determine “active” (set to defaults otherwise). Will still run otherwise.</p></li>
+<li><p><strong>timeData</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable of timesteps.</p></li>
+<li><p><strong>deltaTime</strong> (<em>float</em>) – The time between this current time step and the last one.</p></li>
+<li><p><strong>currentCycleMeasurementLists</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><em>IMeasurementLists</em></a><em>]</em>) – An iterable of measurementLists. One leg may potentially use the measurements of another leg.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterable of actuating values of one or more actuators (depending on how many are one leg).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterable[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.getRespectiveMeasurementList">
+<span class="sig-name descname"><span class="pre">getRespectiveMeasurementList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">currentCycleMeasurementList</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.getRespectiveMeasurementList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.getRespectiveMeasurementList" title="Link to this definition">¶</a></dt>
+<dd><p>A helper method to get the respective measurement list for the leg it belongs to 
+(assuming that measurements and legs are linked pairwise).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentCycleMeasurementList</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><em>IMeasurementLists</em></a><em>]</em>) – A container with MeasurementLists (all of the measurements).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current leg’s MeasurementList.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists">IMeasurementLists</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.setParameters">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">setParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.setParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.setParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Used for modifying the parameters of a certain ControlLogic. Parameters are stored in dictionary format.
+Some input validation may be done at this step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – Dictionary of key-value pairs that are used to update the instance variables used in the logic controller.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.setup">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.setup" title="Link to this definition">¶</a></dt>
+<dd><p>To be run on the “first” time before any real measurements are performed. 
+This includes having any placeholder values before execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Dictionary pairing for any keywords in initialization.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.ControlLogic.IControlLogic.simulatedSetup">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">simulatedSetup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/ControlLogic.html#IControlLogic.simulatedSetup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.ControlLogic.IControlLogic.simulatedSetup" title="Link to this definition">¶</a></dt>
+<dd><p>To be run on the “first” time before any real measurements are performed, as run by simulator. 
+This includes having any placeholder values before execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Dictionary pairing for any keywords in initialization.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.MeasurementLists">
+<span id="brace-server-core-measurementlists-module"></span><h2>brace.Server.Core.MeasurementLists module<a class="headerlink" href="#module-brace.Server.Core.MeasurementLists" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.MeasurementLists.</span></span><span class="sig-name descname"><span class="pre">IMeasurementLists</span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container object that retains generic sensor data and output data. These datapoints are intended to be
+aligned in length with the time stored in RobotAssemblyABC. Thus specific control logic state should ideally be held
+in the IControlLogic class itself. The data stored in this container is passed as a parameter for IControlLogic
+and is used in exporting data for the iteration.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.copyMeasurements">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">copyMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurementDataFrameToCopy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.copyMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.copyMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Used for copying measurements from one master list to the measurements for offline logic controller evaluation.
+This is done clockstep to clockstep with the integer i. All the relevant inputs should be copied, but leave out any outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<em>int</em>) – the step at which a measurement is copied into this measurementList</p></li>
+<li><p><strong>measurementListToCopy</strong> (<em>pandas.DataFrame</em>) – A master dataframe by which to copy input measurements from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.recordOutputValues">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">recordOutputValues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputDes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.recordOutputValues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.recordOutputValues" title="Link to this definition">¶</a></dt>
+<dd><p>The torque values before and after safety controls are passed in. This may be recorded into the measurement list. 
+Otherwise, keep this as pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputDes</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable of one or more actual torque desired (if there is more than one actuator)</p></li>
+<li><p><strong>outputIn</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable of one or more actual torque actuation values (if there is more than one actuator)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.runMeasurements">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">runMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.runMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.runMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Reads input measurements for a cycle using the input interfaces set at the RobotABC level. Should also perform any
+derived measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deltaTimeAll</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – an iterable containing the times between timesteps.</p></li>
+<li><p><strong>inputComs</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><em>IInputCom</em></a><em>]</em>) – an iterable containing the input communciations interfaces for receiving measurements.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.setCalibrationOffset">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">setCalibrationOffset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.setCalibrationOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.setCalibrationOffset" title="Link to this definition">¶</a></dt>
+<dd><p>Zeroes the measurements at the current value by creating an offset. This may be done for some or all of the measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputComs</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><em>IInputCom</em></a><em>]</em>) – An iterable of the input interfaces for getting input measurements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.setupMeasurements">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">setupMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.setupMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.setupMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the first iteration. Where values don’t have instantaneous meaning (like velocity), fill with 0s or NaNs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.MeasurementLists.IMeasurementLists.simulateSetupMeasurements">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">simulateSetupMeasurements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/MeasurementLists.html#IMeasurementLists.simulateSetupMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.MeasurementLists.IMeasurementLists.simulateSetupMeasurements" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Runs the first iteration during a simulated run. Where values don’t have instantaneous meaning (like velocity),</dt><dd><p>fill with 0s or NaNs.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.RemoteProcedureCallHandler">
+<span id="brace-server-core-remoteprocedurecallhandler-module"></span><h2>brace.Server.Core.RemoteProcedureCallHandler module<a class="headerlink" href="#module-brace.Server.Core.RemoteProcedureCallHandler" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RemoteProcedureCallHandler.</span></span><span class="sig-name descname"><span class="pre">RemoteProcedureCallHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commandTopic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/RemoteProcedureCallHandler.html#RemoteProcedureCallHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler.onMessage">
+<span class="sig-name descname"><span class="pre">onMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MQTTMessage</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/RemoteProcedureCallHandler.html#RemoteProcedureCallHandler.onMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler.onMessage" title="Link to this definition">¶</a></dt>
+<dd><p>The callback for when a PUBLISH message is received from the server, which places the command message to be served.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiprocessingQueue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Queue</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RemoteProcedureCallHandler.html#RemoteProcedureCallHandler.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RemoteProcedureCallHandler.RemoteProcedureCallHandler.start" title="Link to this definition">¶</a></dt>
+<dd><p>Starts the asynchronous loop for reading MQTT messages. The relevant messages
+are written to the multiprocessingQueue to be used in RobotAssemblyABC to be executed before
+the next iteration is performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params multiprocessingQueue<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Queue that holds pickled messages of RPC functions to call.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.RobotABC">
+<span id="brace-server-core-robotabc-module"></span><h2>brace.Server.Core.RobotABC module<a class="headerlink" href="#module-brace.Server.Core.RobotABC" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotABC.</span></span><span class="sig-name descname"><span class="pre">RobotABC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">IntEnum</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#brace.Server.Core.ControlLogic.IControlLogic" title="brace.Server.Core.ControlLogic.IControlLogic"><span class="pre">IControlLogic</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debugMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialControlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A functional robotic set of input and output communications interfaces and safety control layers that
+behave under a set of control logic classes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.addInputComs">
+<span class="sig-name descname"><span class="pre">addInputComs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.addInputComs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.addInputComs" title="Link to this definition">¶</a></dt>
+<dd><p>Add the input communications adapters. The ordering should be preserved, and thus should be used to distinguish interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params inputComs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of IInputCom objects that will be used in reading in sensor information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.addMeasurementList">
+<span class="sig-name descname"><span class="pre">addMeasurementList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementList</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.addMeasurementList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.addMeasurementList" title="Link to this definition">¶</a></dt>
+<dd><p>Add the measurement list as way of storing the data to be used in the logic controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params measurementList<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The IMeasurementList object that should be used to store this RobotABCs data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.addOutputComs">
+<span class="sig-name descname"><span class="pre">addOutputComs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputComs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IOutputCom" title="brace.Server.Core.ComInterface.IOutputCom"><span class="pre">IOutputCom</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.addOutputComs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.addOutputComs" title="Link to this definition">¶</a></dt>
+<dd><p>Add the output communications adapters. The ordering is preserved, and thus should be used to 
+enumerate with the data bytes for actuation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params outputComs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of IOutputCom objects that will be used in actuation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.addSafetyControls">
+<span class="sig-name descname"><span class="pre">addSafetyControls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safetyControls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.Server.Core.SafetyControl.ISafetyControl" title="brace.Server.Core.SafetyControl.ISafetyControl"><span class="pre">ISafetyControl</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.addSafetyControls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.addSafetyControls" title="Link to this definition">¶</a></dt>
+<dd><p>Add safety control object to the RobotABC instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params safetyControls<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The ISafetyControl object to be used on this RobotABC to constrain outputs and convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.changeControlLogic">
+<span class="sig-name descname"><span class="pre">changeControlLogic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.changeControlLogic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.changeControlLogic" title="Link to this definition">¶</a></dt>
+<dd><p>Changes the current control logic object based on the corresponding IntEnum from the controlLogicType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params controlLogicType<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The IntEnum in controlLogic dictionary that should be changed to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.changeControlLogicParameters">
+<span class="sig-name descname"><span class="pre">changeControlLogicParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.changeControlLogicParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.changeControlLogicParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Calls the control logic object to change the parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params controlLogicType<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The IntEnum of the control logic class that should have their parameters changed.</p>
+</dd>
+<dt class="field-even">Params parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of keywords and values to change the control logic parameters.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.copyMeasurements">
+<span class="sig-name descname"><span class="pre">copyMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurementDataFrameToCopy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.copyMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.copyMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Copies the measurement data (used in simulation) to this RobotABC’s IMeasurementLists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params i<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The index of this current control iteration.</p>
+</dd>
+<dt class="field-even">Params measurementDataFrameToCopy<span class="colon">:</span></dt>
+<dd class="field-even"><p>The pandas Dataframe containing the relevant input data.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The IMeasurementLists that was updated.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists">IMeasurementLists</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.enableActuation">
+<span class="sig-name descname"><span class="pre">enableActuation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.enableActuation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.enableActuation" title="Link to this definition">¶</a></dt>
+<dd><p>Enables the actuation based on a boolean flag. Actuation values will still be calculated, but not performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params enable<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not actuation should be enabled.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.exportRobotData">
+<span class="sig-name descname"><span class="pre">exportRobotData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">NamedTuple</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.exportRobotData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.exportRobotData" title="Link to this definition">¶</a></dt>
+<dd><p>Exports the data for the current control iteration, getting the assigned DataClass                 and the dictionary of data given by the control logic for the given control logic object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of the DataClass (NamedTuple type) and dictionary of relevant information.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[NamedTuple, dict[str, float | int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.getConfigurationParameters">
+<span class="sig-name descname"><span class="pre">getConfigurationParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatForConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.getConfigurationParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.getConfigurationParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the configuration parameters for a given control logic object. May format it for configuration file needs as necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params controlLogicType<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The IntEnum for the control logic object that should be received.</p>
+</dd>
+<dt class="field-even">Params formatForConfiguration<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean that indicates whether or not the return configuration should be 
+formatted for the data file configuration (e.g. dictionary with strings as keys instead of Enums, to preserve names).
+Should be true if for file (such as exported data trial configuration), false for regular GUI management.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.runCycle">
+<span class="sig-name descname"><span class="pre">runCycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currentCycleMeasurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.runCycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.runCycle" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the iteration cycle using the current IMeasurementLists and time data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params timeAll<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of times for the beginning of each iteration cycle.</p>
+</dd>
+<dt class="field-even">Params deltaTimeAll<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of containing the amount of time in between each iteration cycle.</p>
+</dd>
+<dt class="field-odd">Params currentCycleMeasurementLists<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of IMeasurementLists (for each RobotABC for cross RobotABC dependencies)</p>
+</dd>
+</dl>
+<p>that can be used for control.
+:type currentCycleMeasurementLists: Iterable[IMeasurementLists]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.runMeasurements">
+<span class="sig-name descname"><span class="pre">runMeasurements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.runMeasurements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.runMeasurements" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the measurement collection for this cycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params deltaTimeAll<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of floats that refers to the amount of time between control iterations.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The IMeasurementList that was updated.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists">IMeasurementLists</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.setCalibrationOffset">
+<span class="sig-name descname"><span class="pre">setCalibrationOffset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.setCalibrationOffset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.setCalibrationOffset" title="Link to this definition">¶</a></dt>
+<dd><p>Calls the IMeasurementLists to zero calibration offset values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.setup" title="Link to this definition">¶</a></dt>
+<dd><p>Executes to initialize after the constructor, but just before the control iteration starts (transient state). 
+Initializes the IMeasurementList.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params kwargs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Keyword arguments passed to controlLogic.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.simulatedSetup">
+<span class="sig-name descname"><span class="pre">simulatedSetup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.simulatedSetup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.simulatedSetup" title="Link to this definition">¶</a></dt>
+<dd><p>Executes to initialize after the constructor, but just before the control iteration starts (transient state). 
+Initializes the IMeasurementList. Specifically running the simulated setups of each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params kwargs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Keyword arguments passed to controlLogic simulated setup.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotABC.RobotABC.turnOnOffRobot">
+<span class="sig-name descname"><span class="pre">turnOnOffRobot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotABC.html#RobotABC.turnOnOffRobot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotABC.RobotABC.turnOnOffRobot" title="Link to this definition">¶</a></dt>
+<dd><p>Enables the RobotABC. The input and output interfaces are turned off. A failure to turn on the RobotABC
+disables the RobotABC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params enable<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not this RobotABC should be turned on or off.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether or not enabling or disabling this RbbotABC was successful.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.RobotAssemblyABC">
+<span id="brace-server-core-robotassemblyabc-module"></span><h2>brace.Server.Core.RobotAssemblyABC module<a class="headerlink" href="#module-brace.Server.Core.RobotAssemblyABC" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotAssemblyABC.</span></span><span class="sig-name descname"><span class="pre">RobotAssemblyABC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">initialControlLogicType:</span> <span class="pre">~enum.IntEnum,</span> <span class="pre">numRobots:</span> <span class="pre">int,</span> <span class="pre">controlLogic:</span> <span class="pre">dict[~enum.IntEnum,</span> <span class="pre">~typing.Callable[[int],</span> <span class="pre">~brace.Server.Core.ControlLogic.IControlLogic]],</span> <span class="pre">UPDATE_RATE_PER_SECOND:</span> <span class="pre">int,</span> <span class="pre">startTime:</span> <span class="pre">~multiprocessing.sharedctypes.Synchronized</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">robotImplementation:</span> <span class="pre">~brace.Server.Core.RobotABC.RobotABC</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'brace.Server.Core.RobotABC.RobotABC'&gt;,</span> <span class="pre">simulated:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">dataTopicName:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">remoteHostTopicTemplate:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="brace.RealTimeGraphing.Graphing.html#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer" title="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer"><code class="xref py py-class docutils literal notranslate"><span class="pre">IDataProducer</span></code></a></p>
+<p>Class that handles overall control between RobotABC objects, reading into the IMeasurementLists, RPC requests, and data export.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.IGNORED_EXPORT_API_CALLS">
+<span class="sig-name descname"><span class="pre">IGNORED_EXPORT_API_CALLS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'changeControlLogic',</span> <span class="pre">'heartbeat'}</span></span><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.IGNORED_EXPORT_API_CALLS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.IGNORED_SIMULATED_API_CALLS">
+<span class="sig-name descname"><span class="pre">IGNORED_SIMULATED_API_CALLS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'calibrateRobots',</span> <span class="pre">'enableActuation',</span> <span class="pre">'restartSharedStartTime',</span> <span class="pre">'startSend'}</span></span><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.IGNORED_SIMULATED_API_CALLS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.MAX_LEN">
+<span class="sig-name descname"><span class="pre">MAX_LEN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">15000</span></span><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.MAX_LEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.addSendDataEvent">
+<span class="sig-name descname"><span class="pre">addSendDataEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sendData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Synchronized</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.addSendDataEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.addSendDataEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Binds additional multiprocessing events to be controlled by RobotAssemblyABC (to control when data is sent).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sendData</strong> (<em>multiprocessing.Event</em>) – Event in a while loop to dictate if data should be sent. This is to synchronize when data
+should be sent together with RobotAssemblyABC.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.calibrateRobots">
+<span class="sig-name descname"><span class="pre">calibrateRobots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.calibrateRobots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.calibrateRobots" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the calibration function in each RobotABC. This is often to zero each robot for relative sensor measurements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeControlLogic">
+<span class="sig-name descname"><span class="pre">changeControlLogic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.changeControlLogic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeControlLogic" title="Link to this definition">¶</a></dt>
+<dd><p>Changes the logic controllers across all robots, exporting a terminating NaN datapoint if data is being sent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>controlLogicType</strong> – An integer enum that corresponds to the control logic from the controller logic</p>
+</dd>
+</dl>
+<p>constructor dictionary, to be changed.
+:type controlLogicType: IntEnum
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeControlLogicParameters">
+<span class="sig-name descname"><span class="pre">changeControlLogicParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">controlLogicType:</span> <span class="pre">~enum.IntEnum,</span> <span class="pre">parameters:</span> <span class="pre">dict[str,</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">dict[slice(&lt;enum</span> <span class="pre">'IntEnum'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None)]],</span> <span class="pre">index:</span> <span class="pre">int</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.changeControlLogicParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeControlLogicParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Requests in-place modification of the control logic parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controlLogicType</strong> (<em>IntEnum</em>) – An integer enum that corresponds to the control logic to be changed.</p></li>
+<li><p><strong>parameters</strong> – The parameters that should be overridden (often through setattr, keys can be instance variable names).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Parameters are often floats, but may be state lookup tables for torque values.
+:type parameters: dict[str, float | dict[IntEnum: float]]
+:param index: Index of the RobotABC that should undergo the control logic parameter change with respect to this RobotAssemblyABC.
+:type index: int
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeMultipleControlLogicParameters">
+<span class="sig-name descname"><span class="pre">changeMultipleControlLogicParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">controlLogicType:</span> <span class="pre">~enum.IntEnum,</span> <span class="pre">parameters:</span> <span class="pre">list[dict[str,</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">dict[slice(&lt;enum</span> <span class="pre">'IntEnum'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None)]]],</span> <span class="pre">index:</span> <span class="pre">list[int]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.changeMultipleControlLogicParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.changeMultipleControlLogicParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the same command as changeControlLogicParameters, except uses index aligned indicies and parameters; 
+used to update in one cycle instead of issuing multiple commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controlLogicType</strong> (<em>IntEnum</em>) – An integer enum that corresponds to the control logic to be changed.</p></li>
+<li><p><strong>parameters</strong> (<em>list</em><em>[</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em> | </em><em>dict</em><em>[</em><em>IntEnum: float</em><em>]</em><em>]</em><em>]</em>) – A list of parameter dictionaries that should be set for this controlLogicType</p></li>
+<li><p><strong>index</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A list of indicies corresponding to the robots that are pairwise set to the parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.enableActuation">
+<span class="sig-name descname"><span class="pre">enableActuation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.enableActuation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.enableActuation" title="Link to this definition">¶</a></dt>
+<dd><p>By default, actuation is turned off and should be enabled through this RPC call. Changes the actuation enable flag for
+each RobotABC object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> – A flag which determines whether or not output actuation should be performed. If disabled, output calculation</p>
+</dd>
+</dl>
+<p>is still performed, but no outputs are sent out to actuators.
+:type enable: bool
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportAPICallEvents">
+<span class="sig-name descname"><span class="pre">exportAPICallEvents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.exportAPICallEvents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportAPICallEvents" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of tuples containing the uptime, RPC function name, and parameters that were sent.
+Function names that match names in IGNORED_EXPORT_API_CALLS are not included in this list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of tuples containing RPC calls executed since the last shared start time restart.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[tuple[float, str, dict]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportNaNData">
+<span class="sig-name descname"><span class="pre">exportNaNData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.exportNaNData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportNaNData" title="Link to this definition">¶</a></dt>
+<dd><p>This exports NaNs to the data topic for the current Data type. On graphs, when 
+a NaN is drawn, the points in between the time value and the next valid time value will not plot anything (no line interpolation).
+This is helpful when switching between controllers should not yield valid data in between.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – The current time relative to the start time for the NaN data point to punctuate the data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportRecentData">
+<span class="sig-name descname"><span class="pre">exportRecentData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.exportRecentData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.exportRecentData" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a NamedTuple object based on the data from the type
+and data from each Control Logic definition. Each field should be defined
+for the NamedTuple which is considered a flat object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>force</strong> (<em>bool</em>) – Flag to force the data to be published when passed to publishDatatoMqtt</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.getConfigurationParameters">
+<span class="sig-name descname"><span class="pre">getConfigurationParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controlLogicType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IntEnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatForConfiguration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.getConfigurationParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.getConfigurationParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a set of configuration parameters defined by particular control logic. 
+This may be used in two ways: for reading configuration into the GUI, or reading for export into a saved trial file.
+This returns a tuple of configuration parameters (of the same control logic) for each RobotABC that is defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>controlLogicType</strong> (<em>IntEnum</em>) – The corresponding IntEnum defined for the control logic that should be exported.</p></li>
+<li><p><strong>formatForConfiguration</strong> – Flag where True formats should format objects as configuration for saved trial data. False</p></li>
+</ul>
+</dd>
+</dl>
+<p>should be used for GUI configuration reading.
+:type formatForConfiguration: bool
+:return: Tuple containing configuration parameters for each RobotABC in this RobotAssemblyABC.
+:rtype: tuple[dict[str, float | int], …]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.getRobot">
+<span class="sig-name descname"><span class="pre">getRobot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#brace.Server.Core.RobotABC.RobotABC" title="brace.Server.Core.RobotABC.RobotABC"><span class="pre">RobotABC</span></a></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.getRobot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.getRobot" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to retrieve a particular RobotABC indexed by number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – Index of the RobotABC within this RobotAssemblyABC.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The RobotABC indexed by the number</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#brace.Server.Core.RobotABC.RobotABC" title="brace.Server.Core.RobotABC.RobotABC">RobotABC</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.heartbeat">
+<span class="sig-name descname"><span class="pre">heartbeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">syn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.heartbeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.heartbeat" title="Link to this definition">¶</a></dt>
+<dd><p>Heartbeat pulse to check for alive connections between Client and Server. 
+Returns “ACK” if and only if the initial response is “SYN”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>syn</strong> (<em>str</em>) – A synchronization string for the heartbeat command.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An acknowledgement string to the synchronization string. None if not “SYN”</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.publishDataToMqtt">
+<span class="sig-name descname"><span class="pre">publishDataToMqtt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.publishDataToMqtt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.publishDataToMqtt" title="Link to this definition">¶</a></dt>
+<dd><p>Publishes a sequence of NamedTuple elements to the MQTT data topic. Elements are batched to reduce overhead 
+at slight expense of viewing delay.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>force</strong> (<em>bool</em>) – Forces the NameTuple buffer to be published. Such as when controllers change.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.remoteCommand">
+<span class="sig-name descname"><span class="pre">remoteCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functionName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">argumentParameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.remoteCommand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.remoteCommand" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the RPC command received by the server, calling the function with the given parameters.
+This function will return any return values back to the Client through a separate client topic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params functionName<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The RPC function to call.</p>
+</dd>
+<dt class="field-even">Params argumentParameters<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary that contains the parameters to run the function with.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Return value of the executed command</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.restartSharedStartTime">
+<span class="sig-name descname"><span class="pre">restartSharedStartTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.restartSharedStartTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.restartSharedStartTime" title="Link to this definition">¶</a></dt>
+<dd><p>Restarts the synchronized start time shared between multiprocesses for data send.
+Datapoints should use this start time as a reference to offset future times with time.perf_counter().
+Saved RPC calls are also cleared such that data trials only contain relevant calls since the restarted time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setInputComInterface">
+<span class="sig-name descname"><span class="pre">setInputComInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputComInterfaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IInputCom" title="brace.Server.Core.ComInterface.IInputCom"><span class="pre">IInputCom</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.setInputComInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setInputComInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the input interfaces that a RobotABC in this RobotAssemblyABC should use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputComInterfaces</strong> – Generally a list of lists containing IInputCom that defines pairwise</p>
+</dd>
+</dl>
+<p>input interfaces to be used for each robot. Each RobotABC is assigned one list of IInputCom from this list of lists.
+:type inputComInterfaces: Iterable[Iterable[IInputCom]]
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setMeasurementLists">
+<span class="sig-name descname"><span class="pre">setMeasurementLists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.setMeasurementLists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setMeasurementLists" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the MeasurementLists that a RobotABC in this RobotAssemblyABC should use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>measurementLists</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><em>IMeasurementLists</em></a><em>]</em>) – Generally a list of IMeasurementLists subclasses that defines pairwise
+sensor data objects to be used for each robot. Each RobotABC is assigned one IMeasurementList from this list,
+representing the sensor data for that RobotABC.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setOutputComInterface">
+<span class="sig-name descname"><span class="pre">setOutputComInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputComInterfaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.ComInterface.IOutputCom" title="brace.Server.Core.ComInterface.IOutputCom"><span class="pre">IOutputCom</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.setOutputComInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setOutputComInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the output interfaces that a RobotABC in this RobotAssemblyABC should use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputComInterfaces</strong> – Generally a list of lists containing IOutputCom that defines pairwise</p>
+</dd>
+</dl>
+<p>input interfaces to be used for each robot. Each RobotABC is assigned one list of IOutputCom from this list of lists.
+:type outputComInterfaces: Iterable[Iterable[IOutputCom]]
+:return: None
+:rtype: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setSafetyControl">
+<span class="sig-name descname"><span class="pre">setSafetyControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safetyControls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.SafetyControl.ISafetyControl" title="brace.Server.Core.SafetyControl.ISafetyControl"><span class="pre">ISafetyControl</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.setSafetyControl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setSafetyControl" title="Link to this definition">¶</a></dt>
+<dd><p>Initializes the ISafetyControl layer that a RobotABC in this RobotAssemblyABC should use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>safetyControls</strong> – Generally a list of ISafetyControl subclasses that defines the safety
+constraint behavior to be used for each robot. Each RobotABC is assigned one ISafetyControl from this list,
+representing the sensor data for that RobotABC.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.setup" title="Link to this definition">¶</a></dt>
+<dd><p>A setup for things that should be performed before execution, but after the constructor init.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params kwargs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parameters that should be passed to each RobotABC’s setup and potentially to control logic objects.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.simulateControllerData">
+<span class="sig-name descname"><span class="pre">simulateControllerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementDataFrames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eventPipeLine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">NamedTuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.simulateControllerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.simulateControllerData" title="Link to this definition">¶</a></dt>
+<dd><p>Function used to retest logic controllers against previously existing data (e.g. from a file). 
+This makes it able to validate the controller without it physically having to put it on again. API functions may be called in between cycles. It is important that the measurements are kept as same
+(recalculating values within a window will change values due to values potentially not being available).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params measurementDataFrames<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of pandas Dataframes referencing the data in the IMeasurementLists subclass that should
+be used in the controller simulation.</p>
+</dd>
+<dt class="field-even">Params eventPipeLine<span class="colon">:</span></dt>
+<dd class="field-even"><p>A pandas Dataframe listing the uptime, name of the function called, and the parameter (stored as JSON) to be
+executed before each control iteration. RPC calls that are listed in IGNORED_SIMULATED_API_CALLS are ignored.</p>
+</dd>
+<dt class="field-odd">Params **kwargs<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Other keyword arguments that should be passed to the simulatedSetup of RobotABC and the control logic objects.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of NamedTuple datatypes that are exported running new control logic or parameters to be graphed or saved.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterable[NamedTuple]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeSynchronizationCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Condition</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.start" title="Link to this definition">¶</a></dt>
+<dd><p>Starts the RobotAssemblyABC to run the RobotABCs, delegating control to downstream classes as necessary.
+Start times are synchronized and started, setup functions are executed. RPC commands are run, followed by 
+execution of the control loop, followed by data export (when enabled).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params timeSynchronizationCondition<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Condition that is passed to all IDataProducer start methods. The primary time synchronization</p>
+</dd>
+</dl>
+<p>reseter notifies the other IDataProducers to continue execution (after waiting). None indicates that no shared condition                 is assigned between multiple IDataProducers.
+:type timeSynchronizationCondition: multiprocessing.Condition | None
+:params <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: Keyword arguments that are passed through setup functions of RobotABCs and Control Logic objects.</p>
+<blockquote>
+<div><p>Necessary kwargs elements are listed below.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Params sendEnd<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Shared queue between producer and consumer. NamedTuple datapoints are added to this queue.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.startSend">
+<span class="sig-name descname"><span class="pre">startSend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.startSend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.startSend" title="Link to this definition">¶</a></dt>
+<dd><p>Sets all bounded Event synchronization flags to start the data streams together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.stopProcess">
+<span class="sig-name descname"><span class="pre">stopProcess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.stopProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.stopProcess" title="Link to this definition">¶</a></dt>
+<dd><p>Stops the RobotAssemblyABC start() loop to cleanly end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.stopSend">
+<span class="sig-name descname"><span class="pre">stopSend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.stopSend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.stopSend" title="Link to this definition">¶</a></dt>
+<dd><p>Clears bounded send multiprocessing.Event flags to stop the data streams together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.turnOnOffControllerRobot">
+<span class="sig-name descname"><span class="pre">turnOnOffControllerRobot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotAssemblyABC.html#RobotAssemblyABC.turnOnOffControllerRobot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotAssemblyABC.RobotAssemblyABC.turnOnOffControllerRobot" title="Link to this definition">¶</a></dt>
+<dd><p>Enables/Disables the RobotABC from executing control logic and reading sensor data. 
+Disabled RobotABCs still be accessed to retrieve filler NaN data to complete the NameTuple fields, however.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params index<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index of the RobotABC to be to be toggled.</p>
+</dd>
+<dt class="field-even">Params enable<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flag to enable or disable the indexed RobotABC</p>
+</dd>
+</dl>
+<p>:type bool
+:return: Whether or not turning off the RobotABC was successful.
+:rtype: bool</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.RobotHelpers">
+<span id="brace-server-core-robothelpers-module"></span><h2>brace.Server.Core.RobotHelpers module<a class="headerlink" href="#module-brace.Server.Core.RobotHelpers" title="Link to this heading">¶</a></h2>
+<p>This is a separate file for helper functions that have uses in both ControlLogic level and RobotABC level which correspond to 
+a more specific vs global scope of parameters that would be used (e.g. RobotABC level enforces a maximum slew limit, while ControlLogic enforces a more local one
+depending on state).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.HysteresisParameters">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotHelpers.</span></span><span class="sig-name descname"><span class="pre">HysteresisParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lambdaCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measurementCollection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hysteresisTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/Server/Core/RobotHelpers.html#HysteresisParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotHelpers.HysteresisParameters" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<p>HysteresisParameters are for evaluating all the values of a certain measurement (up to a certain hysteresisTime) back in time.
+In order for hysteresis to be considered true, all values have to return true when evaluated by the lambdaCondition.
+A successful hysteresis signals long enough stability to switch a state.</p>
+<dl class="simple">
+<dt>NamedTuple that contains</dt><dd><p>lambdaCondition - a callable that contains a float and returns a bool (for evaluating across all values in measurementCollection).
+measurementCollection - an iterable of floats in the measurementList that should be measured against. Values checked are paired with time iterable.
+hysteresisTime - the length of how long hysteresis should be checked for previous measurement values.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.HysteresisParameters.hysteresisTime">
+<span class="sig-name descname"><span class="pre">hysteresisTime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#brace.Server.Core.RobotHelpers.HysteresisParameters.hysteresisTime" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.HysteresisParameters.lambdaCondition">
+<span class="sig-name descname"><span class="pre">lambdaCondition</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#brace.Server.Core.RobotHelpers.HysteresisParameters.lambdaCondition" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.HysteresisParameters.measurementCollection">
+<span class="sig-name descname"><span class="pre">measurementCollection</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#brace.Server.Core.RobotHelpers.HysteresisParameters.measurementCollection" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.capTorqueFromAngle">
+<span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotHelpers.</span></span><span class="sig-name descname"><span class="pre">capTorqueFromAngle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">torqueDes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currentAngle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extAngleLimit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flexAngleLimit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotHelpers.html#capTorqueFromAngle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotHelpers.capTorqueFromAngle" title="Link to this definition">¶</a></dt>
+<dd><p>Sets torque to 0 if beyond extension and flexion angle limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params torqueDes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The torque to use for this iteration cycle</p>
+</dd>
+<dt class="field-even">Params currentAngle<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current angle in this iteration cycle.</p>
+</dd>
+<dt class="field-odd">Params extAngleLimit<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The minimum angle limit before torque is set to 0.</p>
+</dd>
+<dt class="field-even">Params flexAngleLimit<span class="colon">:</span></dt>
+<dd class="field-even"><p>The maximum angle limit before torque is set to 0.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The adjusted torque after comparing between these limits.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.checkSlewRate">
+<span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotHelpers.</span></span><span class="sig-name descname"><span class="pre">checkSlewRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">torqueNow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">torquePast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxSlew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotHelpers.html#checkSlewRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotHelpers.checkSlewRate" title="Link to this definition">¶</a></dt>
+<dd><p>Function that caps the slew rate of an output value of the current iteration
+to prevent excess changes in acceleration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>torqueNow</strong> (<em>float</em>) – The calculated output value before checks this iteration.</p></li>
+<li><p><strong>torquePast</strong> (<em>float</em>) – The output value used last iteration.</p></li>
+<li><p><strong>deltaTime</strong> (<em>float</em>) – The time between the last iteration and the current one in seconds.</p></li>
+<li><p><strong>maxSlew</strong> (<em>float</em>) – The maximum change between the two output values per second.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output value adjusted based on the max slew rate (capped if above limit).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.hysteresis2">
+<span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotHelpers.</span></span><span class="sig-name descname"><span class="pre">hysteresis2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">functionConditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.Server.Core.RobotHelpers.HysteresisParameters" title="brace.Server.Core.RobotHelpers.HysteresisParameters"><span class="pre">HysteresisParameters</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotHelpers.html#hysteresis2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotHelpers.hysteresis2" title="Link to this definition">¶</a></dt>
+<dd><p>Returns whether or not a condition has been maintained for a desired
+time before a state is changed. This is performed by looking back in time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params timeData<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Time data that is stored in RobotAssemblyABC.</p>
+</dd>
+<dt class="field-even">Params functionConditions<span class="colon">:</span></dt>
+<dd class="field-even"><p>A HysteresisParameters object that defines the conditions         collection, and amount of time the condition must be satisfied before considered True.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not the conditions have been satisifed for long enough.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#brace.Server.Core.RobotHelpers.HysteresisParameters" title="brace.Server.Core.RobotHelpers.HysteresisParameters">HysteresisParameters</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.Server.Core.RobotHelpers.hysteresisMultiple">
+<span class="sig-prename descclassname"><span class="pre">brace.Server.Core.RobotHelpers.</span></span><span class="sig-name descname"><span class="pre">hysteresisMultiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">functionConditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#brace.Server.Core.RobotHelpers.HysteresisParameters" title="brace.Server.Core.RobotHelpers.HysteresisParameters"><span class="pre">HysteresisParameters</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/Server/Core/RobotHelpers.html#hysteresisMultiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.RobotHelpers.hysteresisMultiple" title="Link to this definition">¶</a></dt>
+<dd><p>Checks multiple hysteresis conditions to verify all conditions are true.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params timeData<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Time data that is stored in RobotAssemblyABC</p>
+</dd>
+<dt class="field-even">Params functionConditions<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of HysteresisParameters whose conditions should be checked.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether or not all hysteresis conditions are satisfied.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core.SafetyControl">
+<span id="brace-server-core-safetycontrol-module"></span><h2>brace.Server.Core.SafetyControl module<a class="headerlink" href="#module-brace.Server.Core.SafetyControl" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.Server.Core.SafetyControl.ISafetyControl">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.Server.Core.SafetyControl.</span></span><span class="sig-name descname"><span class="pre">ISafetyControl</span></span><a class="reference internal" href="_modules/brace/Server/Core/SafetyControl.html#ISafetyControl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.SafetyControl.ISafetyControl" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Layer that handles constraints for safety and conversions (bytestrings and other messages) for output actuators.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.SafetyControl.ISafetyControl.runOutputConversion">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">runOutputConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputIn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/SafetyControl.html#ISafetyControl.runOutputConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.SafetyControl.ISafetyControl.runOutputConversion" title="Link to this definition">¶</a></dt>
+<dd><p>Translates the outputIn values to format accepted by the output communications interfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputIn</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable containing the outputIn values from runSafetyControl</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterable containing the converted outputIn commands.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterable[Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.Server.Core.SafetyControl.ISafetyControl.runSafetyControl">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">runSafetyControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measurementLists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><span class="pre">IMeasurementLists</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltaTimeAll</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputDes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/Server/Core/SafetyControl.html#ISafetyControl.runSafetyControl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.Server.Core.SafetyControl.ISafetyControl.runSafetyControl" title="Link to this definition">¶</a></dt>
+<dd><p>Runs safety control on the outputDes and returns out a list of outputs within safety boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>measurementLists</strong> (<a class="reference internal" href="#brace.Server.Core.MeasurementLists.IMeasurementLists" title="brace.Server.Core.MeasurementLists.IMeasurementLists"><em>IMeasurementLists</em></a>) – MeasurementList for this leg (and safety check). May use this for determining safety parameters.</p></li>
+<li><p><strong>deltaTimeAll</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable containing the times between timesteps.</p></li>
+<li><p><strong>outputDes</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – An iterable returned from the ControlLogic for desired output values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterable of same size from outputDes containing altered outputDes values (called outputIn).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterable[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.Server.Core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.Server.Core" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.Server.html">brace.Server package</a><ul>
+      <li>Previous: <a href="brace.Server.html" title="previous chapter">brace.Server package</a></li>
+      <li>Next: <a href="brace.Server.GPIOSynch.html" title="next chapter">brace.Server.GPIOSynch package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.Server.Core.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

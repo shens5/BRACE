@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.RealTimeGraphing.Graphing package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.Server package" href="brace.Server.html" />
+    <link rel="prev" title="brace.RealTimeGraphing package" href="brace.RealTimeGraphing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-realtimegraphing-graphing-package">
+<h1>brace.RealTimeGraphing.Graphing package<a class="headerlink" href="#brace-realtimegraphing-graphing-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="brace-realtimegraphing-graphing-animatedgraphmanager-module">
+<h2>brace.RealTimeGraphing.Graphing.AnimatedGraphManager module<a class="headerlink" href="#brace-realtimegraphing-graphing-animatedgraphmanager-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="brace-realtimegraphing-graphing-datastream-module">
+<h2>brace.RealTimeGraphing.Graphing.DataStream module<a class="headerlink" href="#brace-realtimegraphing-graphing-datastream-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing.IDataProducer">
+<span id="brace-realtimegraphing-graphing-idataproducer-module"></span><h2>brace.RealTimeGraphing.Graphing.IDataProducer module<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing.IDataProducer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.RealTimeGraphing.Graphing.IDataProducer.</span></span><span class="sig-name descname"><span class="pre">IDataProducer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UPDATE_RATE_PER_SECOND</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TRIAL_TIME</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Synchronized</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>A class for data producers that run on an update rate that create NamedTuple
+datapoints. These are generally then read in by the AnimatedGraphManager.
+These datapoints can be synchronized in time with a shared start time.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.DATA_TOPIC">
+<span class="sig-name descname"><span class="pre">DATA_TOPIC</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'datatypes'</span></span><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.DATA_TOPIC" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.getSharedStartTime">
+<span class="sig-name descname"><span class="pre">getSharedStartTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Synchronized</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.getSharedStartTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.getSharedStartTime" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the shared startTime for this IDataProducer. This should be used to get the primary IDataProducer
+startTime that should be shared for all the secondaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shared start time that should be shared between the IDataProducers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>multiprocessing.Value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.setSharedStartTime">
+<span class="sig-name descname"><span class="pre">setSharedStartTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updateStartTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeSynchronizationCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Condition</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.setSharedStartTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.setSharedStartTime" title="Link to this definition">¶</a></dt>
+<dd><p>This should be started in the running loop of each IDataProducer. 
+Sets the startTime value only if this startTime is the primary to synchronize
+the startTime values. If it is the secondary datastream, then it will pause execution until
+the synchronized time is set from the primary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>updateStartTime</strong> (<em>float</em>) – A double-precision floating point number representing
+the start time before the while loop. This value is used to synchronize startTime
+in multiple processes to achieve more accurate timing.</p></li>
+<li><p><strong>timeSynchronizationCondition</strong> (<em>multiprocessing.synchronize.Condition</em>) – Multiprocessing condition that pauses execution of the subprocess
+until the primary sets up the startTime.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.start">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeSynchronizationCondition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Condition</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/RealTimeGraphing/Graphing/IDataProducer.html#IDataProducer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.RealTimeGraphing.Graphing.IDataProducer.IDataProducer.start" title="Link to this definition">¶</a></dt>
+<dd><p>Main update function that runs through data logic and produces output data. Output data in the form of a NamedTuple is
+added into a shared queue between producer and consumer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeSynchronizationCondition</strong> (<em>multiprocessing.synchronize.Condition</em>) – Condition that pauses secondaries flow until the time is set by a primary.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Keyword arguments that should be passed in for all other IDataProducers implementing this function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-brace.RealTimeGraphing.Graphing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.RealTimeGraphing.Graphing" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.RealTimeGraphing.html">brace.RealTimeGraphing package</a><ul>
+      <li>Previous: <a href="brace.RealTimeGraphing.html" title="previous chapter">brace.RealTimeGraphing package</a></li>
+      <li>Next: <a href="brace.Server.html" title="next chapter">brace.Server package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.RealTimeGraphing.Graphing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

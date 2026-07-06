@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>brace.UI.GUIController package &#8212; BRACE v2026.07.02 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bba0d692"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="brace.UI.PlotConfiguration package" href="brace.UI.PlotConfiguration.html" />
+    <link rel="prev" title="brace.UI package" href="brace.UI.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="brace-ui-guicontroller-package">
+<h1>brace.UI.GUIController package<a class="headerlink" href="#brace-ui-guicontroller-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.UI.GUIController.DataExporters">
+<span id="brace-ui-guicontroller-dataexporters-module"></span><h2>brace.UI.GUIController.DataExporters module<a class="headerlink" href="#module-brace.UI.GUIController.DataExporters" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">AbstractDataExporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>An abstract class that exports the datastreams into a certain format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter.exportData">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnimatedGraphManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method that should be implemented by all exporting classes, which formats the dataset into
+the desired data structure and file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<em>AnimatedGraphManager</em>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.AbstractDataExporter.exportDatastreamData">
+<span class="sig-name descname"><span class="pre">exportDatastreamData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnimatedGraphManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#AbstractDataExporter.exportDatastreamData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter.exportDatastreamData" title="Link to this definition">¶</a></dt>
+<dd><p>A helper that yields the type and the datastream data from the datastreams of an AnimatedGraphManager.
+Two times are listed, “t” which refers to the time offset to the local time which may be less precise (but useful for general times).
+Or “uptime” which should be used for all analyses as this time is offset from the beginning of the stream time (and is more precise).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<em>AnimatedGraphManager</em>) – The AnimatedGraphManager whose data should be exported.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The local time of the time when the datastream was started (in seconds).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A generator containing a tuple of the type and the data of that datastream.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generator[type, dict[str, list[float | int]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.HDF5Exporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">HDF5Exporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#HDF5Exporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.HDF5Exporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDataExporter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.HDF5Exporter.exportData">
+<span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnimatedGraphManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#HDF5Exporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.HDF5Exporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method that should be implemented by all exporting classes, which formats the dataset into
+the desired data structure and file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<em>AnimatedGraphManager</em>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.ParquetExporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">ParquetExporter</span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#ParquetExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.ParquetExporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#brace.UI.GUIController.DataExporters.AbstractDataExporter" title="brace.UI.GUIController.DataExporters.AbstractDataExporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractDataExporter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.ParquetExporter.exportData">
+<span class="sig-name descname"><span class="pre">exportData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">animatedGraphManager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnimatedGraphManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startStreamUnixTime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlLogicEnumType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MainWindow</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#ParquetExporter.exportData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.ParquetExporter.exportData" title="Link to this definition">¶</a></dt>
+<dd><p>Exports the data in the parquet file format, hierarchically setting the data in “L” and “R” paths,
+scrunching down the table into a single column to fit in the row of a parquet file. Configuration and APIEvents
+are also first-class attributes of this file format (as metadata).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>animatedGraphManager</strong> (<em>AnimatedGraphManager</em>) – The AnimatedGraphManager to export data.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The filename to export the data into.</p></li>
+<li><p><strong>startStreamUnixTime</strong> (<em>float</em>) – The starting time (referenced against Unix epoch) at which the stream has started.</p></li>
+<li><p><strong>controlLogicEnumType</strong> (<em>type</em>) – The enum type the control logic that is to checked against the remote (for configuration).</p></li>
+<li><p><strong>parent</strong> (<em>MainWindow</em>) – The main GUI that is exporting the data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.formatLeftRight">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">formatLeftRight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastreamData</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#formatLeftRight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.formatLeftRight" title="Link to this definition">¶</a></dt>
+<dd><p>Formats the data into left and right based on the L or R at the end of the name of the attribute.
+If there is no L or R, then the value goes to both legs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datastreamData</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>[</em><em>float</em><em> | </em><em>int</em><em>]</em><em>]</em>) – Data formatted in a dictionary of a list of floats or ints.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data sorted into left and right dictionaries by the attribute name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[dict[str, list[float | int], dict[str, list[float | int]]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brace.UI.GUIController.DataExporters.isNanDatastream">
+<span class="sig-prename descclassname"><span class="pre">brace.UI.GUIController.DataExporters.</span></span><span class="sig-name descname"><span class="pre">isNanDatastream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/brace/UI/GUIController/DataExporters.html#isNanDatastream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#brace.UI.GUIController.DataExporters.isNanDatastream" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the datastream given for a left or right leg is NaN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params datastream<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The left or right leg datastream</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether or not the datastream only has NaNs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="brace-ui-guicontroller-initializationfunctions-module">
+<h2>brace.UI.GUIController.InitializationFunctions module<a class="headerlink" href="#brace-ui-guicontroller-initializationfunctions-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="brace-ui-guicontroller-plothelpers-module">
+<h2>brace.UI.GUIController.PlotHelpers module<a class="headerlink" href="#brace-ui-guicontroller-plothelpers-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="brace-ui-guicontroller-uiconfigurationhelpers-module">
+<h2>brace.UI.GUIController.UIConfigurationHelpers module<a class="headerlink" href="#brace-ui-guicontroller-uiconfigurationhelpers-module" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-brace.UI.GUIController">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-brace.UI.GUIController" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">BRACE</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brace.html">brace package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="brace.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brace.html#module-brace">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brace.html">brace package</a><ul>
+  <li><a href="brace.UI.html">brace.UI package</a><ul>
+      <li>Previous: <a href="brace.UI.html" title="previous chapter">brace.UI package</a></li>
+      <li>Next: <a href="brace.UI.PlotConfiguration.html" title="next chapter">brace.UI.PlotConfiguration package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Scott Shen, Noah Rubin, Thomas Bulea.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/brace.UI.GUIController.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
