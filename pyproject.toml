@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 source = "vcs"
 
 [project]
-name = "brace"
+name = "brace-robotics"
 dynamic = ["version"]
 dependencies = [
     "numpy==2.4.6",

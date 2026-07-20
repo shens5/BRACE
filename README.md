@@ -3,9 +3,9 @@ Biomedical Robotics Architecture for Clinical Experimentation (BRACE): A Softwar
 
 Install with:
 ```
-pip install brace
-pip install brace[can] # for installing CAN dependencies (if used)
-pip install brace[zaber] # for installing zaber dependences (if used in other example)
+pip install brace-robotics
+pip install brace-robotics[can] # for installing CAN dependencies (if used)
+pip install brace-robotics[zaber] # for installing zaber dependences (if used in other example)
 ```
 
 ## Examples:
