@@ -91,21 +91,22 @@ class RobotAssemblyABC(IDataProducer):
         # Events that control the loop in GUI mode.
         self.exit = Event()
         self.sendData = Event()
+        self.simulated = simulated
 
         self.sendDataEvents = [self.sendData]
         self.apiCallsThisSession: list[tuple[float, str, dict]] = []
         self._tempApiCalls: list[tuple[str, dict]] = []
 
-        # Keep-alive = 0 means no attempt to check for pings. Max is 65335 seconds = 18.2 hours. 
-        # 3600 seconds = 1 hour.
-        if not simulated:
-            self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-            self.mqttClient.connect("localhost", 8080, keepalive = 3600) 
-
         self.queuedDataElements = []
         self.maxQueueElements = 3 # Max number of elements that should be stored before publishing.
 
         super().__init__(UPDATE_RATE_PER_SECOND = UPDATE_RATE_PER_SECOND, startTime = startTime)
+
+    def _on_connect(client, userdata, flags, reason_code, properties):
+        logger.debug(f"MQTT connected: {reason_code}")
+
+    def _on_disconnect(client, userdata, flags, reason_code, properties):
+        logger.debug(f"MQTT disconnected: {reason_code}")
 
     def publishDataToMqtt(self, force: bool = False) -> None:
         """
@@ -121,6 +122,8 @@ class RobotAssemblyABC(IDataProducer):
         # Send when the number of elements is met, or if it was reset in the middle (before elements have been made).
         if force or (len(self.queuedDataElements) == self.maxQueueElements) or (len(self.queuedDataElements) < self.maxQueueElements and not self.sendData.is_set()):
             publishMessage = self.mqttClient.publish(IDataProducer.DATA_TOPIC, pickle.dumps(self.queuedDataElements))
+            if publishMessage.rc != mqtt.MQTT_ERR_SUCCESS:
+                logger.debug(f"Publish failed with rc={publishMessage.rc}")
             publishMessage.wait_for_publish()
             self.queuedDataElements.clear()
 
@@ -377,6 +380,8 @@ class RobotAssemblyABC(IDataProducer):
             :return: Tuple containing configuration parameters for each RobotABC in this RobotAssemblyABC.
             :rtype: tuple[dict[str, float | int], ...]
         """
+
+        # TODO: Bug somewhere here where left and right configuration is only giving a tuple of one or something.
         configurationParameters = [robot.getConfigurationParameters(controlLogicType, formatForConfiguration) for robot in self.robots]
         return tuple(configurationParameters)
 
@@ -508,6 +513,15 @@ class RobotAssemblyABC(IDataProducer):
 
         try:
 
+            # Keep-alive = 0 means no attempt to check for pings. Max is 65335 seconds = 18.2 hours. 
+            # 3600 seconds = 1 hour.
+            if not self.simulated:
+                self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+                self.mqttClient.on_connect = RobotAssemblyABC._on_connect
+                self.mqttClient.on_disconnect = RobotAssemblyABC._on_disconnect
+                self.mqttClient.connect("localhost", 8080, keepalive = 60) 
+                self.mqttClient.loop_start()
+
             logger.debug('Paused briefly.')
             #shorten this if possible.
             time.sleep(2)
@@ -525,9 +539,12 @@ class RobotAssemblyABC(IDataProducer):
                     clientHostName, receivedCommand, receivedParameters = pickle.loads(sendEnd.get_nowait()) # Format is the name of the function followed by a dictionary of parameters
                     self._tempApiCalls.append((receivedCommand, receivedParameters))
                     returnValue = self.remoteCommand(receivedCommand, receivedParameters)
-                    self.mqttClient.publish(topic = self.remoteHostTopicTemplate.substitute(hostname = clientHostName), 
+                    publishMessage = self.mqttClient.publish(topic = self.remoteHostTopicTemplate.substitute(hostname = clientHostName), 
                                             payload = pickle.dumps(returnValue),
-                                            qos = 0)
+                                            qos = 1)
+                    if publishMessage.rc != mqtt.MQTT_ERR_SUCCESS:
+                        logger.debug(f"Publish failed with rc={publishMessage.rc}")
+                    publishMessage.wait_for_publish()
 
                 #keep time for time vectors
                 currentTime: float = time.perf_counter()
@@ -579,6 +596,7 @@ class RobotAssemblyABC(IDataProducer):
             
         finally:
             logger.debug('Closing Comms.')
+            self.mqttClient.loop_stop()
             self.mqttClient.disconnect()
              # Close the interface objects to remove error.
             for robot in self.robots:
