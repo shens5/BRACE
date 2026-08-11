@@ -64,8 +64,7 @@ def openSocket(ChNum: int) -> can.interface.BusABC:
         :rtype: can.interface.BusABC
     """
     if can.__version__ == '4.5.0': # New version on second Pi
-        canFilters = [{'can_id': 0x118, 'can_mask': 0x7FF, 'extended': False}] # Only get the id 280 message which has encoder and sensor data.
-        canX = can.ThreadSafeBus(channel = 'can' + str(ChNum), interface = 'socketcan', can_filters = canFilters)
+        canX = can.ThreadSafeBus(channel = 'can' + str(ChNum), interface = 'socketcan')
     elif can.__version__ == '3.3.4': # Old legacy version on first Pi
         canX = can.ThreadSafeBus(channel = 'can' + str(ChNum), bustype = 'socketcan')
     return canX

@@ -10,6 +10,7 @@ from multiprocessing import Process, Queue, Value, Event
 import multiprocessing
 import time
 from queue import Empty
+import struct
 from multiprocessing.synchronize import Event as SynchronizedEvent
 
 def forceCurrentDeadZone(commandCurrent: float) -> float:
@@ -45,6 +46,10 @@ class CANReader():
         self.stopEvent: SynchronizedEvent
         self.canEnable: SynchronizedEvent
 
+    def readCurrentMessage(msg: can.Message) -> float:
+        current = float(struct.unpack('<i', msg.data[:4])[0])
+        return current
+
     def readCANMessage(msg: can.Message) -> tuple[float, float]:
         """
             Parses a CAN bus message for a tuple of knee angle and FSR values.
@@ -56,35 +61,33 @@ class CANReader():
         """
         #encoderFlexPositive - true if positive angle readings mean flexion (1884)
         #based on printSensors1/2
-        if msg is not None and msg.arbitration_id == 280:
-            #8th byte shifted 
-            dec4 = (msg.data[7] << 8) | msg.data[6]
-            if dec4 < 32768: #max of signed 16-bit
-                #4096 = 13-bit
-                #360 degrees
-                #angle = (int(dec4) * 360.0)/4096
-                angle = (int(dec4) * 180/3.14159)/4096
-            else:
-                angle = -((int(0xFFFF - dec4) * 180/3.14159)/4096)
-            # There's no real consistency on where it is since it is FSR dependent
-            # dec2 -> toe, dec3 -> mid, dec1 -> heel => BPO9166 SN: 12975 (Left)
-            # dec2 -> toe, dec1 -> mid, dec3 -> heel => BPO8042 SN: 10425 (Right)
-            dec1 = (msg.data[1] << 8) | msg.data[0] # Change endianness
-            force1 = int(dec1) / (2 ** 16 - 1) * 3000
-            dec2 = (msg.data[3] << 8) | msg.data[2]
-            force2 = int(dec2) / (2 ** 16 - 1) * 3000
-            dec3 = (msg.data[5] << 8) | msg.data[4]
-            force3 = int(dec3) / (2 ** 16 - 1) * 3000
-            Force_CanX = force1 + force2 + force3
+        #8th byte shifted 
+        dec4 = (msg.data[7] << 8) | msg.data[6]
+        if dec4 < 32768: #max of signed 16-bit
+            #4096 = 13-bit
+            #360 degrees
+            #angle = (int(dec4) * 360.0)/4096
+            angle = (int(dec4) * 180/3.14159)/4096
+        else:
+            angle = -((int(0xFFFF - dec4) * 180/3.14159)/4096)
+        # There's no real consistency on where it is since it is FSR dependent
+        # dec2 -> toe, dec3 -> mid, dec1 -> heel => BPO9166 SN: 12975 (Left)
+        # dec2 -> toe, dec1 -> mid, dec3 -> heel => BPO8042 SN: 10425 (Right)
+        dec1 = (msg.data[1] << 8) | msg.data[0] # Change endianness
+        force1 = int(dec1) / (2 ** 16 - 1) * 3000
+        dec2 = (msg.data[3] << 8) | msg.data[2]
+        force2 = int(dec2) / (2 ** 16 - 1) * 3000
+        dec3 = (msg.data[5] << 8) | msg.data[4]
+        force3 = int(dec3) / (2 ** 16 - 1) * 3000
+        Force_CanX = force1 + force2 + force3
 
-            # Depending on the motor, extension on torque is positive, and flexion on encoder is negative. Or vice versa.
-            # But encoder convention and torque convention are two different things. All of the encoders are flexion negative (extension positive).
-            # encoderAngle = -angle if encoderFlexPositive else angle
-            encoderAngle = -angle
-            return encoderAngle, Force_CanX
-        return None
+        # Depending on the motor, extension on torque is positive, and flexion on encoder is negative. Or vice versa.
+        # But encoder convention and torque convention are two different things. All of the encoders are flexion negative (extension positive).
+        # encoderAngle = -angle if encoderFlexPositive else angle
+        encoderAngle = -angle
+        return encoderAngle, Force_CanX
 
-    async def readMessage(self, kneeAngle: Synchronized, fsr: Synchronized, canEnable: SynchronizedEvent) -> None:
+    async def readMessage(self, kneeAngle: Synchronized, fsr: Synchronized, current: Synchronized, canEnable: SynchronizedEvent) -> None:
         """
         Coroutine that reads messages continuously through the CAN AsyncBufferedReader object. Messages are parsed
         into two shared memory variables (with locks), which are read by a corresponding IInputObject class.
@@ -93,6 +96,8 @@ class CANReader():
         :type kneeAngle: multiprocessing.Value (double)
         :param fsr: Shared memory variable that represents the FSR value.
         :type fsr: multiprocessing.Value (double)
+        :param current: Shared memory variable that represents the current value.
+        :type current: multiprocessing.Value (double)
         :param canEnable: Event that indicates that the CAN reading should be started.
         :type canEnable: multiprocessing.Event
         :return: None
@@ -105,9 +110,14 @@ class CANReader():
                 try:
                     message = await reader.get_message()
                     if message is not None:
-                        parsed = CANReader.readCANMessage(message)
-                        if parsed is not None:
-                            kneeAngle.value, fsr.value = parsed
+                        if message.arbitration_id == 280:
+                            parsed = CANReader.readCANMessage(message)
+                            if parsed is not None:
+                                kneeAngle.value, fsr.value = parsed
+                        elif message.arbitration_id == 282:
+                            parsed = CANReader.readCurrentMessage(message)
+                            if parsed is not None:
+                                current.value = parsed
                 except asyncio.CancelledError:
                     pass
         notifier.stop()
@@ -142,7 +152,8 @@ class CANReader():
                     # protect against queue closed / other exceptions
                     break
 
-    async def start(self, stopEnable: SynchronizedEvent, queue: Queue, kneeAngle: Synchronized, fsr: Synchronized, canEnable: SynchronizedEvent) -> None:
+    async def start(self, stopEnable: SynchronizedEvent, queue: Queue, kneeAngle: Synchronized, fsr: Synchronized, 
+                    current: Synchronized, canEnable: SynchronizedEvent) -> None:
         """
         Coroutine that initializes the CAN bus channels, then creates the running loop, reading CAN bus messages and 
         writingTorque from the multiprocessing queue.
@@ -176,7 +187,7 @@ class CANReader():
         self.loop = asyncio.get_running_loop()
         # create both tasks and await them concurrently; when one returns (e.g. sentinel)
         self.task = asyncio.gather(
-            self.readMessage(kneeAngle, fsr, self.canEnable),
+            self.readMessage(kneeAngle, fsr, current, self.canEnable),
             self.writeTorque(queue, self.canEnable),
         )
         try:
@@ -199,7 +210,7 @@ class CANReader():
             self.can = None
         CanHelpers.OS_CloseCAN(self.channel)
 
-def createCANPrimitives(channel: int) -> tuple[CANReader, SynchronizedEvent, SynchronizedEvent, Queue, Synchronized, Synchronized]:
+def createCANPrimitives(channel: int) -> tuple[CANReader, SynchronizedEvent, SynchronizedEvent, Queue, Synchronized, Synchronized, Synchronized]:
     """
         Factory method that creates a tuple of events, queues, and shared memory values for a given channel.
 
@@ -208,7 +219,7 @@ def createCANPrimitives(channel: int) -> tuple[CANReader, SynchronizedEvent, Syn
         :return: A tuple of CANReader, events, queues, and shared memory variables for the corresponding IInputCom implementation
         to use.
         :rtype: tuple[CANReader, multiprocessing.Event, multiprocessing.Event, multiprocessing.Queue, 
-        multiprocessing.Value (double), multiprocessing.Value (double)]
+        multiprocessing.Value (double), multiprocessing.Value (double), multiprocessing.Value (double)]
     """
     canReader = CANReader(channel=channel)
     stopEnable = Event()
@@ -216,10 +227,12 @@ def createCANPrimitives(channel: int) -> tuple[CANReader, SynchronizedEvent, Syn
     queue = Queue()
     kneeAngle = Value('d', 0.0)
     fsr = Value('d', 0.0)
-    return canReader, stopEnable, canEnable, queue, kneeAngle, fsr
+    current = Value('d', 0.0)
+    return canReader, stopEnable, canEnable, queue, kneeAngle, fsr, current
 
 def runMultiCAN(canReader: CANReader, stopEnable: SynchronizedEvent, queue: Queue,
-                kneeAngle: Synchronized, fsr: Synchronized, canEnable: SynchronizedEvent) -> None:
+                kneeAngle: Synchronized, fsr: Synchronized, 
+                current: Synchronized, canEnable: SynchronizedEvent) -> None:
     """
         Runs the CAN Bus in a separate process, running asynchronously, using a separate queue
         to handle write messages and an asynchronous reader to get CAN bus messages when available.
@@ -235,6 +248,8 @@ def runMultiCAN(canReader: CANReader, stopEnable: SynchronizedEvent, queue: Queu
         :type kneeAngle: multiprocessing.Value (double)
         :param fsr: A shared memory variable for the FSR voltage that is read by the IInputCom object to get FSR data.
         :type fsr: multiprocessing.Value (double)
+        :param current: A shared memory variable for the Agilik current that is read by the IInputCom object.
+        :type current: multiprocessing.Value (double)
         :param canEnable: An event to start reading and writing to this CAN bus.
         :type canEnable: multiprocessing.Event
         :return: None
@@ -254,7 +269,7 @@ def runMultiCAN(canReader: CANReader, stopEnable: SynchronizedEvent, queue: Queu
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
         # run the asyncio event loop
-        asyncio.run(canReader.start(stopEnable, queue, kneeAngle, fsr, canEnable))
+        asyncio.run(canReader.start(stopEnable, queue, kneeAngle, fsr, current, canEnable))
     except Exception:
         # setpgrp probably doesn't work on windows
         pass
@@ -265,20 +280,20 @@ if __name__ == "__main__":
     # force spawn to avoid inheriting parent's event loop which cause deadlocks on exit
     multiprocessing.set_start_method('spawn', force = True)
 
-    canReader1, stopEnable1, canEnable1, queue1, kneeAngle1, fsr1 = createCANPrimitives(channel = 1)
+    canReader1, stopEnable1, canEnable1, queue1, kneeAngle1, fsr1, current1 = createCANPrimitives(channel = 1)
     canEnable1.set()
 
-    canReader0, stopEnable0, canEnable0, queue0, kneeAngle0, fsr0 = createCANPrimitives(channel = 0)
+    canReader0, stopEnable0, canEnable0, queue0, kneeAngle0, fsr0, current0 = createCANPrimitives(channel = 0)
     # canEnable1.set()
 
     # make process non-daemonic so we can join/terminate it cleanly
     multiprocessedItem1 = Process(target = runMultiCAN,
-                                  args = (canReader1, stopEnable1, queue1, kneeAngle1, fsr1, canEnable1),
+                                  args = (canReader1, stopEnable1, queue1, kneeAngle1, fsr1, current1, canEnable1),
                                   daemon = False)
     multiprocessedItem1.start()
 
     multiprocessedItem0 = Process(target = runMultiCAN,
-                                  args = (canReader0, stopEnable0, queue0, kneeAngle0, fsr0, canEnable0),
+                                  args = (canReader0, stopEnable0, queue0, kneeAngle0, fsr0, current0, canEnable0),
                                   daemon = False)
     multiprocessedItem0.start()
 

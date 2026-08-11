@@ -51,11 +51,11 @@ def main():
 
     # Two CAN reader/writer (left and right) are run in different processes for parallelism.
     canReaderProcess1 = Process(target = runMultiCAN,
-                                  args = (canReader1, stopEnable1, canQueue1, kneeAngle1, fsr1, canEnable1),
+                                  args = (canReader1, stopEnable1, canQueue1, kneeAngle1, fsr1, current1, canEnable1),
                                   daemon = True)
     
     canReaderProcess0 = Process(target = runMultiCAN,
-                                  args = (canReader0, stopEnable0, canQueue0, kneeAngle0, fsr0, canEnable0),
+                                  args = (canReader0, stopEnable0, canQueue0, kneeAngle0, fsr0, current0, canEnable0),
                                   daemon = True)
     canReaderProcess1.start()
     canReaderProcess0.start()
@@ -156,8 +156,8 @@ if __name__ == '__main__':
     logger = logging.getLogger("logger")
 
     # Create the locking primitives that are shared between the CAN processes and the interfaces.
-    canReader1, stopEnable1, canEnable1, canQueue1, kneeAngle1, fsr1 = createCANPrimitives(channel = 1)
-    canReader0, stopEnable0, canEnable0, canQueue0, kneeAngle0, fsr0 = createCANPrimitives(channel = 0)
+    canReader1, stopEnable1, canEnable1, canQueue1, kneeAngle1, fsr1, current1 = createCANPrimitives(channel = 1)
+    canReader0, stopEnable0, canEnable0, canQueue0, kneeAngle0, fsr0, current0 = createCANPrimitives(channel = 0)
     multiprocessingQueue = Queue()
     multiprocessingQueue.cancel_join_thread()
     canQueue0.cancel_join_thread()
