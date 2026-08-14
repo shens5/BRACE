@@ -1,6 +1,6 @@
-import os
 import can
 import struct
+import subprocess
 
 #FUNCTIONS
 #CAN communication set-up
@@ -15,7 +15,7 @@ def setBitRate(ChNum: int, bRate: int) -> None:
         :return: None
         :rtype: None
     """
-    os.system('sudo ip link set can' + str(ChNum) + ' type can bitrate ' + str(bRate))
+    subprocess.run(['sudo', 'ip', 'link', 'set', f'can{str(ChNum)}', 'type', 'can', 'bitrate', str(bRate)], check = True)
 
 def setTransQueue(ChNum: int, Buffer: int) -> None:
     """
@@ -28,7 +28,7 @@ def setTransQueue(ChNum: int, Buffer: int) -> None:
         :return: None
         :rtype: None
     """
-    os.system('sudo ifconfig can' + str(ChNum) + ' txqueuelen ' + str(Buffer))
+    subprocess.run(['sudo', 'ifconfig', f'can{str(ChNum)}', 'txqueuelen', str(Buffer)], check = True)
 
 def OS_OpenCAN(ChNum: int) -> None:
     """
@@ -39,7 +39,7 @@ def OS_OpenCAN(ChNum: int) -> None:
         :return: None
         :rtype: None
     """
-    os.system('sudo ifconfig can' + str(ChNum) + ' up')
+    subprocess.run(['sudo', 'ifconfig', f'can{str(ChNum)}', 'up'], check = True)
 
 def OS_CloseCAN(ChNum: int) -> None:
     """
@@ -50,12 +50,13 @@ def OS_CloseCAN(ChNum: int) -> None:
         :return: None
         :rtype: None
     """
-    os.system('sudo ifconfig can' + str(ChNum) + ' down')
+    subprocess.run(['sudo', 'ifconfig', f'can{str(ChNum)}', 'down'], check = True)
 
 def openSocket(ChNum: int) -> can.interface.BusABC:
     """
-        Opens the CAN bus interface using a ThreadSafeBus, filtering out for only the id 280 message that contains
-        the knee encoder and FSR sensor data. Two versions are given for the legacy Raspberry Pi that used and one for the
+        Opens the CAN bus interface using a ThreadSafeBus, getting messages with id 280 and 282 contains
+        the knee encoder and FSR sensor data, and current respectively. 
+        Two versions are given for the legacy Raspberry Pi that used and one for the
         updated version.
 
         :param ChNum: The channel number of the CAN socket that should be opened.
