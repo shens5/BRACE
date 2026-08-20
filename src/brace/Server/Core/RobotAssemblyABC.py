@@ -577,18 +577,18 @@ class RobotAssemblyABC(IDataProducer):
                 #otherwise, the code will error out.
                 
                 # This aligns to the nearest time closest to a multiple of the update time with respect to the start time.
-                sleepTime = self.UPDATE_TIME - ((time.perf_counter() - self.startTime.value) % self.UPDATE_TIME) 
+                if (timeToSleep := time.perf_counter()) <= currentTime + self.UPDATE_TIME:
+                    sleepTime = self.UPDATE_TIME - ((timeToSleep - self.startTime.value) % self.UPDATE_TIME) 
 
-                # Then pick either A) Standard sleep.
-                if sleepTime > 0:
+                    # Then pick either A) Standard sleep.
                     time.sleep(sleepTime)
-                
-                # or B) Busy waiting loop. Not great on CPU, but this gives more accurate delay.
-                # startSleep = time.perf_counter()
-                # delay = sleepTime - (time.perf_counter() - startSleep)
-                # while(delay > 0):
-                #     time.sleep(delay / 10) # Take micronaps? This reduces load a little bit
-                #     delay = sleepTime - (time.perf_counter() - startSleep)
+                    
+                    # or B) Busy waiting loop. Not great on CPU, but this gives more accurate delay.
+                    # startSleep = time.perf_counter()
+                    # delay = sleepTime - (time.perf_counter() - startSleep)
+                    # while(delay > 0):
+                    #     time.sleep(delay / 10) # Take micronaps? This reduces load a little bit
+                    #     delay = sleepTime - (time.perf_counter() - startSleep)
             
         except Exception as error:
             logger.debug('Error occurred:')
