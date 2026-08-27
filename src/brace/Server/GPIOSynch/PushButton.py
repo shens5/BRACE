@@ -52,10 +52,6 @@ class ButtonPress(IDataProducer):
         self.exit = Event()
         self.sendData = Event()
 
-        # Keep-alive = 0 means no attempt to check for pings. If this doesn't work, just set keep-alive to a large number
-        self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.mqttClient.connect("localhost", 8080, keepalive = 0)
-
         self.queuedDataElements = []
         self.maxQueueElements = 6 # Max number of elements that should be stored before publishing.
         super().__init__(UPDATE_RATE_PER_SECOND, 0, startTime)
@@ -136,6 +132,15 @@ class ButtonPress(IDataProducer):
             :return: None
             :rtype: None
         """
+        # Keep-alive = 0 means no attempt to check for pings. If this doesn't work, just set keep-alive to a large number
+        self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.mqttClient.connect("localhost", 8080, keepalive = 0)
+
+        username = kwargs.get("username", None)
+        password = kwargs.get("password", None)
+        if username != None:
+            self.mqttClient.username_pw_set(username = username, password = password)
+            
         button = Button(pin = self.buttonPin, pull_up = False, bounce_time = 0.0001)
         button.when_activated = self.onTrigger
 

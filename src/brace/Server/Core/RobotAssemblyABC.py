@@ -516,7 +516,13 @@ class RobotAssemblyABC(IDataProducer):
             # Keep-alive = 0 means no attempt to check for pings. Max is 65335 seconds = 18.2 hours. 
             # 3600 seconds = 1 hour.
             if not self.simulated:
+                username = kwargs.get("username", None)
+                password = kwargs.get("password", None)
+
                 self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+                if username != None:
+                    self.mqttClient.username_pw_set(username = username, password = password)
+                    
                 self.mqttClient.on_connect = RobotAssemblyABC._on_connect
                 self.mqttClient.on_disconnect = RobotAssemblyABC._on_disconnect
                 self.mqttClient.connect("localhost", 8080, keepalive = 60) 
