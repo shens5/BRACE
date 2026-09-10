@@ -9,6 +9,8 @@ jobs:
   build_and_release:
     name: Build Python Package and Create GitHub Release
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
       - name: Checkout code
