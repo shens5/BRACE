@@ -174,8 +174,8 @@ class ZaberMainWindow(QMainWindow, Ui_ZaberWindow):
         """
         if not self.isConnected:
             try:
-                self.mqttClient.connect('raspberrypi', 8080, keepalive = 60)
-                logger.info("Successfully connected to {0} MQTT at port {1}".format(self.mqttClient.host, 8080))
+                self.mqttClient.connect('raspberrypi.local', 8080, keepalive = 60)
+                logger.info("Successfully connected to {0} MQTT at port {1}".format(self.mqttClient.host, self.mqttClient.port))
                 self.mqttClient.loop_start()
 
                 self.isConnected = True
@@ -191,7 +191,7 @@ class ZaberMainWindow(QMainWindow, Ui_ZaberWindow):
 
                 self.toggleWidgetsWhenConnected(disabled = False)
             except socket.gaierror:
-                logger.error("Failed to connect to {0} at port {1}. Check LAN connection and firewall settings.".format(self.mqttClient.host, 8080))
+                logger.error("Failed to connect to {0} at port {1}. Check LAN connection and firewall settings.".format(self.mqttClient.host, self.mqttClient.port))
             except ConnectionRefusedError:
                 logger.error("ConnectionRefusedError: Is the Raspberry Pi server process on?")
                 self.handleDisconnection()

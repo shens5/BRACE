@@ -134,7 +134,9 @@ class ButtonPress(IDataProducer):
         """
         # Keep-alive = 0 means no attempt to check for pings. If this doesn't work, just set keep-alive to a large number
         self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.mqttClient.connect("localhost", 8080, keepalive = 0)
+        port = kwargs.get("port", 1883)
+        host = kwargs.get("host", 'localhost')
+        self.mqttClient.connect(host, port, keepalive = 0)
 
         username = kwargs.get("username", None)
         password = kwargs.get("password", None)

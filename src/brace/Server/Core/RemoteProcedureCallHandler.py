@@ -2,12 +2,13 @@ from paho.mqtt import client as mqtt
 from multiprocessing import Queue
 
 class RemoteProcedureCallHandler():
-    def __init__(self, commandTopic: str = None, username: str = None, password: str = None):
+    def __init__(self, commandTopic: str = None, username: str = None, password: str = None, port: int = 1883):
         self.commandTopic = commandTopic if commandTopic is not None else "remotecommands/command"
         self.mqttHost = 'localhost' # May be changed to an external host in the future.
 
         self.username = username
         self.password = password
+        self.port = port
     
     def onMessage(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         """
@@ -30,7 +31,7 @@ class RemoteProcedureCallHandler():
         """
         self.multiprocessingQueue = multiprocessingQueue
         self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.mqttClient.connect(self.mqttHost, 8080, keepalive = 3600)
+        self.mqttClient.connect(self.mqttHost, self.port, keepalive = 3600)
 
         if self.username != None:
             self.mqttClient.username_pw_set(username = self.username, password = self.password)

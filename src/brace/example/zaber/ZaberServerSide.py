@@ -69,7 +69,7 @@ def main():
     atexit.register(lambda: logger.debug(f"Session ended at {datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")}"))
 
     multiprocessingQueue = Queue()
-    remoteProcedureHandler = RemoteProcedureCallHandler()
+    remoteProcedureHandler = RemoteProcedureCallHandler(port = 8080)
 
     timeSynchronizationLock = RLock()
     timeSynchronizationCondition = Condition(timeSynchronizationLock)
@@ -102,7 +102,7 @@ def main():
     if hasButton:
         logger.debug("Starting Trigger process.")
         buttonProducer = ButtonPress(buttonPin = 24, UPDATE_RATE_PER_SECOND = 100, startTime = controllerProducer.getSharedStartTime())
-        buttonProcess = Process(target = buttonProducer.start, args = (timeSynchronizationCondition,), daemon = True)
+        buttonProcess = Process(target = buttonProducer.start, args = (timeSynchronizationCondition,), kwargs = {'port': 8080}, daemon = True)
         controllerProducer.addSendDataEvent(buttonProducer.sendData) # The controller handles when button sends data (previous attempts at a manager to handle both in a separate process) yielded slow GUI.
         buttonProcess.start()
         atexit.register(buttonProducer.stopProcess)

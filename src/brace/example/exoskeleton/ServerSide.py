@@ -45,9 +45,10 @@ def main():
     initFileConfiguration = loadInitFile(os.path.join(scriptDirectory, "ExoskeletonControl.ini"))
     initDefaults = getDefaultsDictionary(initFileConfiguration)
     initSettings = getSettingsDictionary(initFileConfiguration)
+    port = initSettings.get('hostPort', 1883)
 
     logger.debug("Starting ExoController process.")
-    remoteProcedureHandler = RemoteProcedureCallHandler(initSettings.get('commandTopic', None))
+    remoteProcedureHandler = RemoteProcedureCallHandler(initSettings.get('commandTopic', None), username = None, password = None, port = port)
 
     # Two CAN reader/writer (left and right) are run in different processes for parallelism.
     canReaderProcess1 = Process(target = runMultiCAN,
@@ -94,7 +95,7 @@ def main():
     controllerProducer.setOutputComInterface(np.array([leftCom, rightCom]))
     controllerProducer.setMeasurementLists(np.array([leftMeasurementList, rightMeasurementList]))
     controllerProducer.setSafetyControl(np.array([leftSafetyCheck, rightSafetyCheck]))
-    producerProcess = Process(target = controllerProducer.start, args = (timeSynchronizationCondition,), kwargs= {'sendEnd': multiprocessingQueue}, daemon = True)
+    producerProcess = Process(target = controllerProducer.start, args = (timeSynchronizationCondition,), kwargs= {'sendEnd': multiprocessingQueue, 'port': port}, daemon = True)
 
     # The button is created as a separate process that generates data to the data topic. Initialized to pin 24, at 100 Hz.
     hasButton = initSettings.get('hasTrigger', True)
@@ -102,7 +103,7 @@ def main():
         logger.debug("Starting Trigger process.")
         buttonProducer = ButtonPress(buttonPin = 24, UPDATE_RATE_PER_SECOND = 100, startTime = controllerProducer.getSharedStartTime(), 
                                      triggerTopicName = initSettings.get('triggerTopicName', None))
-        buttonProcess = Process(target = buttonProducer.start, args = (timeSynchronizationCondition,), daemon = True)
+        buttonProcess = Process(target = buttonProducer.start, args = (timeSynchronizationCondition,), kwargs = {'port': port}, daemon = True)
         controllerProducer.addSendDataEvent(buttonProducer.sendData) # The controller handles when button sends data (previous attempts at a manager to handle both in a separate process) yielded slow GUI.
         buttonProcess.start()
 

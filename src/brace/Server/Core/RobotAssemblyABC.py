@@ -518,6 +518,7 @@ class RobotAssemblyABC(IDataProducer):
             if not self.simulated:
                 username = kwargs.get("username", None)
                 password = kwargs.get("password", None)
+                port = kwargs.get("port", 1883)
 
                 self.mqttClient = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
                 if username != None:
@@ -525,7 +526,7 @@ class RobotAssemblyABC(IDataProducer):
                     
                 self.mqttClient.on_connect = RobotAssemblyABC._on_connect
                 self.mqttClient.on_disconnect = RobotAssemblyABC._on_disconnect
-                self.mqttClient.connect("localhost", 8080, keepalive = 60) 
+                self.mqttClient.connect("localhost", port, keepalive = 60) 
                 self.mqttClient.loop_start()
 
             logger.debug('Paused briefly.')
